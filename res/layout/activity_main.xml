@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark" >
+    
+    <com.example.words.GameBoard 
+        android:id="@+id/game_board"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+    
+    <com.example.words.MyTiles 
+        android:id="@+id/my_tiles"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+
+
+<!--     <com.example.words.Tile -->
+<!--         android:layout_width="100dp" -->
+<!--         android:layout_height="100dp" -->
+<!--         android:background="@android:color/background_light" -->
+<!--         android:layout_alignParentTop="true" /> -->
+    
+<!--     <com.example.words.TileHolder -->
+<!--         android:layout_width="120dp" -->
+<!--         android:layout_height="120dp" -->
+<!--         android:background="@android:color/darker_gray" -->
+<!--         android:layout_alignParentBottom="true"/> -->
+
+</RelativeLayout>
