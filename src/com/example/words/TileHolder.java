@@ -13,13 +13,16 @@ public class TileHolder extends FrameLayout implements OnDragListener {
 	private MainActivity activity;
 	
 	private boolean containsDragable;
+
+	private int index;
 	
-	public TileHolder(MainActivity activity) {
+	public TileHolder(MainActivity activity, int index) {
 		super(activity);
 		this.activity = activity;
+		this.index = index;
 		
 		initLayoutParams();
-		setBackgroundColor(Color.GREEN);
+		setBackgroundColor(Color.BLACK);
 		setOnDragListener(this);
 	}
 	
@@ -35,14 +38,27 @@ public class TileHolder extends FrameLayout implements OnDragListener {
 	@Override
     public boolean onDrag(View view, DragEvent dragEvent) {
 		int dragAction = dragEvent.getAction();
-        View dragView = (View) dragEvent.getLocalState();
+        Tile dragView = (Tile) dragEvent.getLocalState();
         if (dragAction == DragEvent.ACTION_DRAG_EXITED) {
             containsDragable = false;
+            unhighlight();
         } else if (dragAction == DragEvent.ACTION_DRAG_ENTERED) {
             containsDragable = true;
+           	highlight();
         } else if (dragAction == DragEvent.ACTION_DRAG_ENDED) {
             dragView.setVisibility(View.VISIBLE);
-        } else if (dragAction == DragEvent.ACTION_DROP && containsDragable && getChildCount() == 0) {
+            activity.stopDrag();
+        } else if (dragAction == DragEvent.ACTION_DROP && containsDragable) {
+        	if(getChildCount() > 0){
+        		Tile oldChild = (Tile)getChildAt(0);
+        		removeView(oldChild);
+        		if(dragView.getParent() instanceof TileHolder)
+        			activity.addTileToGameBoard(oldChild, ((TileHolder)dragView.getParent()).getIndex());
+        		else if(oldChild.isPartOfLastWord())
+        			activity.replaceLastWordTile(dragView, oldChild);
+        		else
+	        		activity.replaceMyTile(dragView, oldChild);
+        	}
         	ViewGroup owner = (ViewGroup) dragView.getParent();
             owner.removeView(dragView);
             addView(dragView);
@@ -50,5 +66,17 @@ public class TileHolder extends FrameLayout implements OnDragListener {
         }
         return true;
     }
+
+	private int getIndex() {
+		return index;
+	}
+
+	public void highlight() {
+		setBackgroundColor(Color.GREEN);
+	}
+
+	public void unhighlight() {
+		setBackgroundColor(Color.BLACK);
+	}
 
 }
