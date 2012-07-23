@@ -2,11 +2,8 @@ package com.example.words;
 
 import android.content.ClipData;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,16 +14,19 @@ public class Tile extends RelativeLayout {
 	
 	private TextView textView;
 	private TextView scoreView;
-	private char text;
+	private String text;
 
 	private boolean partOfLastWord;
+
+	private int points;
 	
 	
-	public Tile(MainActivity activity, char text, boolean partOfLastWord) {
+	public Tile(MainActivity activity, String text, boolean partOfLastWord) {
 		super(activity);
 		this.activity = activity;
-		this.text = text;
+		this.text = text.toUpperCase();
 		this.partOfLastWord = partOfLastWord;
+		this.points = activity.getAppController().getPoints(text);
 		
 		initLayoutParams();
 		setBackgroundColor(partOfLastWord ? Color.YELLOW : Color.CYAN);
@@ -36,14 +36,14 @@ public class Tile extends RelativeLayout {
 
 	private void initTextView() {
 		textView = new TextView(activity);
-		textView.setText("" + text);
+		textView.setText(text);
 		textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		textView.setGravity(Gravity.CENTER);
 		textView.setTextColor(Color.BLACK);
 		addView(textView); 
 		
 		scoreView = new TextView(activity);
-		scoreView.setText("1");
+		scoreView.setText("" + points);
 		scoreView.setTextSize(8);
 		scoreView.setTextColor(Color.BLACK);
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -66,7 +66,6 @@ public class Tile extends RelativeLayout {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			activity.startDrag(this);
 			startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0);
 			setVisibility(INVISIBLE);
 			return true;
@@ -81,6 +80,10 @@ public class Tile extends RelativeLayout {
 	@Override
 	public String toString() {
 		return "Tile : " + text;
+	}
+
+	public char getLetter() {
+		return text.charAt(0);
 	}
 
 

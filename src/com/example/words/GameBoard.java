@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.LinearLayout;
 
 public class GameBoard extends LinearLayout {
@@ -33,9 +32,36 @@ public class GameBoard extends LinearLayout {
 	private TileHolder getTileHolderAt(int z) {
 		return (TileHolder)getChildAt(z);
 	}
+	
+	private Tile getTileAt(int z){
+		TileHolder holder = getTileHolderAt(z);
+		if(holder != null)
+			return holder.getTile();
+		return null;
+	}
 
 	public void addTile(Tile tile, int index) {
 		getTileHolderAt(index).addView(tile);
+	}
+
+	public char[] getLetters() {
+		char[] letters = new char[Constants.NUM_TILE_HOLDERS];
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null)
+				letters[z] = t.getLetter();
+		}
+		return letters;
+	}
+
+	public boolean[] partOfLastWordArray() {
+		boolean[] partOfLastWord = new boolean[Constants.NUM_TILE_HOLDERS];
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null)
+				partOfLastWord[z] = t.isPartOfLastWord();
+		}
+		return partOfLastWord;
 	}
 
 	

@@ -118,4 +118,20 @@ public class MyTiles extends LinearLayout implements OnDragListener {
 		return 0;
 	}
 
+	public char[] getLetters() {
+		String letters = "";
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null)
+				letters += t.getLetter();
+		}
+		return letters.toCharArray();
+	}
+
+	private Tile getTileAt(int z) {
+		return (Tile)getChildAt(z);
+	}
+	
+	
+
 }

@@ -8,28 +8,26 @@ import android.widget.LinearLayout;
 public class LastWord extends LinearLayout {
 	
 	int[] tiles;
+	private String lastWord;
 
 	public LastWord(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		tiles = new int[Constants.NUM_MY_TILES];
 	}
 	
-	@Override
-	public void addView(View child) {
-		tiles[getChildCount()] = child.hashCode();
-		super.addView(child);
-		((Tile)child).initLayoutParams();
-		
-	}
-	
-	@Override
-	public void addView(View child, int index) {
-		super.addView(child, index);
-		((Tile)child).initLayoutParams();
+	public void setLastWord(String lastWord){
+		this.lastWord = lastWord;
+		for(int z = 0; z < lastWord.length(); z++){
+			if(Character.isLetter(lastWord.charAt(z))){
+				Tile tile = new Tile((MainActivity)getContext(), "" + lastWord.charAt(z), true);
+				tiles[z] = tile.hashCode();
+				((TileHolder)getChildAt(z)).addView(tile);
+			}
+		}
 	}
 
 	public void replaceTile(Tile oldChild, Tile newChild) {
-		addView(newChild, indexOf(newChild));
+		((TileHolder)getChildAt(indexOf(newChild))).addView(newChild);
 	}
 	
 	private int indexOf(Tile newChild) {
@@ -39,6 +37,27 @@ public class LastWord extends LinearLayout {
 				return z;
 		}
 		return 0;
+	}
+	
+	private TileHolder getTileHolderAt(int z) {
+		return (TileHolder)getChildAt(z);
+	}
+	
+	private Tile getTileAt(int z){
+		TileHolder holder = getTileHolderAt(z);
+		if(holder != null)
+			return holder.getTile();
+		return null;
+	}
+
+	public char[] getLetters() {
+		char[] letters = new char[Constants.NUM_TILE_HOLDERS];
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null)
+				letters[z] = t.getLetter();
+		}
+		return letters;
 	}
 
 	

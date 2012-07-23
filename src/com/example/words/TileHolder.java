@@ -47,12 +47,12 @@ public class TileHolder extends FrameLayout implements OnDragListener {
            	highlight();
         } else if (dragAction == DragEvent.ACTION_DRAG_ENDED) {
             dragView.setVisibility(View.VISIBLE);
-            activity.stopDrag();
+            activity.update();
         } else if (dragAction == DragEvent.ACTION_DROP && containsDragable) {
         	if(getChildCount() > 0){
         		Tile oldChild = (Tile)getChildAt(0);
         		removeView(oldChild);
-        		if(dragView.getParent() instanceof TileHolder)
+        		if(dragView.getParent() instanceof TileHolder && dragView.getParent().getParent() instanceof GameBoard)
         			activity.addTileToGameBoard(oldChild, ((TileHolder)dragView.getParent()).getIndex());
         		else if(oldChild.isPartOfLastWord())
         			activity.replaceLastWordTile(dragView, oldChild);
@@ -77,6 +77,10 @@ public class TileHolder extends FrameLayout implements OnDragListener {
 
 	public void unhighlight() {
 		setBackgroundColor(Color.BLACK);
+	}
+
+	public Tile getTile() {
+		return getChildCount() > 0 ? (Tile)getChildAt(0) : null;
 	}
 
 }
