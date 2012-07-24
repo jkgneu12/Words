@@ -3,7 +3,6 @@ package com.example.words;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
 
 public class MainActivity extends Activity {
 
@@ -29,16 +28,13 @@ public class MainActivity extends Activity {
         
         
         for(int z = 0; z < Constants.NUM_TILE_HOLDERS; z++)
-        	gameBoard.addView(new TileHolder(this, z));
-        
-        for(int z = 0; z < Constants.NUM_TILE_HOLDERS; z++)
-        	lastWord.addView(new TileHolder(this, z));
+        	gameBoard.addView(new GameBoardTileHolder(this, z));
         
         if(savedInstanceState == null){
         	game = new Game(this);
             
             for(int z = 0; z < Constants.NUM_MY_TILES; z++)
-            	myTiles.addView(new Tile(this, appController.getLetter(z), false));
+            	myTiles.addView(new MyTilesTile(this, appController.getLetter(z)));
 
             lastWord.setLastWord("Test");
             
@@ -57,12 +53,16 @@ public class MainActivity extends Activity {
     	game = bundle.getParcelable("game");
     	
         for(int z = 0; z < game.gameBoard.length; z++){
-        	if(Character.isLetter(game.gameBoard[z]))
-        		gameBoard.addTile(new Tile(this, "" + game.gameBoard[z], game.partOfLastWord[z]), z);
+        	if(Character.isLetter(game.gameBoard[z])){
+        		if(game.partOfLastWord[z])
+        			gameBoard.addTile(new LastWordTile(this, "" + game.gameBoard[z], z), z);
+        		else
+        			gameBoard.addTile(new MyTilesTile(this, "" + game.gameBoard[z]), z);
+        	}
         }
         
         for(int z = 0; z < game.myTiles.length; z++)
-        	myTiles.addView(new Tile(this, "" + game.myTiles[z], false));
+        	myTiles.addView(new MyTilesTile(this, "" + game.myTiles[z]));
         
         lastWord.setLastWord(new String(game.lastWord));
     	
@@ -79,10 +79,6 @@ public class MainActivity extends Activity {
 		game.update(gameBoard, myTiles, lastWord);
 	}
 
-	public void addToMyTiles(View v) {
-		myTiles.addView(v);
-	}
-
 	public void replaceMyTile(Tile oldChild, Tile newChild) {
 		myTiles.replaceTile(oldChild, newChild);
 	}
@@ -97,6 +93,21 @@ public class MainActivity extends Activity {
 	
 	public AppController getAppController(){
 		return appController;
+	}
+
+	public void returnTile(Tile tile) {
+		TileHolder holder = tile.getHolder(); 
+		if(holder != null && holder.isGameBoardHolder()){
+			if(tile.isPartOfLastWord()){
+				holder.unhighlight();
+				holder.removeView(tile);
+				lastWord.returnTile((LastWordTile)tile);
+			} else {
+				holder.unhighlight();
+				holder.removeView(tile);
+				myTiles.addView(tile);
+			}
+		}
 	}
 
 	

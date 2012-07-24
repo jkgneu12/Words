@@ -8,28 +8,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class Tile extends RelativeLayout {
+public abstract class Tile extends RelativeLayout {
 
-	private MainActivity activity;
+	protected MainActivity activity;
 	
-	private TextView textView;
-	private TextView scoreView;
-	private String text;
-
-	private boolean partOfLastWord;
+	protected TextView textView;
+	protected TextView scoreView;
+	protected String text;
 
 	private int points;
 	
 	
-	public Tile(MainActivity activity, String text, boolean partOfLastWord) {
+	public Tile(MainActivity activity, String text) {
 		super(activity);
 		this.activity = activity;
 		this.text = text.toUpperCase();
-		this.partOfLastWord = partOfLastWord;
 		this.points = activity.getAppController().getPoints(text);
 		
 		initLayoutParams();
-		setBackgroundColor(partOfLastWord ? Color.YELLOW : Color.CYAN);
 		
 		initTextView();
 	}
@@ -65,17 +61,17 @@ public class Tile extends RelativeLayout {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if(event.getAction() == MotionEvent.ACTION_DOWN){
-			startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0);
-			setVisibility(INVISIBLE);
-			return true;
+		if(event.getAction() == MotionEvent.ACTION_MOVE){
+			if(startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0))
+				setVisibility(INVISIBLE);
 		}
-		return false;
+		else if(event.getAction() == MotionEvent.ACTION_UP){
+			activity.returnTile(this);
+		}
+		return true;
 	}
 	
-	public boolean isPartOfLastWord(){
-		return partOfLastWord;
-	}
+	public abstract boolean isPartOfLastWord();
 	
 	@Override
 	public String toString() {
@@ -84,6 +80,12 @@ public class Tile extends RelativeLayout {
 
 	public char getLetter() {
 		return text.charAt(0);
+	}
+	
+	public TileHolder getHolder() {
+		if(getParent() != null && getParent() instanceof TileHolder)
+			return (TileHolder)getParent();
+		return null;
 	}
 
 

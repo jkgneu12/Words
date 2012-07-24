@@ -4,17 +4,16 @@ import android.graphics.Color;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-public class TileHolder extends FrameLayout implements OnDragListener {
+public abstract class TileHolder extends FrameLayout implements OnDragListener {
 
-	private MainActivity activity;
+	protected MainActivity activity;
 	
-	private boolean containsDragable;
+	protected boolean containsDragable;
 
-	private int index;
+	protected int index;
 	
 	public TileHolder(MainActivity activity, int index) {
 		super(activity);
@@ -34,45 +33,34 @@ public class TileHolder extends FrameLayout implements OnDragListener {
 		p.setMargins(margin, margin, margin, margin);
 		setLayoutParams(p);
 	}
-
+	
 	@Override
     public boolean onDrag(View view, DragEvent dragEvent) {
 		int dragAction = dragEvent.getAction();
-        Tile dragView = (Tile) dragEvent.getLocalState();
+        Tile tile = (Tile) dragEvent.getLocalState();
         if (dragAction == DragEvent.ACTION_DRAG_EXITED) {
-            containsDragable = false;
-            unhighlight();
-        } else if (dragAction == DragEvent.ACTION_DRAG_ENTERED) {
-            containsDragable = true;
-           	highlight();
+            dragExited(tile);
+        } else if (dragAction == DragEvent.ACTION_DRAG_ENTERED ) {
+        	dragEntered(tile);
         } else if (dragAction == DragEvent.ACTION_DRAG_ENDED) {
-            dragView.setVisibility(View.VISIBLE);
-            activity.update();
+        	dragEnded(tile);
         } else if (dragAction == DragEvent.ACTION_DROP && containsDragable) {
-        	if(getChildCount() > 0){
-        		Tile oldChild = (Tile)getChildAt(0);
-        		removeView(oldChild);
-        		if(dragView.getParent() instanceof TileHolder && dragView.getParent().getParent() instanceof GameBoard)
-        			activity.addTileToGameBoard(oldChild, ((TileHolder)dragView.getParent()).getIndex());
-        		else if(oldChild.isPartOfLastWord())
-        			activity.replaceLastWordTile(dragView, oldChild);
-        		else
-	        		activity.replaceMyTile(dragView, oldChild);
-        	}
-        	ViewGroup owner = (ViewGroup) dragView.getParent();
-            owner.removeView(dragView);
-            addView(dragView);
-            
+        	dragDropped(tile);
         }
         return true;
     }
 
-	private int getIndex() {
-		return index;
-	}
+	protected abstract void dragExited(Tile tile);
+	protected abstract void dragEntered(Tile tile);
+	protected abstract void dragEnded(Tile tile);
+	protected abstract void dragDropped(Tile tile);
 
-	public void highlight() {
+	public void goodHighlight() {
 		setBackgroundColor(Color.GREEN);
+	}
+	
+	public void badHighlight() {
+		setBackgroundColor(Color.RED);
 	}
 
 	public void unhighlight() {
@@ -82,5 +70,11 @@ public class TileHolder extends FrameLayout implements OnDragListener {
 	public Tile getTile() {
 		return getChildCount() > 0 ? (Tile)getChildAt(0) : null;
 	}
+	
+	protected int getIndex() {
+		return index;
+	}
+	
+	public abstract boolean isGameBoardHolder();
 
 }

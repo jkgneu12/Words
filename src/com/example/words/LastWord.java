@@ -2,7 +2,6 @@ package com.example.words;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.LinearLayout;
 
 public class LastWord extends LinearLayout {
@@ -19,9 +18,9 @@ public class LastWord extends LinearLayout {
 		this.lastWord = lastWord;
 		for(int z = 0; z < lastWord.length(); z++){
 			if(Character.isLetter(lastWord.charAt(z))){
-				Tile tile = new Tile((MainActivity)getContext(), "" + lastWord.charAt(z), true);
+				Tile tile = new LastWordTile((MainActivity)getContext(), "" + lastWord.charAt(z), z);
 				tiles[z] = tile.hashCode();
-				((TileHolder)getChildAt(z)).addView(tile);
+				addView(new LastWordTileHolder((MainActivity)getContext(), z, tile));
 			}
 		}
 	}
@@ -58,6 +57,10 @@ public class LastWord extends LinearLayout {
 				letters[z] = t.getLetter();
 		}
 		return letters;
+	}
+
+	public void returnTile(LastWordTile tile) {
+		getTileHolderAt(tile.getIndex()).addView(tile);
 	}
 
 	

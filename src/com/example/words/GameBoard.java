@@ -21,8 +21,12 @@ public class GameBoard extends LinearLayout {
 
 	
 
-	public void highlight(int z) {
-		getTileHolderAt(z).highlight();
+	public void goodHighlight(int z) {
+		getTileHolderAt(z).goodHighlight();
+	}
+	
+	public void badHighlight(int z) {
+		getTileHolderAt(z).badHighlight();
 	}
 	
 	public void unhighlight(int z) {
