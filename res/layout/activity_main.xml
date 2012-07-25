@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_dark" >
     
+    <com.example.words.ResetButton
+        android:id="@+id/reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"
+        />
+    
     <com.example.words.SubmitButton
         android:id="@+id/submit"
         android:layout_width="wrap_content"

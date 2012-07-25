@@ -1,10 +1,5 @@
 package com.example.words;
 
-import java.util.concurrent.ExecutionException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -100,6 +95,10 @@ public class MainActivity extends Activity {
 		else
 			Toast.makeText(this, "Not a word", Toast.LENGTH_LONG).show();
 	}
+	
+	public void reset() {
+		gameBoard.reset();
+	}
 
 	public void replaceMyTile(Tile oldChild, Tile newChild) {
 		myTiles.replaceTile(oldChild, newChild);
@@ -131,6 +130,8 @@ public class MainActivity extends Activity {
 			}
 		}
 	}
+
+	
 
 	
 

@@ -68,6 +68,16 @@ public class GameBoard extends LinearLayout {
 		return partOfLastWord;
 	}
 
+	public void reset() {
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null){
+				((MainActivity)getContext()).returnTile(t);
+			}
+				
+		}
+	}
+
 	
 
 }

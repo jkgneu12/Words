@@ -1,9 +1,6 @@
 package com.example.words;
 
-import java.util.logging.Logger;
-
 import android.graphics.Color;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.View.OnDragListener;

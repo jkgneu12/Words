@@ -2,10 +2,10 @@ package com.example.words;
 
 import java.util.HashMap;
 
-import com.parse.ParseObject;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.parse.ParseObject;
 
 public class Game implements Parcelable{
 	
