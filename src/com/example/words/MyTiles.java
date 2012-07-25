@@ -113,6 +113,7 @@ public class MyTiles extends LinearLayout implements OnDragListener {
 	    	ViewGroup owner = (ViewGroup) tile.getParent();
 	        owner.removeView(tile);
 	        addView(tile, insertIndex);
+	        ((MainActivity)getContext()).update();
 		}
 	}
 	

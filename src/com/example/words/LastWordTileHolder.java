@@ -33,7 +33,6 @@ public class LastWordTileHolder extends TileHolder {
 	protected void dragEnded(Tile tile) {
 		tile.setVisibility(View.VISIBLE);
         unhighlight();
-        activity.update();
 	}
 
 	@Override
@@ -52,6 +51,7 @@ public class LastWordTileHolder extends TileHolder {
 	    	ViewGroup owner = (ViewGroup) tile.getParent();
 	        owner.removeView(tile);
 	        addView(tile);
+	        activity.update();
 		}
 	}
 

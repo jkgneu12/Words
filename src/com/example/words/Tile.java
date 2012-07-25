@@ -62,8 +62,9 @@ public abstract class Tile extends RelativeLayout {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_MOVE){
-			if(startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0))
+			if(startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0)){
 				setVisibility(INVISIBLE);
+			}
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP){
 			activity.returnTile(this);

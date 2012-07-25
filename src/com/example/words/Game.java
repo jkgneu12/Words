@@ -2,6 +2,8 @@ package com.example.words;
 
 import java.util.HashMap;
 
+import com.parse.ParseObject;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -70,6 +72,20 @@ public class Game implements Parcelable{
 		dest.writeCharArray(gameBoard);
 		dest.writeCharArray(myTiles);
 		dest.writeCharArray(lastWord);
+	}
+	
+	public ParseObject getParseObject(){
+		ParseObject game = new ParseObject("Game");
+		for(int z = 0; z < myTiles.length; z++){
+			game.add("myTiles", "" + myTiles[z]);
+		}
+		for(int z = 0; z < gameBoard.length; z++){
+			game.add("gameBoard", "" + gameBoard[z]);
+		}
+		for(int z = 0; z < lastWord.length; z++){
+			game.add("lastWord", "" + lastWord[z]);
+		}
+		return game;
 	}
 	
 	

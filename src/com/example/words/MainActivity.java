@@ -1,8 +1,16 @@
 package com.example.words;
 
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.widget.Toast;
+
+import com.parse.Parse;
 
 public class MainActivity extends Activity {
 
@@ -22,6 +30,8 @@ public class MainActivity extends Activity {
         
         appController = (AppController)getApplication();
         
+        Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
+        
         gameBoard = ((GameBoard)findViewById(R.id.game_board));
         lastWord = ((LastWord)findViewById(R.id.last_word));
         myTiles = ((MyTiles)findViewById(R.id.my_tiles));
@@ -40,6 +50,8 @@ public class MainActivity extends Activity {
             
             update();
         } 
+        
+        
     }
     
     @Override
@@ -77,6 +89,16 @@ public class MainActivity extends Activity {
 
 	public void update() {
 		game.update(gameBoard, myTiles, lastWord);
+	}
+	
+	public void submit(){
+		update();
+		if(Constants.validate(new String(game.gameBoard))){
+			Toast.makeText(this, "Nice Work!!!", Toast.LENGTH_LONG).show();
+			game.getParseObject().saveInBackground();
+		}
+		else
+			Toast.makeText(this, "Not a word", Toast.LENGTH_LONG).show();
 	}
 
 	public void replaceMyTile(Tile oldChild, Tile newChild) {

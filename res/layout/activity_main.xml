@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_dark" >
     
+    <com.example.words.SubmitButton
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        />
+    
     <com.example.words.MyTiles 
         android:id="@+id/my_tiles"
         android:layout_width="fill_parent"
@@ -21,19 +30,5 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/game_board" />
-
-
-
-<!--     <com.example.words.Tile -->
-<!--         android:layout_width="100dp" -->
-<!--         android:layout_height="100dp" -->
-<!--         android:background="@android:color/background_light" -->
-<!--         android:layout_alignParentTop="true" /> -->
-    
-<!--     <com.example.words.TileHolder -->
-<!--         android:layout_width="120dp" -->
-<!--         android:layout_height="120dp" -->
-<!--         android:background="@android:color/darker_gray" -->
-<!--         android:layout_alignParentBottom="true"/> -->
 
 </RelativeLayout>

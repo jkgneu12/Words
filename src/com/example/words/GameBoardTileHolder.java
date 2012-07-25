@@ -28,7 +28,6 @@ public class GameBoardTileHolder extends TileHolder {
 	@Override
 	protected void dragEnded(Tile tile) {
 		tile.setVisibility(View.VISIBLE);
-        activity.update();
         unhighlight();
 	}
 
@@ -47,6 +46,7 @@ public class GameBoardTileHolder extends TileHolder {
     	ViewGroup owner = (ViewGroup) tile.getParent();
         owner.removeView(tile);
         addView(tile);
+        activity.update();
 	}
 
 	@Override
