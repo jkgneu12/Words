@@ -1,0 +1,54 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_light" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp" >
+
+        <com.example.words.view.NewGameButton
+            android:id="@+id/new_game"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/new_game" />
+
+        <TextView
+            android:id="@+id/current_game_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/new_game"
+            android:layout_margin="20dp"
+            android:text="@string/your_turn"
+            android:textSize="20dp" />
+
+        <ListView
+            android:id="@+id/current_game_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/current_game_title"
+            android:layout_margin="20dp" >
+        </ListView>
+
+        <TextView
+            android:id="@+id/waiting_game_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/current_game_list"
+            android:layout_margin="20dp"
+            android:text="@string/their_turn"
+            android:textSize="20dp" />
+
+        <ListView
+            android:id="@+id/waiting_game_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/waiting_game_title"
+            android:layout_margin="20dp" >
+        </ListView>
+    </RelativeLayout>
+
+</ScrollView>
