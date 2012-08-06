@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutionException;
 
 import org.json.JSONObject;
 
+import com.example.words.state.Game;
+
 import android.app.Activity;
 import android.util.DisplayMetrics;
 
@@ -29,12 +31,14 @@ public class Constants {
 		return (spaceForEachTile - getTileDimensions(activity)) / 2;
 	}
 	
-	public static boolean validate(String[] wordArray)  {
-		return true;
-		/*String word = arrayToString(wordArray);
-		word = word.trim().toLowerCase();
+	public static boolean validateGameBoard(Game game)  {
+		String[] wordArray = game.gameBoard;
+		//return true;
+		String word = arrayToString(wordArray).trim().toLowerCase();
+		if(game.usedWords.contains(word)) 
+			return false;
+		
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
-
 		try {
 			GetTask task = new GetTask(); 
 			task.execute(url);
@@ -49,7 +53,7 @@ public class Constants {
 			e.printStackTrace();
 		} 
 		
-		return false;*/
+		return false;
 	}
 
 	public static String arrayToString(String[] wordArray) {

@@ -35,6 +35,7 @@ public class SignupActivity extends Activity implements OnClickListener {
         	Intent intent = new Intent();
         	intent.setClass(this, HomeActivity.class);
         	startActivity(intent);
+        	finish();
         } else {
 		
 			setContentView(R.layout.activity_signup);

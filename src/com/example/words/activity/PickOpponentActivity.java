@@ -79,5 +79,7 @@ public class PickOpponentActivity extends Activity implements OnItemClickListene
 		intent.putExtra("WaitingPlayerName", item.userName);
 		
 		startActivity(intent);
+		
+		finish();
 	}
 }

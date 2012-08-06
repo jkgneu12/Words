@@ -141,10 +141,12 @@ public class GameActivity extends Activity {
 	
 	public void submit(){
 		update();
-		if(Constants.validate(game.gameBoard)){
+		if(Constants.validateGameBoard(game)){
 			Toast.makeText(this, "Nice Work!!!", Toast.LENGTH_LONG).show();
 			game.incrementCurrentScore(appController.getPoints(game.gameBoard));
+			game.usedWords.add(Constants.arrayToString(game.gameBoard));
 			game.save();
+			finish();
 		}
 		else
 			Toast.makeText(this, "Not a word", Toast.LENGTH_LONG).show();

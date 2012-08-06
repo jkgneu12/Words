@@ -1,5 +1,6 @@
 package com.example.words.state;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ public class Game implements Parcelable{
 	public String waitingPlayerId;
 	public int waitingPlayerScore;
 	public String waitingPlayerName;
+	
+	public List<String> usedWords; 
 
 	private ParseObject parseObject;	
 
@@ -50,6 +53,8 @@ public class Game implements Parcelable{
 		this.gameBoard = new String[Constants.NUM_TILE_HOLDERS];  
 		this.myTiles = new String[Constants.NUM_MY_TILES];  
 		this.lastWord = new String[Constants.NUM_TILE_HOLDERS];  
+		
+		usedWords = new ArrayList<String>();
 	}
 	
 	public void randomTiles(){
@@ -122,6 +127,8 @@ public class Game implements Parcelable{
 		parseObject.put("waitingPlayerId", currentPlayerId);
 		parseObject.put("waitingPlayerName", currentPlayerName);
 		parseObject.put("waitingPlayerScore", currentPlayerScore);
+		
+		parseObject.put("usedWords", usedWords);
 	}
 
 	public void save() {
@@ -145,6 +152,7 @@ public class Game implements Parcelable{
 					myTiles = Constants.listToArray(obj.getList("myTiles"));
 					lastWord = Constants.listToArray(obj.getList("lastWord"));
 					bag = obj.getMap("bag");
+					usedWords = obj.getList("usedWords");
 					replenishTiles();
 					activity.refreshUIFromGame();
 				}
