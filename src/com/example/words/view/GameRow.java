@@ -2,13 +2,12 @@ package com.example.words.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.words.R;
 import com.example.words.adapter.GameRowData;
 
-public class GameRow extends RelativeLayout{
+public class GameRow extends Row<GameRowData>{
 	
 	TextView opponent;
 	TextView opponentScore;

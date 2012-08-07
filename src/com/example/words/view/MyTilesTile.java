@@ -1,8 +1,8 @@
 package com.example.words.view;
 
-import com.example.words.activity.GameActivity;
-
 import android.graphics.Color;
+
+import com.example.words.activity.GameActivity;
 
 public class MyTilesTile extends Tile {
 

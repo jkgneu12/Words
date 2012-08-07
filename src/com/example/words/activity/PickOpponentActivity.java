@@ -12,7 +12,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.example.words.R;
-import com.example.words.adapter.GameRowData;
 import com.example.words.adapter.UserListAdpater;
 import com.example.words.adapter.UserRowData;
 import com.parse.FindCallback;

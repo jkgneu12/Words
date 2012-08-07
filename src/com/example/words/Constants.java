@@ -6,10 +6,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.json.JSONObject;
 
-import com.example.words.state.Game;
-
 import android.app.Activity;
 import android.util.DisplayMetrics;
+
+import com.example.words.state.Game;
 
 public class Constants {
 
@@ -59,7 +59,7 @@ public class Constants {
 	public static String arrayToString(String[] wordArray) {
 		StringBuilder s = new StringBuilder(wordArray.length);
 		for(int z = 0; z < wordArray.length; z++){
-			if(wordArray[z] != null && !wordArray[z].equals("null"))
+			if(!isNull(wordArray[z]))
 				s.append(wordArray[z]);
 		}
 		return s.toString();
@@ -68,7 +68,7 @@ public class Constants {
 	public static ArrayList<String> arrayToList(String[] wordArray) {
 		ArrayList<String> list = new ArrayList<String>(wordArray.length);
 		for(int z = 0; z < wordArray.length; z++){
-			if(wordArray[z] == null)
+			if(isNull(wordArray[z]))
 				list.add("null");
 			else
 				list.add(wordArray[z]);
@@ -88,5 +88,9 @@ public class Constants {
 		String[] array = new String[list.size()];
 		list.toArray(array);
 		return array;
+	}
+
+	public static boolean isNull(String string) {
+		return string == null || string.equals("null");
 	}
 }

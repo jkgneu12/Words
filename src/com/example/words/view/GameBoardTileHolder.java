@@ -1,9 +1,9 @@
 package com.example.words.view;
 
-import com.example.words.activity.GameActivity;
-
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.words.activity.GameActivity;
 
 public class GameBoardTileHolder extends TileHolder {
 

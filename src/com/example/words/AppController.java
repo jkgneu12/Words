@@ -3,8 +3,6 @@ package com.example.words;
 import java.util.HashMap;
 
 import android.app.Application;
-import android.content.Context;
-import android.telephony.TelephonyManager;
 
 public class AppController extends Application {
 	
@@ -15,8 +13,6 @@ public class AppController extends Application {
 	public AppController() {
 		super();
 	}
-	
-	
 	
 	@Override
 	public void onCreate() {
@@ -37,7 +33,7 @@ public class AppController extends Application {
 	}
 	
 	public int getPoints(String c){
-		if(c == null || c.equals("null"))
+		if(Constants.isNull(c))
 			return 0;
 		return points.get(c.toLowerCase());
 	}
@@ -57,12 +53,5 @@ public class AppController extends Application {
 	public String getLetter(int index){
 		return alpha[index];
 	}
-	public String getRandomLetter() {
-		return alpha[(int)(Math.random() * alpha.length)];
-	}
-
-
-
-	
 
 }

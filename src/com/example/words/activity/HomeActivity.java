@@ -18,7 +18,6 @@ import com.example.words.adapter.GameListAdpater;
 import com.example.words.adapter.GameRowData;
 import com.example.words.view.NewGameButton;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;

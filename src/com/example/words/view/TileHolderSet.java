@@ -1,10 +1,10 @@
 package com.example.words.view;
 
-import com.example.words.Constants;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+
+import com.example.words.Constants;
 
 public abstract class TileHolderSet extends LinearLayout {
 

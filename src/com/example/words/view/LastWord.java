@@ -1,11 +1,10 @@
 package com.example.words.view;
 
-import com.example.words.Constants;
-import com.example.words.activity.GameActivity;
-
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
+
+import com.example.words.Constants;
+import com.example.words.activity.GameActivity;
 
 public class LastWord extends TileHolderSet {
 	

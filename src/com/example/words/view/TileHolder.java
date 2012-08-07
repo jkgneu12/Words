@@ -1,14 +1,14 @@
 package com.example.words.view;
 
-import com.example.words.Constants;
-import com.example.words.activity.GameActivity;
-
 import android.graphics.Color;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.View.OnDragListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.example.words.Constants;
+import com.example.words.activity.GameActivity;
 
 public abstract class TileHolder extends FrameLayout implements OnDragListener {
 

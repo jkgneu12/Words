@@ -22,6 +22,26 @@
         android:layout_margin="10dp"
         />
     
+    <TextView
+        android:id="@+id/remaining_tiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/submit"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:textSize="14dp"/>
+    
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/remaining_tiles"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:layout_marginTop="0dp"
+        android:textSize="14dp"/>
+        
+    
 	<com.example.words.view.MyTiles
         android:id="@+id/my_tiles"
         android:layout_width="fill_parent"

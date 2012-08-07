@@ -1,8 +1,5 @@
 package com.example.words.view;
 
-import com.example.words.Constants;
-import com.example.words.activity.GameActivity;
-
 import android.content.ClipData;
 import android.graphics.Color;
 import android.view.Gravity;
@@ -10,6 +7,10 @@ import android.view.MotionEvent;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.words.Constants;
+import com.example.words.activity.GameActivity;
+import com.example.words.state.Game;
 
 public abstract class Tile extends RelativeLayout {
 
@@ -20,6 +21,13 @@ public abstract class Tile extends RelativeLayout {
 	protected String text;
 
 	private int points;
+	
+	public static Tile create(GameActivity activity, String text, int index, boolean isPartOfLastWord){
+		if(isPartOfLastWord)
+			return new LastWordTile(activity, text, index);
+		else
+			return new MyTilesTile(activity, text);
+	}
 	
 	
 	public Tile(GameActivity activity, String text) {

@@ -48,22 +48,14 @@ public class Game implements Parcelable{
 	public Game(GameActivity activity) {
 		this.activity = activity;
 		
-		initBag();
-		
 		this.gameBoard = new String[Constants.NUM_TILE_HOLDERS];  
 		this.myTiles = new String[Constants.NUM_MY_TILES];  
 		this.lastWord = new String[Constants.NUM_TILE_HOLDERS];  
 		
 		usedWords = new ArrayList<String>();
 	}
-	
-	public void randomTiles(){
-		for(int z = 0; z < myTiles.length; z++){
-			myTiles[z] = activity.getAppController().getRandomLetter();
-		}
-	}
 
-	private void initBag() {
+	public void initBag() {
 		bag = new HashMap<String, Object>();
 		String[] alpha = activity.getResources().getStringArray(R.array.alpha);
 		int[] count = activity.getResources().getIntArray(R.array.count);
@@ -73,23 +65,36 @@ public class Game implements Parcelable{
 		}
 	}
 	
+	public void initMyTiles(){
+		for(int z = 0; z < myTiles.length; z++){
+			myTiles[z] = takeFromBag();
+		}
+	}
+	
 	public String takeFromBag(){
 		int randomLetter = (int) (Math.random() * bag.size());
 		String key = activity.getAppController().getLetter(randomLetter);
 		int remaining = (Integer)bag.get(key);
 		if(remaining > 0){
-			bag.put(key, remaining--);
+			bag.put(key, remaining - 1);
 			return key;
 		}
 		return takeFromBag();
 	}
 	
 	public boolean isBagEmpty(){
-		for(int z = 0; z < bag.size(); z++){
-			if((Integer)bag.get(z) > 0)
+		for(String c : bag.keySet()){
+			if((Integer)bag.get(c) > 0)
 				return false;
 		}
 		return true;
+	}
+	
+	public int remainingTiles(){
+		int sum = 0;
+		for(String c : bag.keySet())
+			sum += (Integer)bag.get(c);
+		return sum;
 	}
 
 	public void update(GameBoard gb, MyTiles mt, LastWord lw) {
@@ -98,18 +103,17 @@ public class Game implements Parcelable{
 		lastWord = lw.getLetters();
 		partOfLastWord = gb.partOfLastWordArray();
 	}
-
-	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeStringArray(gameBoard);
-		dest.writeStringArray(myTiles);
-		dest.writeStringArray(lastWord);
+	
+	public void save() {
+		updateParseObject();
+		parseObject.saveInBackground(new SaveCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				if(e != null)
+					Log.e("Parse", "Could not save game");
+			}
+		});
 	}
 	
 	private void updateParseObject(){
@@ -129,17 +133,6 @@ public class Game implements Parcelable{
 		parseObject.put("waitingPlayerScore", currentPlayerScore);
 		
 		parseObject.put("usedWords", usedWords);
-	}
-
-	public void save() {
-		updateParseObject();
-		parseObject.saveInBackground(new SaveCallback() {
-			
-			@Override
-			public void done(ParseException e) {
-				Log.e("Parse", "Could not save game");
-			}
-		});
 	}
 	
 	public void refresh(){
@@ -162,9 +155,9 @@ public class Game implements Parcelable{
 		}
 	}
 	
-	private void replenishTiles() {
+	public void replenishTiles() {
 		for(int z = 0; z < myTiles.length; z++){
-			if(myTiles[z] == null || myTiles[z].equals("null"))
+			if(Constants.isNull(myTiles[z]))
 				myTiles[z] = takeFromBag();
 		}
 	}
@@ -172,6 +165,33 @@ public class Game implements Parcelable{
 	public void incrementCurrentScore(int points) {
 		currentPlayerScore += points;
 	}
+	
+	public void addGameBoardToUsedWord() {
+		usedWords.add(Constants.arrayToString(gameBoard));
+	}
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeStringArray(gameBoard);
+		dest.writeStringArray(myTiles);
+		dest.writeStringArray(lastWord);
+		dest.writeBooleanArray(partOfLastWord);
+		dest.writeString(id);
+		dest.writeMap(bag);
+		dest.writeString(currentPlayerId);
+		dest.writeInt(currentPlayerScore);
+		dest.writeString(currentPlayerName);
+		dest.writeString(waitingPlayerId);
+		dest.writeInt(waitingPlayerScore);
+		dest.writeString(waitingPlayerName);
+		dest.writeList(usedWords);
+	}
+
 	
 	
 }
