@@ -141,7 +141,7 @@ public class GameActivity extends Activity {
 	
 	private void sendPush(String yourName, String opponentName) {
 		ParsePush push = new ParsePush();
-		push.setChannel("User" + opponentName);
+		push.setChannel("User" + "User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
 		push.setMessage("Your turn with " + yourName);
 		push.sendInBackground(new SendCallback() {

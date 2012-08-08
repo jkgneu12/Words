@@ -31,13 +31,10 @@ public class SignupActivity extends Activity implements OnClickListener {
 		Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
 		
 		currentUser = ParseUser.getCurrentUser();
-		PushService.subscribe(this, "User" + currentUser.getUsername(), SignupActivity.class);
+		
 		
         if (currentUser != null) {
-        	Intent intent = new Intent();
-        	intent.setClass(this, HomeActivity.class);
-        	startActivity(intent);
-        	finish();
+        	navigate();
         } else {
 		
 			setContentView(R.layout.activity_signup);
@@ -54,6 +51,14 @@ public class SignupActivity extends Activity implements OnClickListener {
 		
 	}
 
+	private void navigate() {
+		PushService.subscribe(this, "User" + currentUser.getUsername().replaceAll("\\s", ""), SignupActivity.class);
+		Intent intent = new Intent();
+		intent.setClass(this, HomeActivity.class);
+		startActivity(intent);
+		finish();
+	}
+
 	@Override
 	public void onClick(View button) {
 		ParseUser user = new ParseUser();
@@ -64,7 +69,7 @@ public class SignupActivity extends Activity implements OnClickListener {
 		user.signUpInBackground(new SignUpCallback() {
 			  public void done(ParseException e) {
 			    if (e == null) {
-			      finish();
+			    	navigate();
 			    } else {
 			    	Toast.makeText(SignupActivity.this, "Signup Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
 			    }
