@@ -31,19 +31,22 @@ public class Constants {
 		return (spaceForEachTile - getTileDimensions(activity)) / 2;
 	}
 	
-	public static boolean validateGameBoard(Game game)  {
+	public static String validateGameBoard(Game game, String lastWord)  {
 		String[] wordArray = game.gameBoard;
 		//return true;
 		String word = arrayToString(wordArray).trim().toLowerCase();
 		if(game.usedWords.contains(word)) 
-			return false;
+			return "Already Used";
+		if(word.contains(lastWord))
+			return word + " contains " + lastWord ;
 		
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
 		try {
 			GetTask task = new GetTask(); 
 			task.execute(url);
 			JSONObject json = task.get();
-			return json != null && json.has("value");
+			if(json != null && json.has("value"))
+				return "1";
 			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -53,7 +56,7 @@ public class Constants {
 			e.printStackTrace();
 		} 
 		
-		return false;
+		return "Not a Word";
 	}
 
 	public static String arrayToString(String[] wordArray) {

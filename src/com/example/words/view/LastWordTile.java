@@ -12,8 +12,6 @@ public class LastWordTile extends Tile  {
 		super(activity, text);
 		
 		this.index = index;
-		
-		setBackgroundColor(Color.YELLOW );
 	}
 
 	@Override
@@ -28,6 +26,10 @@ public class LastWordTile extends Tile  {
 
 	public int getIndex() {
 		return index;
+	}
+	
+	protected int getBackgroundColor(){
+		return Color.YELLOW;
 	}
 
 }

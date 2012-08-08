@@ -1,6 +1,7 @@
 package com.example.words.view;
 
-import android.view.View;
+import android.annotation.TargetApi;
+import android.view.DragEvent;
 import android.view.ViewGroup;
 
 import com.example.words.activity.GameActivity;
@@ -15,30 +16,13 @@ public class LastWordTileHolder extends TileHolder {
 		addView(tile);
 	}
 	
-	@Override
-	protected void dragExited(Tile tile) {
-		containsDragable = false;
-        unhighlight();
+	protected boolean canDrop(Tile tile){
+		return tile == myTile;
 	}
 
+	@TargetApi(11)
 	@Override
-	protected void dragEntered(Tile tile) {
-		if(tile != myTile)
-    		badHighlight();
-    	else {
-    		containsDragable = true;
-    		goodHighlight();
-    	}
-	}
-
-	@Override
-	protected void dragEnded(Tile tile) {
-		tile.setVisibility(View.VISIBLE);
-        unhighlight();
-	}
-
-	@Override
-	protected void dragDropped(Tile tile) {
+	public void dragDropped(Tile tile, DragEvent dragEvent) {
 		if(tile == myTile) {
 			if(getChildCount() > 0){
 	    		Tile oldChild = (Tile)getChildAt(0);

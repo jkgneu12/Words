@@ -35,6 +35,8 @@ public class GameActivity extends Activity {
 
 	private ParseUser currentUser;
 
+	private Tile activeTile;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +121,8 @@ public class GameActivity extends Activity {
 	
 	public void submit(){
 		update();
-		if(Constants.validateGameBoard(game)){
+		String validation = Constants.validateGameBoard(game, lastWord.getLastWord());
+		if(validation.equals("1")){
 			Toast.makeText(this, "Nice Work!!!", Toast.LENGTH_LONG).show();
 			game.replenishTiles();
 			game.incrementCurrentScore(appController.getPoints(game.gameBoard));
@@ -128,11 +131,12 @@ public class GameActivity extends Activity {
 			finish();
 		}
 		else
-			Toast.makeText(this, "Not a word", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
 	}
 	
 	public void reset() {
 		gameBoard.reset();
+		setActiveTile(null);
 	}
 
 	public void replaceMyTile(Tile oldChild, Tile newChild) {
@@ -198,5 +202,17 @@ public class GameActivity extends Activity {
 
 	public AppController getAppController(){
 		return appController;
+	}
+
+	public void setActiveTile(Tile tile) {
+		if(activeTile != null)
+			activeTile.setActive(false);
+		activeTile = tile;
+	}
+	
+	public Tile getActiveTile(){
+		if(activeTile != null && activeTile.isActive())
+			return activeTile;
+		return null;
 	}
 }

@@ -1,7 +1,9 @@
 package com.example.words.view;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -10,7 +12,6 @@ import android.widget.TextView;
 
 import com.example.words.Constants;
 import com.example.words.activity.GameActivity;
-import com.example.words.state.Game;
 
 public abstract class Tile extends RelativeLayout {
 
@@ -21,6 +22,8 @@ public abstract class Tile extends RelativeLayout {
 	protected String text;
 
 	private int points;
+
+	private boolean active;
 	
 	public static Tile create(GameActivity activity, String text, int index, boolean isPartOfLastWord){
 		if(isPartOfLastWord)
@@ -35,6 +38,8 @@ public abstract class Tile extends RelativeLayout {
 		this.activity = activity;
 		this.text = text.toUpperCase();
 		this.points = activity.getAppController().getPoints(text);
+		
+		setBackgroundColor(getBackgroundColor());
 		
 		initLayoutParams();
 		
@@ -70,15 +75,28 @@ public abstract class Tile extends RelativeLayout {
 		setLayoutParams(p);
 	}
 	
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if(event.getAction() == MotionEvent.ACTION_MOVE){
-			if(startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0)){
+		if(event.getAction() == MotionEvent.ACTION_DOWN){
+			if(Build.VERSION.SDK_INT < 11){
+				if(active){
+					setActive(false);
+					activity.setActiveTile(null);
+				} else {
+					setActive(true);
+					activity.setActiveTile(this);
+				}
+			}
+		}
+		else if(event.getAction() == MotionEvent.ACTION_MOVE){
+			if(Build.VERSION.SDK_INT >= 11 && startDrag(ClipData.newPlainText("", ""), new DragShadowBuilder(this), this, 0)){
 				setVisibility(INVISIBLE);
 			}
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP){
-			activity.returnTile(this);
+			if(Build.VERSION.SDK_INT >= 11)
+				activity.returnTile(this);
 		}
 		return true;
 	}
@@ -99,6 +117,20 @@ public abstract class Tile extends RelativeLayout {
 			return (TileHolder)getParent();
 		return null;
 	}
+	
+	public boolean isActive(){
+		return active;
+	}
+	
+	public void setActive(boolean active){
+		this.active = active;
+		if(active)
+			setBackgroundColor(Color.GREEN);
+		else
+			setBackgroundColor(getBackgroundColor());
+	}
+	
+	protected abstract int getBackgroundColor();
 
 
 }

@@ -8,8 +8,6 @@ public class MyTilesTile extends Tile {
 
 	public MyTilesTile(GameActivity activity, String text) {
 		super(activity, text);
-		
-		setBackgroundColor(Color.CYAN);
 	}
 
 	@Override
@@ -20,6 +18,11 @@ public class MyTilesTile extends Tile {
 	@Override
 	public String toString() {
 		return "MyTiles" + super.toString();
+	}
+
+	@Override
+	protected int getBackgroundColor() {
+		return Color.CYAN;
 	}
 
 }

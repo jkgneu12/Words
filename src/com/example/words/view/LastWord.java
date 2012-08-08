@@ -26,6 +26,10 @@ public class LastWord extends TileHolderSet {
 			}
 		}
 	}
+	
+	public String getLastWord(){
+		return lastWord.toLowerCase();
+	}
 
 	public void replaceTile(Tile oldChild, Tile newChild) {
 		((TileHolder)getChildAt(indexOf(newChild))).addView(newChild);

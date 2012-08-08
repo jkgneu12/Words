@@ -1,16 +1,20 @@
 package com.example.words.view;
 
+import android.annotation.TargetApi;
 import android.graphics.Color;
-import android.view.DragEvent;
+import android.os.Build;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnDragListener;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.example.words.Constants;
 import com.example.words.activity.GameActivity;
+import com.example.words.listener.DragAndDropListener;
+import com.example.words.listener.IDragAndDrop;
 
-public abstract class TileHolder extends FrameLayout implements OnDragListener {
+public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
 
 	protected GameActivity activity;
 	
@@ -25,9 +29,16 @@ public abstract class TileHolder extends FrameLayout implements OnDragListener {
 		
 		initLayoutParams();
 		setBackgroundColor(Color.BLACK);
-		setOnDragListener(this);
+		
+		initListeners();
 	}
 	
+	@TargetApi(11)
+	private void initListeners() {
+		if(Build.VERSION.SDK_INT >= 11)
+			setOnDragListener(new DragAndDropListener(this));
+	}
+
 	public void initLayoutParams() {
 		int dim = Constants.getTileDimensions(activity);
 		
@@ -36,27 +47,45 @@ public abstract class TileHolder extends FrameLayout implements OnDragListener {
 		p.setMargins(margin, margin, margin, margin);
 		setLayoutParams(p);
 	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if(event.getAction() == MotionEvent.ACTION_UP){
+			Tile active = activity.getActiveTile();
+			if(active != null && canDrop(active)){
+				ViewGroup owner = (ViewGroup) active.getParent();
+		        owner.removeView(active);
+		        addView(active);
+		        activity.setActiveTile(null);
+			}
+		}
+		return true;
+	}
+	
+
+	protected abstract boolean canDrop(Tile active);
 	
 	@Override
-    public boolean onDrag(View view, DragEvent dragEvent) {
-		int dragAction = dragEvent.getAction();
-        Tile tile = (Tile) dragEvent.getLocalState();
-        if (dragAction == DragEvent.ACTION_DRAG_EXITED) {
-            dragExited(tile);
-        } else if (dragAction == DragEvent.ACTION_DRAG_ENTERED ) {
-        	dragEntered(tile);
-        } else if (dragAction == DragEvent.ACTION_DRAG_ENDED) {
-        	dragEnded(tile);
-        } else if (dragAction == DragEvent.ACTION_DROP && containsDragable) {
-        	dragDropped(tile);
-        }
-        return true;
-    }
-
-	protected abstract void dragExited(Tile tile);
-	protected abstract void dragEntered(Tile tile);
-	protected abstract void dragEnded(Tile tile);
-	protected abstract void dragDropped(Tile tile);
+	public void dragEntered(Tile tile) {
+		if(!canDrop(tile))
+    		badHighlight();
+    	else {
+    		containsDragable = true;
+    		goodHighlight();
+    	}
+	}
+	
+	@Override
+	public void dragExited(Tile tile) {
+		containsDragable = false;
+        unhighlight();
+	}
+	
+	@Override
+	public void dragEnded(Tile tile) {
+		tile.setVisibility(View.VISIBLE);
+        unhighlight();
+	}
 
 	public void goodHighlight() {
 		setBackgroundColor(Color.GREEN);
@@ -79,5 +108,9 @@ public abstract class TileHolder extends FrameLayout implements OnDragListener {
 	}
 	
 	public abstract boolean isGameBoardHolder();
+	
+	public boolean containsDragable(){
+		return containsDragable;
+	}
 
 }
