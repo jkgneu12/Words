@@ -13,6 +13,7 @@ import com.example.words.R;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.PushService;
 import com.parse.SignUpCallback;
 
 public class SignupActivity extends Activity implements OnClickListener {
@@ -28,9 +29,10 @@ public class SignupActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		
 		Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
-        
 		
 		currentUser = ParseUser.getCurrentUser();
+		PushService.subscribe(this, "User" + currentUser.getUsername(), SignupActivity.class);
+		
         if (currentUser != null) {
         	Intent intent = new Intent();
         	intent.setClass(this, HomeActivity.class);
@@ -47,6 +49,8 @@ public class SignupActivity extends Activity implements OnClickListener {
 			
 			signup.setOnClickListener(this);
 		}
+        
+        
 		
 	}
 

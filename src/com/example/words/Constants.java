@@ -37,8 +37,8 @@ public class Constants {
 		String word = arrayToString(wordArray).trim().toLowerCase();
 		if(game.usedWords.contains(word)) 
 			return "Already Used";
-		if(word.contains(lastWord))
-			return word + " contains " + lastWord ;
+		//if(word.contains(lastWord))
+		//	return word + " contains " + lastWord ;
 		
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
 		try {

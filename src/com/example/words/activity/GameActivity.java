@@ -2,6 +2,7 @@ package com.example.words.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +20,11 @@ import com.example.words.view.MyTilesTile;
 import com.example.words.view.Tile;
 import com.example.words.view.TileHolder;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
+import com.parse.PushService;
+import com.parse.SendCallback;
 
 public class GameActivity extends Activity {
 
@@ -41,7 +46,6 @@ public class GameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
         
         setContentView(R.layout.activity_game);
         
@@ -128,12 +132,28 @@ public class GameActivity extends Activity {
 			game.incrementCurrentScore(appController.getPoints(game.gameBoard));
 			game.addGameBoardToUsedWord();
 			game.save();
+			sendPush(game.currentPlayerName, game.waitingPlayerName);
 			finish();
 		}
 		else
 			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
 	}
 	
+	private void sendPush(String yourName, String opponentName) {
+		ParsePush push = new ParsePush();
+		push.setChannel("User" + opponentName);
+		push.setExpirationTimeInterval(86400);
+		push.setMessage("Your turn with " + yourName);
+		push.sendInBackground(new SendCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				if(e != null)
+					Log.w("PUSH", e.getMessage());
+			}
+		});
+	}
+
 	public void reset() {
 		gameBoard.reset();
 		setActiveTile(null);

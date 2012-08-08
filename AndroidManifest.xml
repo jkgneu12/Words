@@ -23,9 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:name=".activity.HomeActivity" 
-            android:label="@string/title_activity_home">
+        <activity
+            android:name=".activity.HomeActivity"
+            android:label="@string/title_activity_home" >
         </activity>
         <activity
             android:name=".activity.GameActivity"
@@ -35,7 +35,18 @@
             android:name=".activity.PickOpponentActivity"
             android:label="@string/title_activity_pick" >
         </activity>
-        
+
+        <service android:name="com.parse.PushService" />
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
     </application>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 </manifest>
