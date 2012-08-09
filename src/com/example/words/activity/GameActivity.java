@@ -47,6 +47,8 @@ public class GameActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
+        
         setContentView(R.layout.activity_game);
         
         appController = (AppController)getApplication();
@@ -141,7 +143,7 @@ public class GameActivity extends Activity {
 	
 	private void sendPush(String yourName, String opponentName) {
 		ParsePush push = new ParsePush();
-		push.setChannel("User" + "User" + opponentName.replaceAll("\\s", ""));
+		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
 		push.setMessage("Your turn with " + yourName);
 		push.sendInBackground(new SendCallback() {

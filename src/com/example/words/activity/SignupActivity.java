@@ -34,7 +34,7 @@ public class SignupActivity extends Activity implements OnClickListener {
 		
 		
         if (currentUser != null) {
-        	navigate();
+        	navigate(currentUser.getUsername());
         } else {
 		
 			setContentView(R.layout.activity_signup);
@@ -51,8 +51,8 @@ public class SignupActivity extends Activity implements OnClickListener {
 		
 	}
 
-	private void navigate() {
-		PushService.subscribe(this, "User" + currentUser.getUsername().replaceAll("\\s", ""), SignupActivity.class);
+	private void navigate(String userName) {
+		PushService.subscribe(this, "User" + userName.replaceAll("\\s", ""), SignupActivity.class);
 		Intent intent = new Intent();
 		intent.setClass(this, HomeActivity.class);
 		startActivity(intent);
@@ -66,10 +66,12 @@ public class SignupActivity extends Activity implements OnClickListener {
 		user.setPassword(password.getEditableText().toString());
 		user.setEmail(email.getEditableText().toString());
 		
+		final String userName = user.getUsername();
+		
 		user.signUpInBackground(new SignUpCallback() {
 			  public void done(ParseException e) {
 			    if (e == null) {
-			    	navigate();
+			    	navigate(userName);
 			    } else {
 			    	Toast.makeText(SignupActivity.this, "Signup Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
 			    }

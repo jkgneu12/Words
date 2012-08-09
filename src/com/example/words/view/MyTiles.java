@@ -57,7 +57,7 @@ public class MyTiles extends LinearLayout implements IDragAndDrop{
 
 	@TargetApi(11)
 	public void dragDropped(Tile tile, DragEvent dragEvent) {
-		if(!tile.isPartOfLastWord()){
+		if(canDrop(tile)){
 	    	int x = (int)dragEvent.getX();
 	    	placeTile(tile, x);
 		}
@@ -67,12 +67,16 @@ public class MyTiles extends LinearLayout implements IDragAndDrop{
 	public boolean onTouchEvent(MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_UP){
 			Tile active = activity.getActiveTile();
-			if(active != null){
+			if(active != null && canDrop(active)){
 				placeTile(active, (int)event.getX());
 		       	activity.setActiveTile(null);
 			}
 		}
 		return true;
+	}
+	
+	private boolean canDrop(Tile tile){
+		return !tile.isPartOfLastWord();
 	}
 	
 

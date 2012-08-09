@@ -18,6 +18,7 @@ import com.example.words.adapter.GameListAdpater;
 import com.example.words.adapter.GameRowData;
 import com.example.words.view.NewGameButton;
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -37,6 +38,8 @@ public class HomeActivity extends Activity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        
+        Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
         
         newGame = (NewGameButton)findViewById(R.id.new_game);
         currentGameList = (ListView)findViewById(R.id.current_game_list);
