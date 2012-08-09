@@ -7,7 +7,6 @@
     <string name="new_game">New Game</string>
     <string name="name">Name</string>
     <string name="password">Password</string>
-    <string name="email">email</string>
     <string name="sign_up">Sign Up</string>
     <string name="title_activity_signup">Sign Up</string>
     <string name="title_activity_pick">Pick Opponenet</string>
@@ -15,5 +14,6 @@
     <string name="their_turn">Their Turn</string>
     <string name="refresh">Refresh</string>
     <string name="you">You</string>
+    <string name="login">Login</string>
 
 </resources>

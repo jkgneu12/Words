@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.words.R;
+import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -20,8 +21,9 @@ public class SignupActivity extends Activity implements OnClickListener {
 
 	private EditText name;
 	private EditText password;
-	private EditText email;
 	private Button signup;
+	private Button login;
+	
 	private ParseUser currentUser;
 
 	@Override
@@ -41,10 +43,11 @@ public class SignupActivity extends Activity implements OnClickListener {
 			
 			name = (EditText)findViewById(R.id.name);
 			password = (EditText)findViewById(R.id.password);
-			email = (EditText)findViewById(R.id.email);
 			signup = (Button)findViewById(R.id.signup_button);
+			login = (Button)findViewById(R.id.login_button);
 			
 			signup.setOnClickListener(this);
+			login.setOnClickListener(this);
 		}
         
         
@@ -61,21 +64,41 @@ public class SignupActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View button) {
+		if(button == signup)
+			signup();
+		else
+			login();
+	}
+	
+	private void signup(){
 		ParseUser user = new ParseUser();
 		user.setUsername(name.getEditableText().toString());
 		user.setPassword(password.getEditableText().toString());
-		user.setEmail(email.getEditableText().toString());
-		
+
 		final String userName = user.getUsername();
-		
+
 		user.signUpInBackground(new SignUpCallback() {
-			  public void done(ParseException e) {
-			    if (e == null) {
-			    	navigate(userName);
-			    } else {
-			    	Toast.makeText(SignupActivity.this, "Signup Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
-			    }
-			  }
-			});
+			public void done(ParseException e) {
+				if (e == null) {
+					navigate(userName);
+				} else {
+					Toast.makeText(SignupActivity.this, "Signup Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+				} 
+			}
+		});
+	}
+	
+	private void login(){
+		ParseUser.logInInBackground(name.getEditableText().toString(), password.getEditableText().toString(), new LogInCallback() {
+
+			@Override
+			public void done(ParseUser user, ParseException e) {
+				if(e == null){
+					currentUser = user;
+					navigate(currentUser.getUsername());
+				} else 
+					Toast.makeText(SignupActivity.this, "Could not login " + e.getMessage(), Toast.LENGTH_LONG).show();
+			}
+		});
 	}
 }
