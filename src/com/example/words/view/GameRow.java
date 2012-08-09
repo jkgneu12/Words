@@ -26,6 +26,7 @@ public class GameRow extends Row<GameRowData>{
 	}
 	
 	public void initialize(GameRowData data){
+		super.initialize(data);
 		opponent.setText(data.opponent);
 		opponentScore.setText("" + data.opponentScore);
 		yourScore.setText("" + data.yourScore);

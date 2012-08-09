@@ -22,6 +22,7 @@ public class UserRow extends Row<UserRowData>{
 	}
 	
 	public void initialize(UserRowData data){
+		super.initialize(data);
 		name.setText(data.userName);
 	
 	}

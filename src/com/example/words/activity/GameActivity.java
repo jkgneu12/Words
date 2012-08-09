@@ -23,7 +23,6 @@ import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.PushService;
 import com.parse.SendCallback;
 
 public class GameActivity extends Activity {
@@ -70,8 +69,6 @@ public class GameActivity extends Activity {
         	
         	
         	if(getIntent().getBooleanExtra("NewGame", true)){
-        		int[] ids = {1,2};
-        		String[] names = {"Jim","Bob"};
 	        	game = new Game(this);
 	        	game.initBag();
 	        	game.initMyTiles();
@@ -82,7 +79,6 @@ public class GameActivity extends Activity {
 	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
 	        	game.waitingPlayerScore = 0;
 	        	refreshUIFromGame();  
-	        	game.save();
         	} else {
         		game = new Game(this);
         		game.currentPlayerId = getIntent().getStringExtra("CurrentPlayerId");
@@ -127,18 +123,35 @@ public class GameActivity extends Activity {
 	
 	public void submit(){
 		update();
-		String validation = Constants.validateGameBoard(game, lastWord.getLastWord());
+		String validation = Constants.validateGameBoard(game, lastWord);
 		if(validation.equals("1")){
-			Toast.makeText(this, "Nice Work!!!", Toast.LENGTH_LONG).show();
+			boolean usedAllTiles = lastWord.usedAllTiles() || myTiles.usedAllTiles();
+			int points = getPointsForValidWord(usedAllTiles);
 			game.replenishTiles();
-			game.incrementCurrentScore(appController.getPoints(game.gameBoard));
+			game.incrementCurrentScore(points);
 			game.addGameBoardToUsedWord();
 			game.save();
+			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			sendPush(game.currentPlayerName, game.waitingPlayerName);
 			finish();
 		}
 		else
 			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
+	}
+	
+	private String getMessageForValidWord(boolean usedAllTiles, int points){
+		if(usedAllTiles)
+			return "Double Points!!! " + points + " Points";
+		else
+			return points + " Points!!";
+	}
+
+	private int getPointsForValidWord(boolean usedAllTiles) {
+		int points = appController.getPoints(game.gameBoard);
+		if(usedAllTiles)
+			points *= 2;
+		return points;
+		
 	}
 	
 	private void sendPush(String yourName, String opponentName) {

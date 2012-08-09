@@ -179,4 +179,8 @@ public class MyTiles extends LinearLayout implements IDragAndDrop{
 		return containsDragable;
 	}
 
+	public boolean usedAllTiles() {
+		return getChildCount() == 0;
+	}
+
 }

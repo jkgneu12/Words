@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.util.DisplayMetrics;
 
 import com.example.words.state.Game;
+import com.example.words.view.LastWord;
 
 public class Constants {
 
@@ -31,14 +32,14 @@ public class Constants {
 		return (spaceForEachTile - getTileDimensions(activity)) / 2;
 	}
 	
-	public static String validateGameBoard(Game game, String lastWord)  {
+	public static String validateGameBoard(Game game, LastWord lastWord)  {
+		if(!lastWord.usedAtLeastOneTile())
+			return "You must use at least 1 tile from the last word";
+		
 		String[] wordArray = game.gameBoard;
-		//return true;
 		String word = arrayToString(wordArray).trim().toLowerCase();
 		if(game.usedWords.contains(word)) 
 			return "Already Used";
-		//if(word.contains(lastWord))
-		//	return word + " contains " + lastWord ;
 		
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
 		try {
@@ -95,5 +96,9 @@ public class Constants {
 
 	public static boolean isNull(String string) {
 		return string == null || string.equals("null");
+	}
+
+	public static boolean isNullOrEmpty(String string) {
+		return isNull(string) || string.length() <= 0;
 	}
 }

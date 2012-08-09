@@ -47,6 +47,24 @@ public class LastWord extends TileHolderSet {
 	public void returnTile(LastWordTile tile) {
 		getTileHolderAt(tile.getIndex()).addView(tile);
 	}
+	
+	public boolean usedAtLeastOneTile(){
+		if(Constants.isNullOrEmpty(lastWord)) return true;
+		for(int z = 0; z < lastWord.length(); z++){
+			if(getTileAt(z) == null)
+				return true;
+		}
+		return false;
+	}
+	
+	public boolean usedAllTiles(){
+		if(Constants.isNullOrEmpty(lastWord)) return false;
+		for(int z = 0; z < lastWord.length(); z++){
+			if(getTileAt(z) != null)
+				return false;
+		}
+		return true;
+	}
 
 	
 

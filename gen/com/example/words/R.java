@@ -25,8 +25,8 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int current_game_list=0x7f090009;
         public static final int current_game_title=0x7f090008;
+        public static final int current_games=0x7f090009;
         public static final int game_board=0x7f090005;
         public static final int last_word=0x7f090006;
         public static final int login_button=0x7f090010;
@@ -43,8 +43,8 @@ public final class R {
         public static final int signup_button=0x7f09000f;
         public static final int submit=0x7f090001;
         public static final int user_list=0x7f09000c;
-        public static final int waiting_game_list=0x7f09000b;
         public static final int waiting_game_title=0x7f09000a;
+        public static final int waiting_games=0x7f09000b;
         public static final int you=0x7f090013;
         public static final int your_score=0x7f090014;
     }

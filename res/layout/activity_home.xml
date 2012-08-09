@@ -1,13 +1,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/background_light" >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp" >
+        android:orientation="vertical" >
 
         <com.example.words.view.NewGameButton
             android:id="@+id/new_game"
@@ -20,35 +20,42 @@
             android:id="@+id/current_game_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/new_game"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/your_turn"
             android:textSize="20dp" />
 
-        <ListView
-            android:id="@+id/current_game_list"
+        <LinearLayout
+            android:id="@+id/current_games"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/current_game_title"
-            android:layout_margin="20dp" >
-        </ListView>
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical" >
+        </LinearLayout>
 
         <TextView
             android:id="@+id/waiting_game_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/current_game_list"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/their_turn"
             android:textSize="20dp" />
 
-        <ListView
-            android:id="@+id/waiting_game_list"
+        <LinearLayout
+            android:id="@+id/waiting_games"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/waiting_game_title"
-            android:layout_margin="20dp" >
-        </ListView>
-    </RelativeLayout>
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+    </LinearLayout>
 
 </ScrollView>
