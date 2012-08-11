@@ -8,56 +8,77 @@
         android:id="@+id/reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_margin="10dp"
-        />
-    
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp" />
+
     <com.example.words.view.SubmitButton
         android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
-        />
+        android:layout_margin="10dp" />
     
-    <TextView
-        android:id="@+id/remaining_tiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/submit"
-        android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
-        android:textSize="14dp"/>
-    
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/remaining_tiles"
-        android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
-        android:layout_marginTop="0dp"
-        android:textSize="14dp"/>
-        
-    
-	<com.example.words.view.MyTiles
+    <com.example.words.view.MyTiles
         android:id="@+id/my_tiles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
-    
-     <com.example.words.view.GameBoard 
+
+    <com.example.words.view.GameBoard
         android:id="@+id/game_board"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/my_tiles" />
-     
-     <com.example.words.view.LastWord 
+    
+    
+    <com.example.words.view.LastWord
         android:id="@+id/last_word"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/game_board" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/last_word"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/submit"
+        android:layout_toRightOf="@id/reset"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/previous_words"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+
+    
+
+    <TextView
+        android:id="@+id/remaining_tiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/submit"
+        android:layout_margin="10dp"
+        android:textSize="14dp" />
+
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/remaining_tiles"
+        android:layout_margin="10dp"
+        android:layout_marginTop="0dp"
+        android:textSize="14dp" />
+
+    
+    
 
 </RelativeLayout>

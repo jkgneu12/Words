@@ -15,5 +15,10 @@
     <string name="refresh">Refresh</string>
     <string name="you">You</string>
     <string name="login">Login</string>
+    <string name="find_friends_on_facebook">Find Friends on Facebook</string>
+    <string name="find_friends_by_username">Find Friends By Username</string>
+    <string name="random_opponent">Random Opponent</string>
+    <string name="title_activity_new">New Game</string>
+    <string name="search">Search</string>
 
 </resources>

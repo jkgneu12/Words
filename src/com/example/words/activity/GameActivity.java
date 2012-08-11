@@ -1,15 +1,25 @@
 package com.example.words.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.words.AppController;
 import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.listener.ShakeEventListener;
 import com.example.words.state.Game;
 import com.example.words.view.GameBoard;
 import com.example.words.view.GameBoardTileHolder;
@@ -19,13 +29,12 @@ import com.example.words.view.MyTiles;
 import com.example.words.view.MyTilesTile;
 import com.example.words.view.Tile;
 import com.example.words.view.TileHolder;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SendCallback;
 
-public class GameActivity extends Activity {
+public class GameActivity extends Activity{
 
 	private Game game;
 
@@ -41,16 +50,32 @@ public class GameActivity extends Activity {
 
 	private Tile activeTile;
 
+	private LinearLayout previousWords;
+
+	private SensorManager mSensorManager;
+
+	private ShakeEventListener mSensorListener;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
+        Constants.initParse(this);
         
         setContentView(R.layout.activity_game);
         
         appController = (AppController)getApplication();
+        
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorListener = new ShakeEventListener();   
+
+        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
+
+          public void onShake() {
+            myTiles.shuffle();
+          }
+        });
         
         currentUser = ParseUser.getCurrentUser();
         
@@ -60,6 +85,7 @@ public class GameActivity extends Activity {
         myTiles = (MyTiles)findViewById(R.id.my_tiles);
         remainingTiles = (TextView)findViewById(R.id.remaining_tiles);
         score = (TextView)findViewById(R.id.score);
+        previousWords = (LinearLayout)findViewById(R.id.previous_words);
         
         
         for(int z = 0; z < Constants.NUM_TILE_HOLDERS; z++)
@@ -96,7 +122,22 @@ public class GameActivity extends Activity {
     }
     
     @Override
+    protected void onResume() {
+    	super.onResume();
+    	mSensorManager.registerListener(mSensorListener,
+    	        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+    	        SensorManager.SENSOR_DELAY_UI);
+    }
+    
+    @Override
+    protected void onPause() {
+      mSensorManager.unregisterListener(mSensorListener);
+      super.onStop();
+    }
+    
+    @Override
     protected void onSaveInstanceState(Bundle bundle) {
+    	update();
     	bundle.putParcelable("game", game);
     	super.onSaveInstanceState(bundle);
     }
@@ -172,6 +213,7 @@ public class GameActivity extends Activity {
 	public void reset() {
 		gameBoard.reset();
 		setActiveTile(null);
+		update();
 	}
 
 	public void replaceMyTile(Tile oldChild, Tile newChild) {
@@ -186,7 +228,7 @@ public class GameActivity extends Activity {
 		gameBoard.addTile(tile, index);
 	}
 
-	public void returnTile(Tile tile) {
+	public boolean returnTile(Tile tile) {
 		TileHolder holder = tile.getHolder(); 
 		if(holder != null && holder.isGameBoardHolder()){
 			if(tile.isPartOfLastWord()){
@@ -198,20 +240,48 @@ public class GameActivity extends Activity {
 				holder.removeView(tile);
 				myTiles.addView(tile);
 			}
+			return true;
 		}
+		return false;
 	}
 	
 	public void refreshUIFromGame(){
     	myTiles.removeAllViews();
-    	for(int z = 0; z < game.myTiles.length; z++){
-    		if(!Constants.isNull(game.myTiles[z]))
-    			myTiles.addView(new MyTilesTile(this, "" + game.myTiles[z]));
+    	for(int z = 0; z < game.currentPlayerTiles.length; z++){
+    		if(!Constants.isNull(game.currentPlayerTiles[z]))
+    			myTiles.addView(new MyTilesTile(this, "" + game.currentPlayerTiles[z]));
     	}
     	
-    	lastWord.setLastWord(game.lastWord);
+    	lastWord.setCompleteLastWord(game.completeLastWord);
+    	lastWord.setCurrentLastWord(game.currentLastWord);
     	remainingTiles.setText(game.remainingTiles() + " Tiles Remaining");
     	setScoreText();
+    	for(int z = 0; z < game.usedWords.size() - 1; z++){
+    		TextView word = new TextView(this);
+    		word.setText(game.usedWords.get(z));
+    		word.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    		word.setPadding(30, 2, 30, 2);
+    		word.setTextSize(18);
+    		word.setFocusable(true);
+    		previousWords.addView(word);
+    	}
+    	
+    	final ScrollView scroll = (ScrollView)previousWords.getParent();
+    	if(Build.VERSION.SDK_INT >= 9)
+			disableOverScroll(scroll);
+    	scroll.post(new Runnable() {
+
+            @Override
+            public void run() {
+            	scroll.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
     }
+
+	@TargetApi(9)
+	private void disableOverScroll(final ScrollView scroll) {
+		scroll.setOverScrollMode(ScrollView.OVER_SCROLL_NEVER);
+	}
 	
 	private void refreshGameBoardUIFromGame() {
 		for(int z = 0; z < game.gameBoard.length; z++){
@@ -243,6 +313,8 @@ public class GameActivity extends Activity {
 		if(activeTile != null)
 			activeTile.setActive(false);
 		activeTile = tile;
+		if(activeTile != null)
+			activeTile.setActive(true);
 	}
 	
 	public Tile getActiveTile(){

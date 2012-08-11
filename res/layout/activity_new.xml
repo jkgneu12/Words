@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <Button android:id="@+id/facebook"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/find_friends_on_facebook"/>
+    
+    <Button android:id="@+id/username"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/find_friends_by_username"/>
+    
+    <Button android:id="@+id/random"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/random_opponent"/>
+
+</LinearLayout>

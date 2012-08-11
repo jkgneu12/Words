@@ -16,11 +16,19 @@ public class LastWord extends TileHolderSet {
 		tiles = new int[Constants.NUM_TILE_HOLDERS];
 	}
 	
-	public void setLastWord(String[] lastWordArray){
-		this.lastWord = Constants.arrayToString(lastWordArray);
+	public void setCompleteLastWord(String[] lastWordArray){
+		if(lastWord == null)
+			lastWord = Constants.arrayToString(lastWordArray);
+	}
+	
+	public void setCurrentLastWord(String[] lastWordArray) {
 		for(int z = 0; z < lastWord.length(); z++){
-			if(Character.isLetter(lastWord.charAt(z))){
-				Tile tile = new LastWordTile((GameActivity)getContext(), "" + lastWord.charAt(z), z);
+			String c = lastWordArray[z];
+			if(Constants.isNullOrEmpty(c)){
+				addView(new LastWordTileHolder((GameActivity)getContext(), z, null));
+			}
+			else {
+				Tile tile = new LastWordTile((GameActivity)getContext(), lastWordArray[z], z);
 				tiles[z] = tile.hashCode();
 				addView(new LastWordTileHolder((GameActivity)getContext(), z, tile));
 			}

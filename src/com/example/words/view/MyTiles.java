@@ -1,5 +1,7 @@
 package com.example.words.view;
 
+import java.util.Stack;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -181,6 +183,18 @@ public class MyTiles extends LinearLayout implements IDragAndDrop{
 
 	public boolean usedAllTiles() {
 		return getChildCount() == 0;
+	}
+
+	public void shuffle() {
+		Stack<Tile> tiles = new Stack<Tile>();
+		while(getChildCount() > 0){
+			int index = (int)(Math.random() * getChildCount());
+			tiles.push(getTileAt(index));
+			removeViewAt(index);
+		}
+		while(!tiles.isEmpty()){
+			addView(tiles.pop());
+		}
 	}
 
 }

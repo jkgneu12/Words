@@ -7,23 +7,21 @@ import android.view.ViewGroup;
 import com.example.words.activity.GameActivity;
 
 public class LastWordTileHolder extends TileHolder {
-	
-	private Tile myTile;
 
 	public LastWordTileHolder(GameActivity activity, int index, Tile tile) {
 		super(activity, index);
-		this.myTile = tile;
-		addView(tile);
+		if(tile != null)
+			addView(tile);
 	}
 	
 	protected boolean canDrop(Tile tile){
-		return tile == myTile;
+		return tile.isPartOfLastWord() && ((LastWordTile)tile).getIndex() == index;
 	}
 
 	@TargetApi(11)
 	@Override
 	public void dragDropped(Tile tile, DragEvent dragEvent) {
-		if(tile == myTile) {
+		if(canDrop(tile)) {
 			if(getChildCount() > 0){
 	    		Tile oldChild = (Tile)getChildAt(0);
 	    		removeView(oldChild);

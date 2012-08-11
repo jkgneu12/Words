@@ -6,47 +6,53 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 
+import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.adapter.UserListAdpater;
 import com.example.words.adapter.UserRowData;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-public class PickOpponentActivity extends Activity implements OnItemClickListener {
+public class PickOpponentActivity extends Activity implements OnItemClickListener, TextWatcher {
 
 	private ListView userList;
 	private ParseUser currentUser;
 	private String userId;
 	private UserListAdpater adapter;
+	private EditText searchBar;
 
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Parse.initialize(this, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8"); 
+        Constants.initParse(this); 
         setContentView(R.layout.activity_pick);
         
         userList = (ListView)findViewById(R.id.user_list);
+        searchBar = (EditText)findViewById(R.id.search);
         
         currentUser = ParseUser.getCurrentUser();
         userId = currentUser.getObjectId();
         
         setupUserList();
+        setupSearchBar();
         
     }
-	
+
 	private void setupUserList() {
 		final ArrayList<UserRowData> users = new ArrayList<UserRowData>();
-        ParseQuery query = ParseQuery.getUserQuery();
+		ParseQuery query = ParseUser.getQuery();
         query.whereNotEqualTo("objectId", userId);
         query.findInBackground(new FindCallback() {
 			
@@ -80,5 +86,24 @@ public class PickOpponentActivity extends Activity implements OnItemClickListene
 		startActivity(intent);
 		
 		finish();
+	}
+	
+	private void setupSearchBar() {
+		searchBar.addTextChangedListener(this);
+	}
+
+	@Override
+	public void afterTextChanged(Editable s) {
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int count, int after) {
+		adapter.setFilter(s.toString());
 	}
 }

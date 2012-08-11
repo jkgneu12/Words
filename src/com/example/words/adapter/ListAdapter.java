@@ -14,11 +14,13 @@ public class ListAdapter<D,V extends Row<D>> extends ArrayAdapter<D> {
 	
 	protected LayoutInflater mLayoutInflater;
 	protected int resourceId;
+	protected List<D> data;
 	
 	public ListAdapter(Context context, int textViewResourceId, List<D> objects) {
 		super(context, textViewResourceId, objects);
 		resourceId = textViewResourceId;
 		mLayoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		data = objects;
 	}
 	
 	@Override
@@ -33,4 +35,6 @@ public class ListAdapter<D,V extends Row<D>> extends ArrayAdapter<D> {
 		
 		return row;
 	}
+	
+	
 }

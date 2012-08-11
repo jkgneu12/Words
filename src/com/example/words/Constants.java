@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 
 import com.example.words.state.Game;
 import com.example.words.view.LastWord;
+import com.parse.Parse;
 
 public class Constants {
 
@@ -37,9 +38,15 @@ public class Constants {
 			return "You must use at least 1 tile from the last word";
 		
 		String[] wordArray = game.gameBoard;
-		String word = arrayToString(wordArray).trim().toLowerCase();
+		String word = arrayToString(wordArray).trim().toUpperCase();
 		if(game.usedWords.contains(word)) 
 			return "Already Used";
+		
+		String lastWordString = lastWord.getLastWord().toUpperCase();
+		if(!isNullOrEmpty(lastWordString) && word.contains(lastWordString))
+			return "Can't reuse the last word with rearranging the letters";
+		
+		word = word.toLowerCase();
 		
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
 		try {
@@ -100,5 +107,9 @@ public class Constants {
 
 	public static boolean isNullOrEmpty(String string) {
 		return isNull(string) || string.length() <= 0;
+	}
+	
+	public static void initParse(Activity a){
+		Parse.initialize(a, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8");
 	}
 }

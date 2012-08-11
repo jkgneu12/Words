@@ -28,8 +28,8 @@ public class Game implements Parcelable{
 	public String id;
 	
 	public String[] gameBoard;
-	public String[] myTiles;
-	public String[] lastWord;
+	public String[] currentLastWord;
+	public String[] completeLastWord;
 	public boolean[] partOfLastWord;
 	
 	public Map<String, Object> bag;
@@ -37,9 +37,11 @@ public class Game implements Parcelable{
 	public String currentPlayerId;
 	public int currentPlayerScore;
 	public String currentPlayerName;
+	public String[] currentPlayerTiles;
 	public String waitingPlayerId;
 	public int waitingPlayerScore;
 	public String waitingPlayerName;
+	public String[] waitingPlayerTiles;
 	
 	public List<String> usedWords; 
 
@@ -49,10 +51,30 @@ public class Game implements Parcelable{
 		this.activity = activity;
 		
 		this.gameBoard = new String[Constants.NUM_TILE_HOLDERS];  
-		this.myTiles = new String[Constants.NUM_MY_TILES];  
-		this.lastWord = new String[Constants.NUM_TILE_HOLDERS];  
+		this.currentPlayerTiles = new String[Constants.NUM_MY_TILES]; 
+		this.waitingPlayerTiles = new String[Constants.NUM_MY_TILES]; 
+		this.currentLastWord = new String[Constants.NUM_TILE_HOLDERS];  
+		this.completeLastWord = new String[Constants.NUM_TILE_HOLDERS];  
 		
 		usedWords = new ArrayList<String>();
+	}
+
+	public Game(Parcel in) {
+		in.readStringArray(gameBoard);
+		in.readStringArray(currentPlayerTiles);
+		in.readStringArray(waitingPlayerTiles);
+		in.readStringArray(currentLastWord);
+		in.readStringArray(completeLastWord);
+		in.readBooleanArray(partOfLastWord);
+		id = in.readString();
+		in.readMap(bag, null);
+		currentPlayerId = in.readString();
+		currentPlayerScore = in.readInt();
+		currentPlayerName = in.readString();
+		waitingPlayerId = in.readString();
+		waitingPlayerScore = in.readInt();
+		waitingPlayerName = in.readString();
+		in.readList(usedWords, null);
 	}
 
 	public void initBag() {
@@ -66,12 +88,15 @@ public class Game implements Parcelable{
 	}
 	
 	public void initMyTiles(){
-		for(int z = 0; z < myTiles.length; z++){
-			myTiles[z] = takeFromBag();
+		for(int z = 0; z < currentPlayerTiles.length; z++){
+			currentPlayerTiles[z] = takeFromBag();
+			waitingPlayerTiles[z] = takeFromBag();
 		}
 	}
 	
 	public String takeFromBag(){
+		if(isBagEmpty())
+			return null;
 		int randomLetter = (int) (Math.random() * bag.size());
 		String key = activity.getAppController().getLetter(randomLetter);
 		int remaining = (Integer)bag.get(key);
@@ -99,8 +124,8 @@ public class Game implements Parcelable{
 
 	public void update(GameBoard gb, MyTiles mt, LastWord lw) {
 		gameBoard = gb.getLetters();
-		myTiles = mt.getLetters();
-		lastWord = lw.getLetters();
+		currentPlayerTiles = mt.getLetters();
+		currentLastWord = lw.getLetters();
 		partOfLastWord = gb.partOfLastWordArray();
 	}
 	
@@ -120,7 +145,7 @@ public class Game implements Parcelable{
 		if(parseObject == null)
 			parseObject = new ParseObject("Game");
 		
-		parseObject.put("myTiles",Constants.arrayToList(myTiles));
+		
 		parseObject.put("lastWord",Constants.arrayToList(gameBoard));
 		
 		parseObject.put("bag", bag);
@@ -128,9 +153,12 @@ public class Game implements Parcelable{
 		parseObject.put("currentPlayerId", waitingPlayerId);
 		parseObject.put("currentPlayerName", waitingPlayerName);
 		parseObject.put("currentPlayerScore", waitingPlayerScore);
+		parseObject.put("currentPlayerTiles",Constants.arrayToList(waitingPlayerTiles));
 		parseObject.put("waitingPlayerId", currentPlayerId);
 		parseObject.put("waitingPlayerName", currentPlayerName);
 		parseObject.put("waitingPlayerScore", currentPlayerScore);
+		parseObject.put("waitingPlayerTiles",Constants.arrayToList(currentPlayerTiles));
+		parseObject.put("myTiles",Constants.arrayToList(currentPlayerTiles));
 		
 		parseObject.put("usedWords", usedWords);
 	}
@@ -142,8 +170,18 @@ public class Game implements Parcelable{
 				@Override
 				public void done(ParseObject obj, ParseException e) {
 					parseObject = obj;
-					myTiles = Constants.listToArray(obj.getList("myTiles"));
-					lastWord = Constants.listToArray(obj.getList("lastWord"));
+					List temp = obj.getList("currentPlayerTiles");
+					if(temp == null)
+						currentPlayerTiles = Constants.listToArray(obj.getList("myTiles"));
+					else
+						currentPlayerTiles = Constants.listToArray(temp);
+					temp = obj.getList("waitingPlayerTiles");
+					if(temp != null)
+						waitingPlayerTiles = Constants.listToArray(temp);
+					else
+						waitingPlayerTiles = currentPlayerTiles;
+					currentLastWord = Constants.listToArray(obj.getList("lastWord"));
+					completeLastWord = Constants.listToArray(obj.getList("lastWord"));
 					bag = obj.getMap("bag");
 					usedWords = obj.getList("usedWords");
 					replenishTiles();
@@ -156,9 +194,9 @@ public class Game implements Parcelable{
 	}
 	
 	public void replenishTiles() {
-		for(int z = 0; z < myTiles.length; z++){
-			if(Constants.isNull(myTiles[z]))
-				myTiles[z] = takeFromBag();
+		for(int z = 0; z < currentPlayerTiles.length; z++){
+			if(Constants.isNull(currentPlayerTiles[z]))
+				currentPlayerTiles[z] = takeFromBag();
 		}
 	}
 
@@ -178,8 +216,10 @@ public class Game implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeStringArray(gameBoard);
-		dest.writeStringArray(myTiles);
-		dest.writeStringArray(lastWord);
+		dest.writeStringArray(currentPlayerTiles);
+		dest.writeStringArray(waitingPlayerTiles);
+		dest.writeStringArray(currentLastWord);
+		dest.writeStringArray(completeLastWord);
 		dest.writeBooleanArray(partOfLastWord);
 		dest.writeString(id);
 		dest.writeMap(bag);
@@ -191,6 +231,17 @@ public class Game implements Parcelable{
 		dest.writeString(waitingPlayerName);
 		dest.writeList(usedWords);
 	}
+	
+	public static final Parcelable.Creator<Game> CREATOR
+	= new Parcelable.Creator<Game>() {
+		public Game createFromParcel(Parcel in) {
+			return new Game(in);
+		}
+
+		public Game[] newArray(int size) {
+			return new Game[size];
+		}
+	};
 
 	
 	
