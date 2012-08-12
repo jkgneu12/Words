@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
@@ -334,18 +335,25 @@ public class GameActivity extends Activity implements OnClickListener{
     	for(int z = 0; z < prevWordCount - 1; z++){
     		LinearLayout row = (LinearLayout) ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
     		
-    		TextView word = (TextView)row.findViewById(R.id.b);
+    		LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
     		float fontSize = Constants.getPreviousWordSize(this);
     		String wordText = game.usedWords.get(z);
-    		word.setText(wordText);
-    		word.setTextSize(fontSize);
-    		word.setFocusable(true);
+    		for(int y = 0; y < wordText.length(); y++){
+    			TextView letter = new TextView(this);
+    			letter.setText("" + wordText.charAt(y));
+    			letter.setTextSize(fontSize);
+    			if(game.reused != null && game.reused.size() > z && game.reused.get(z).contains(y))
+    				letter.setTextColor(Color.RED);
+    			word.addView(letter);
+        		//word.setFocusable(true);
+    		}
+    		
     		
     		if(game.scores != null){
 	    		String scoreText = "" + game.scores.get(z);
 	    		TextView score;
 	    		TextView space;
-	    		if(game.turns.get(z).equals(currentUser.getObjectId())){
+	    		if(game.turns.size() > z && game.turns.get(z).equals(currentUser.getObjectId())){
 	    			score = (TextView)row.findViewById(R.id.c);
 	    			space = (TextView)row.findViewById(R.id.a);
 	    		} else {

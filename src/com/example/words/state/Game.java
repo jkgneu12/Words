@@ -52,6 +52,7 @@ public class Game implements Parcelable{
 	public List<String> usedWords; 
 	public List<Integer> scores;
 	public List<String> turns; 
+	public List<List<Integer>> reused;
 
 	private ParseObject parseObject;
 
@@ -73,6 +74,7 @@ public class Game implements Parcelable{
 		usedWords = new ArrayList<String>();
 		scores = new ArrayList<Integer>();
 		turns = new ArrayList<String>();
+		reused = new ArrayList<List<Integer>>();
 	}
 
 	public Game(Parcel in) {
@@ -94,6 +96,7 @@ public class Game implements Parcelable{
 		in.readList(usedWords, null);
 		in.readList(scores, null);
 		in.readList(turns, null);
+		in.readList(reused, null);
 	}
 
 	public void initBag() {
@@ -190,6 +193,7 @@ public class Game implements Parcelable{
 		parseObject.put("usedWords", usedWords);
 		parseObject.put("scores", scores);
 		parseObject.put("turns", turns);
+		parseObject.put("reused", reused);
 	}
 	
 	public void refresh(){
@@ -231,6 +235,7 @@ public class Game implements Parcelable{
 						usedWords = obj.getList("usedWords");
 						scores = obj.getList("scores");
 						turns = obj.getList("turns");
+						reused = obj.getList("reused");
 						lastPlayerPassed = obj.getBoolean("passed");
 						replenishTiles();
 						activity.refreshUIFromGame();
@@ -265,6 +270,8 @@ public class Game implements Parcelable{
 		scores.add(points);
 		if(turns == null)
 			turns = new ArrayList<String>();
+		if(reused == null)
+			reused = new ArrayList<List<Integer>>();
 		turns.add(currentPlayerId);
 	}
 	
@@ -293,6 +300,7 @@ public class Game implements Parcelable{
 		dest.writeList(usedWords);
 		dest.writeList(scores);
 		dest.writeList(turns);
+		dest.writeList(reused);
 	}
 	
 	public static final Parcelable.Creator<Game> CREATOR
