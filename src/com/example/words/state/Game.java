@@ -235,7 +235,7 @@ public class Game implements Parcelable{
 						usedWords = obj.getList("usedWords");
 						scores = obj.getList("scores");
 						turns = obj.getList("turns");
-						reused = obj.getList("reused");
+						reused = Constants.handleJSONArray(obj.getList("reused"));
 						lastPlayerPassed = obj.getBoolean("passed");
 						replenishTiles();
 						activity.refreshUIFromGame();
@@ -263,16 +263,18 @@ public class Game implements Parcelable{
 		currentPlayerScore += points;
 	}
 	
-	public void addGameBoardToUsedWord(int points) {
+	public void addGameBoardToUsedWord(int points, List<Integer> reusedIndices) {
 		usedWords.add(Constants.arrayToString(gameBoard));
 		if(scores == null)
 			scores = new ArrayList<Integer>();
 		scores.add(points);
 		if(turns == null)
 			turns = new ArrayList<String>();
+		turns.add(currentPlayerId);
 		if(reused == null)
 			reused = new ArrayList<List<Integer>>();
-		turns.add(currentPlayerId);
+		reused.add(reusedIndices);
+		
 	}
 	
 	@Override

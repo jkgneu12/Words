@@ -26,7 +26,7 @@ public class LastWordTileHolder extends TileHolder {
 	    		Tile oldChild = (Tile)getChildAt(0);
 	    		removeView(oldChild);
 	    		if(tile.getParent() instanceof TileHolder && tile.getParent().getParent() instanceof GameBoard)
-	    			activity.addTileToGameBoard(oldChild, ((TileHolder)tile.getParent()).getIndex());
+	    			activity.addTileToGameBoard(oldChild);
 	    		else if(oldChild.isPartOfLastWord())
 	    			activity.replaceLastWordTile(tile, oldChild);
 	    		else

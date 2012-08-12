@@ -1,45 +1,22 @@
 package com.example.words.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 
 import com.example.words.Constants;
 import com.example.words.activity.GameActivity;
 
-public class GameBoard extends TileHolderSet {
+public class GameBoard extends FreeFormBoard {
 
 	public GameBoard(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setOrientation(HORIZONTAL);
 		setGravity(Gravity.CENTER);
-	}
-
-	public void goodHighlight(int z) {
-		getTileHolderAt(z).goodHighlight();
-	}
-	
-	public void badHighlight(int z) {
-		getTileHolderAt(z).badHighlight();
-	}
-	
-	public void unhighlight(int z) {
-		getTileHolderAt(z).unhighlight();
-	}
-
-	public void addTile(Tile tile, int index) {
-		getTileHolderAt(index).addView(tile);
-	}
-
-	public String[] getLetters() {
-		String[] letters = new String[Constants.NUM_TILE_HOLDERS];
-		for(int z = 0; z < getChildCount(); z++){
-			Tile t = getTileAt(z);
-			if(t != null)
-				letters[z] = t.getLetter();
-		}
-		return letters;
 	}
 	
 	public int[] getIndices() {
@@ -64,13 +41,32 @@ public class GameBoard extends TileHolderSet {
 	}
 
 	public void reset() {
-		for(int z = 0; z < getChildCount(); z++){
-			Tile t = getTileAt(z);
+		while(getChildCount() > 0){
+			Tile t = getTileAt(0);
 			if(t != null){
-				((GameActivity)getContext()).returnTile(t);
+				activity.returnTile(t);
 			}
 				
 		}
+	}
+
+	public List<Integer> getReusedIndices() {
+		int found = 0;
+		List<Integer> indices = new ArrayList<Integer>();
+		for(int z = 0; z < getChildCount(); z++){
+			if(getTileAt(z) != null){
+				if(getTileAt(z).isPartOfLastWord())
+					indices.add(found);
+				found++;
+			}
+				
+		}
+		return indices;
+	}
+
+	@Override
+	protected boolean canDrop(Tile tile) {
+		return getChildCount() < Constants.NUM_MY_TILES;
 	}
 
 	

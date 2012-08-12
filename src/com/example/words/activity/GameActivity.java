@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
@@ -16,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -28,14 +28,12 @@ import com.example.words.R;
 import com.example.words.listener.ShakeEventListener;
 import com.example.words.state.Game;
 import com.example.words.view.GameBoard;
-import com.example.words.view.GameBoardTileHolder;
 import com.example.words.view.LastWord;
 import com.example.words.view.LastWordTile;
 import com.example.words.view.MyTiles;
 import com.example.words.view.MyTilesTile;
 import com.example.words.view.StarWarsScroller;
 import com.example.words.view.Tile;
-import com.example.words.view.TileHolder;
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
@@ -117,9 +115,6 @@ public class GameActivity extends Activity implements OnClickListener{
         isMyTurn = getIntent().getBooleanExtra("MyTurn", true);
         isGameOver = getIntent().getBooleanExtra("GameOver", false);
         
-        
-        for(int z = 0; z < Constants.NUM_TILE_HOLDERS; z++)
-        	gameBoard.addView(new GameBoardTileHolder(this, z));
         
         if(savedInstanceState == null){
         	
@@ -225,7 +220,7 @@ public class GameActivity extends Activity implements OnClickListener{
 			int points = getPointsForValidWord(usedAllTiles);
 			game.replenishTiles();
 			game.incrementCurrentScore(points);
-			game.addGameBoardToUsedWord(points);
+			game.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
 			game.save();
 			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			sendPush(game.currentPlayerName, game.waitingPlayerName);
@@ -294,27 +289,22 @@ public class GameActivity extends Activity implements OnClickListener{
 		lastWord.replaceTile(oldChild, newChild);
 	}
 
-	public void addTileToGameBoard(Tile tile, int index) {
-		gameBoard.addTile(tile, index);
+	public void addTileToGameBoard(Tile tile) {
+		gameBoard.addView(tile);
 	}
 
 	public boolean returnTile(Tile tile) {
-		TileHolder holder = tile.getHolder(); 
-		if(holder != null && holder.isGameBoardHolder()){
-			if(tile.isPartOfLastWord()){
-				holder.unhighlight();
-				holder.removeView(tile);
-				lastWord.returnTile((LastWordTile)tile);
-			} else {
-				holder.unhighlight();
-				holder.removeView(tile);
-				myTiles.addView(tile);
-			}
-			return true;
+		ViewGroup v = (ViewGroup)tile.getParent();
+		if(v != null)
+			v.removeView(tile);
+		if(tile.isPartOfLastWord()){
+			lastWord.returnTile((LastWordTile)tile);
+		} else {
+			myTiles.addView(tile);
 		}
-		return false;
+		return true;
 	}
-	
+
 	public void refreshUIFromGame(){
     	myTiles.removeAllViews();
     	for(int z = 0; z < game.currentPlayerTiles.length; z++){
@@ -342,8 +332,8 @@ public class GameActivity extends Activity implements OnClickListener{
     			TextView letter = new TextView(this);
     			letter.setText("" + wordText.charAt(y));
     			letter.setTextSize(fontSize);
-    			if(game.reused != null && game.reused.size() > z && game.reused.get(z).contains(y))
-    				letter.setTextColor(Color.RED);
+    			if(game.reused == null || game.reused.size() <= z || !game.reused.get(z).contains(y))
+    				letter.setTextColor(getResources().getColor(R.color.brown));
     			word.addView(letter);
         		//word.setFocusable(true);
     		}
@@ -354,11 +344,11 @@ public class GameActivity extends Activity implements OnClickListener{
 	    		TextView score;
 	    		TextView space;
 	    		if(game.turns.size() > z && game.turns.get(z).equals(currentUser.getObjectId())){
-	    			score = (TextView)row.findViewById(R.id.c);
-	    			space = (TextView)row.findViewById(R.id.a);
-	    		} else {
 	    			score = (TextView)row.findViewById(R.id.a);
 	    			space = (TextView)row.findViewById(R.id.c);
+	    		} else {
+	    			score = (TextView)row.findViewById(R.id.c);
+	    			space = (TextView)row.findViewById(R.id.a);
 	    		}
 	    		score.setText(scoreText);
 	    		score.setTextSize(fontSize / 2);
@@ -395,7 +385,7 @@ public class GameActivity extends Activity implements OnClickListener{
 		for(int z = 0; z < game.gameBoard.length; z++){
         	if(!Constants.isNull(game.gameBoard[z]) && Character.isLetter(game.gameBoard[z].charAt(0))){
         		Tile tile = Tile.create(this, "" + game.gameBoard[z], game.gameBoardIndices[z], game.partOfLastWord[z]);
-        		gameBoard.addTile(tile, z);
+        		gameBoard.addView(tile);
         	}
         }
 	}

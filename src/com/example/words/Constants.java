@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -198,5 +200,23 @@ public class Constants {
 				}
 			}
 		});
+	}
+
+	public static List<List<Integer>> handleJSONArray(List<Object> list) {
+		if(list == null) return null;
+		List<List<Integer>> ret = new ArrayList<List<Integer>>();
+		for(Object o : list){
+			List<Integer> innerList = new ArrayList<Integer>();
+			JSONArray json = (JSONArray)o;
+			for(int z = 0; z < json.length(); z++){
+				try {
+					innerList.add(json.getInt(z));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			ret.add(innerList);
+		}
+		return ret;
 	}
 }

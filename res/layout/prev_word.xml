@@ -6,8 +6,8 @@
     
     <TextView android:id="@+id/a"
         android:layout_width="18dp"
-        android:layout_height="wrap_content"
-        android:gravity="right"/>
+        android:layout_height="fill_parent"
+        android:gravity="right|center_vertical"/>
     
     <LinearLayout android:id="@+id/b"
         android:layout_width="wrap_content"
@@ -21,8 +21,8 @@
     
     <TextView android:id="@+id/c"
         android:layout_width="18dp"
-        android:layout_height="wrap_content"
-        android:gravity="left"/>
+        android:layout_height="fill_parent"
+        android:gravity="left|center_vertical"/>
     
 
 </LinearLayout>
