@@ -34,7 +34,7 @@ public class MyTiles extends LinearLayout implements IDragAndDrop{
 		setGravity(Gravity.CENTER);
 		setBackgroundColor(Color.WHITE);
 		
-		setMinimumHeight(Constants.getTileDimensions((Activity)context) + 2 * Constants.getTileMargin((Activity)context, Constants.NUM_MY_TILES));
+		setMinimumHeight(Constants.getTileDimensions((Activity)context));
 		
 		initListeners();
 	}

@@ -20,5 +20,18 @@
     <string name="random_opponent">Random Opponent</string>
     <string name="title_activity_new">New Game</string>
     <string name="search">Search</string>
+    <string name="login_with_facebook">Login With Facebook</string>
+    <string name="_or_">" - OR - "</string>
+    <string name="login_with_twitter">Login With Twitter</string>
+    <string name="link_facebook">Link Facebook</string>
+    <string name="link_twitter">Link Twitter</string>
+    <string name="how_to_play">How To Play</string>
+    <string name="play">Play</string>
+    <string name="review">Review</string>
+    <string name="reset">Reset</string>
+    <string name="submit">Submit</string>
+    <string name="pass">Pass</string>
+    <string name="complete">Complete</string>
+    <string name="resign">Resign</string>
 
 </resources>

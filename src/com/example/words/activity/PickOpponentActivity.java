@@ -59,7 +59,7 @@ public class PickOpponentActivity extends Activity implements OnItemClickListene
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
 				for(ParseObject obj : objects){
-					String userName = obj.getString("username");
+					String userName = obj.getString("displayName");
 					String userId = obj.getObjectId();
 					users.add(new UserRowData(userId, userName));
 				}

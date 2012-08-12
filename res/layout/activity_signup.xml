@@ -1,31 +1,52 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
     <EditText android:id="@+id/name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/name"
-        android:layout_alignParentTop="true"/>
+        android:hint="@string/name"/>
     
     <EditText android:id="@+id/password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:hint="@string/password"
-        android:layout_below="@id/name"/>
+        android:hint="@string/password"/>
     
     <Button android:id="@+id/signup_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sign_up"
-        android:layout_below="@id/password"/>
+        android:text="@string/sign_up"/>
     
     <Button android:id="@+id/login_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:layout_below="@id/signup_button"/>
+        android:text="@string/login"/>
+    
+    <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/_or_"
+        android:gravity="center_horizontal"
+        android:layout_margin="30dp"/>
+    
+    <Button android:id="@+id/facebook"
+       	android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_with_facebook"/>
+    
+    <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/_or_"
+        android:gravity="center_horizontal"
+        android:layout_margin="30dp"/>
+    
+    <Button android:id="@+id/twitter"
+       	android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_with_twitter"/>
 
-</RelativeLayout>
+</LinearLayout>

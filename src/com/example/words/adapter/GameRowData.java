@@ -11,15 +11,17 @@ public class GameRowData implements Parcelable{
 	public int opponentScore;
 	public int yourScore;
 	public boolean currentPlayer;
+	public boolean gameOver;
 
 
-	public GameRowData(String id, String opponent, String opponentId, int opponentScore, int yourScore, boolean currentPlayer) {
+	public GameRowData(String id, String opponent, String opponentId, int opponentScore, int yourScore, boolean currentPlayer, boolean gameOver) {
 		this.id = id;
 		this.opponent = opponent;
 		this.opponentId = opponentId;
 		this.opponentScore = opponentScore;
 		this.yourScore = yourScore;
 		this.currentPlayer = currentPlayer;
+		this.gameOver = gameOver;
 	}
 
 
@@ -30,6 +32,7 @@ public class GameRowData implements Parcelable{
 		this.opponentScore = in.readInt();
 		this.yourScore = in.readInt();
 		this.currentPlayer = in.readByte() == 1;
+		this.gameOver = in.readByte() == 1;
 	}
 
 
@@ -47,6 +50,7 @@ public class GameRowData implements Parcelable{
 		dest.writeInt(opponentScore);
 		dest.writeInt(yourScore);
 		dest.writeByte((byte) (currentPlayer ? 1 : 0));
+		dest.writeByte((byte) (gameOver ? 1 : 0));
 	}
 
 	public static final Parcelable.Creator<GameRowData> CREATOR

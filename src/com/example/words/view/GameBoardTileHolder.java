@@ -1,5 +1,6 @@
 package com.example.words.view;
 
+import android.annotation.TargetApi;
 import android.view.DragEvent;
 import android.view.ViewGroup;
 
@@ -11,6 +12,7 @@ public class GameBoardTileHolder extends TileHolder {
 		super(activity, index);
 	}
 
+	@TargetApi(11)
 	@Override
 	public void dragDropped(Tile tile, DragEvent dragEvent) {
 		if(getChildCount() > 0){

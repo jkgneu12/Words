@@ -1,8 +1,15 @@
 package com.example.words.activity;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -11,11 +18,18 @@ import android.widget.Toast;
 
 import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.network.FacebookGetTask;
+import com.example.words.network.TwitterGetTask;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
+import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.PushService;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
+import com.parse.facebook.FacebookError;
+import com.parse.facebook.Util;
 
 public class SignupActivity extends Activity implements OnClickListener {
 
@@ -23,35 +37,41 @@ public class SignupActivity extends Activity implements OnClickListener {
 	private EditText password;
 	private Button signup;
 	private Button login;
-	
+
 	private ParseUser currentUser;
+	private Button facebook;
+	private Button twitter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Constants.initParse(this); 
-		
+
 		currentUser = ParseUser.getCurrentUser();
-		
-		
-        if (currentUser != null) {
-        	navigate(currentUser.getUsername());
-        } else {
-		
+
+
+		if (currentUser != null) {
+			navigate(currentUser.getUsername());
+		} else {
+
 			setContentView(R.layout.activity_signup);
-			
+
 			name = (EditText)findViewById(R.id.name);
 			password = (EditText)findViewById(R.id.password);
 			signup = (Button)findViewById(R.id.signup_button);
 			login = (Button)findViewById(R.id.login_button);
-			
+			facebook = (Button)findViewById(R.id.facebook);
+			twitter = (Button)findViewById(R.id.twitter);
+
 			signup.setOnClickListener(this);
 			login.setOnClickListener(this);
+			facebook.setOnClickListener(this);
+			twitter.setOnClickListener(this);
 		}
-        
-        
-		
+
+
+
 	}
 
 	private void navigate(String userName) {
@@ -66,16 +86,33 @@ public class SignupActivity extends Activity implements OnClickListener {
 	public void onClick(View button) {
 		if(button == signup)
 			signup();
-		else
+		else if (button == login)
 			login();
+		else if (button == facebook)
+			facebook();
+		else
+			twitter();
 	}
-	
-	private void signup(){
-		ParseUser user = new ParseUser();
-		user.setUsername(name.getEditableText().toString());
-		user.setPassword(password.getEditableText().toString());
 
-		final String userName = user.getUsername();
+	private void signup(){
+		final String userName = name.getEditableText().toString();
+		String passwordString = password.getEditableText().toString();
+
+
+		if(Constants.isNullOrEmpty(userName)){
+			Toast.makeText(SignupActivity.this, "Enter a User Name", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		if(Constants.isNullOrEmpty(passwordString)){
+			Toast.makeText(SignupActivity.this, "Enter a Password", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		ParseUser user = new ParseUser();
+		user.setUsername(userName);
+		user.setPassword(passwordString);
+		user.put("displayName", userName);
 
 		user.signUpInBackground(new SignUpCallback() {
 			public void done(ParseException e) {
@@ -87,9 +124,23 @@ public class SignupActivity extends Activity implements OnClickListener {
 			}
 		});
 	}
-	
+
 	private void login(){
-		ParseUser.logInInBackground(name.getEditableText().toString(), password.getEditableText().toString(), new LogInCallback() {
+		String userName = name.getEditableText().toString();
+		String passwordString = password.getEditableText().toString();
+
+
+		if(Constants.isNullOrEmpty(userName)){
+			Toast.makeText(SignupActivity.this, "Enter a User Name", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		if(Constants.isNullOrEmpty(passwordString)){
+			Toast.makeText(SignupActivity.this, "Enter a Password", Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		ParseUser.logInInBackground(userName, passwordString, new LogInCallback() {
 
 			@Override
 			public void done(ParseUser user, ParseException e) {
@@ -98,6 +149,46 @@ public class SignupActivity extends Activity implements OnClickListener {
 					navigate(currentUser.getUsername());
 				} else 
 					Toast.makeText(SignupActivity.this, "Could not login " + e.getMessage(), Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+
+	private void facebook() {
+		ParseFacebookUtils.logIn(this, new LogInCallback() {
+			@Override
+			public void done(ParseUser user, ParseException e) {
+				if (user != null) {
+					if (ParseFacebookUtils.isLinked(user)) {
+						new FacebookGetTask(user).execute("/me");
+						currentUser = user;
+						navigate(currentUser.getUsername());
+
+					} else {
+						Toast.makeText(SignupActivity.this, "Facebook Linking Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+					}
+				} else {
+					Toast.makeText(SignupActivity.this, "Facebook Linking Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+	}
+	
+	private void twitter() {
+		ParseTwitterUtils.logIn(this, new LogInCallback() {
+			@Override
+			public void done(ParseUser user, ParseException e) {
+				if (user != null) {
+					if (ParseTwitterUtils.isLinked(user)) {
+						new TwitterGetTask(user).execute();
+						currentUser = user;
+						navigate(currentUser.getUsername());
+
+					} else {
+						Toast.makeText(SignupActivity.this, "Twitter Linking Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+					}
+				} else {
+					Toast.makeText(SignupActivity.this, "Twitter Linking Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
+				}
 			}
 		});
 	}

@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.words.Constants;
 import com.example.words.R;
@@ -42,10 +46,11 @@ public class Game implements Parcelable{
 	public int waitingPlayerScore;
 	public String waitingPlayerName;
 	public String[] waitingPlayerTiles;
+	public boolean lastPlayerPassed;	
 	
 	public List<String> usedWords; 
 
-	private ParseObject parseObject;	
+	private ParseObject parseObject;
 
 	public Game(GameActivity activity) {
 		this.activity = activity;
@@ -55,6 +60,7 @@ public class Game implements Parcelable{
 		this.waitingPlayerTiles = new String[Constants.NUM_MY_TILES]; 
 		this.currentLastWord = new String[Constants.NUM_TILE_HOLDERS];  
 		this.completeLastWord = new String[Constants.NUM_TILE_HOLDERS];  
+		this.lastPlayerPassed = false;
 		
 		usedWords = new ArrayList<String>();
 	}
@@ -129,8 +135,12 @@ public class Game implements Parcelable{
 		partOfLastWord = gb.partOfLastWordArray();
 	}
 	
-	public void save() {
-		updateParseObject();
+	public void save(){
+		save(false, false);
+	}
+	
+	public void save(boolean passing, boolean gameOver) {
+		updateParseObject(passing, gameOver);
 		parseObject.saveInBackground(new SaveCallback() {
 			
 			@Override
@@ -141,12 +151,15 @@ public class Game implements Parcelable{
 		});
 	}
 	
-	private void updateParseObject(){
+	private void updateParseObject(boolean passing, boolean gameOver){
 		if(parseObject == null)
 			parseObject = new ParseObject("Game");
 		
+		if(!passing)
+			parseObject.put("lastWord",Constants.arrayToList(gameBoard));
 		
-		parseObject.put("lastWord",Constants.arrayToList(gameBoard));
+		parseObject.put("passed", passing);
+		parseObject.put("gameOver", gameOver);
 		
 		parseObject.put("bag", bag);
 		
@@ -165,27 +178,45 @@ public class Game implements Parcelable{
 	
 	public void refresh(){
 		if(parseObject == null){
+			final ProgressDialog waiting = new ProgressDialog(activity, ProgressDialog.STYLE_SPINNER);
+			waiting.setTitle("Please Wait");
+			waiting.setMessage("Loading Game vs. " + waitingPlayerName);
+			waiting.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					activity.finish();
+				}
+			});
+			waiting.show();
 			ParseQuery query = new ParseQuery("Game");
 			query.getInBackground(id, new GetCallback() {
 				@Override
 				public void done(ParseObject obj, ParseException e) {
-					parseObject = obj;
-					List temp = obj.getList("currentPlayerTiles");
-					if(temp == null)
-						currentPlayerTiles = Constants.listToArray(obj.getList("myTiles"));
-					else
-						currentPlayerTiles = Constants.listToArray(temp);
-					temp = obj.getList("waitingPlayerTiles");
-					if(temp != null)
-						waitingPlayerTiles = Constants.listToArray(temp);
-					else
-						waitingPlayerTiles = currentPlayerTiles;
-					currentLastWord = Constants.listToArray(obj.getList("lastWord"));
-					completeLastWord = Constants.listToArray(obj.getList("lastWord"));
-					bag = obj.getMap("bag");
-					usedWords = obj.getList("usedWords");
-					replenishTiles();
-					activity.refreshUIFromGame();
+					if(e == null){
+						parseObject = obj;
+						List temp = obj.getList("currentPlayerTiles");
+						if(temp == null)
+							currentPlayerTiles = Constants.listToArray(obj.getList("myTiles"));
+						else
+							currentPlayerTiles = Constants.listToArray(temp);
+						temp = obj.getList("waitingPlayerTiles");
+						if(temp != null)
+							waitingPlayerTiles = Constants.listToArray(temp);
+						else
+							waitingPlayerTiles = currentPlayerTiles;
+						currentLastWord = Constants.listToArray(obj.getList("lastWord"));
+						completeLastWord = Constants.listToArray(obj.getList("lastWord"));
+						bag = obj.getMap("bag");
+						usedWords = obj.getList("usedWords");
+						lastPlayerPassed = obj.getBoolean("passed");
+						replenishTiles();
+						activity.refreshUIFromGame();
+						
+					} else {
+						Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();
+						activity.finish();
+					}
+					waiting.dismiss();
 				}
 			});
 		} else {

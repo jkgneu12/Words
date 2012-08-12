@@ -76,7 +76,7 @@ public abstract class Tile extends RelativeLayout {
 
 		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(dim, dim);
 		int margin = Constants.getTileMargin(activity, Constants.NUM_MY_TILES);
-		p.setMargins(margin, margin, margin, margin);
+		p.setMargins(margin, 0, margin, 0);
 		setLayoutParams(p);
 	}
 

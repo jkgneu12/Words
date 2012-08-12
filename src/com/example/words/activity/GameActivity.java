@@ -2,14 +2,21 @@ package com.example.words.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Camera;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
@@ -27,6 +34,7 @@ import com.example.words.view.LastWord;
 import com.example.words.view.LastWordTile;
 import com.example.words.view.MyTiles;
 import com.example.words.view.MyTilesTile;
+import com.example.words.view.StarWarsScroller;
 import com.example.words.view.Tile;
 import com.example.words.view.TileHolder;
 import com.parse.ParseException;
@@ -34,7 +42,7 @@ import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SendCallback;
 
-public class GameActivity extends Activity{
+public class GameActivity extends Activity implements OnClickListener{
 
 	private Game game;
 
@@ -55,6 +63,14 @@ public class GameActivity extends Activity{
 	private SensorManager mSensorManager;
 
 	private ShakeEventListener mSensorListener;
+
+	private Button submit;
+
+	private Button reset;
+
+	private Button pass;
+
+	private TextView opponent;
 
 
     @Override
@@ -85,7 +101,15 @@ public class GameActivity extends Activity{
         myTiles = (MyTiles)findViewById(R.id.my_tiles);
         remainingTiles = (TextView)findViewById(R.id.remaining_tiles);
         score = (TextView)findViewById(R.id.score);
+        opponent = (TextView)findViewById(R.id.opponent);
         previousWords = (LinearLayout)findViewById(R.id.previous_words);
+        submit = (Button)findViewById(R.id.submit);
+        reset = (Button)findViewById(R.id.reset);
+        pass = (Button)findViewById(R.id.pass);
+        
+        submit.setOnClickListener(this);
+        reset.setOnClickListener(this);
+        pass.setOnClickListener(this);
         
         
         for(int z = 0; z < Constants.NUM_TILE_HOLDERS; z++)
@@ -124,6 +148,7 @@ public class GameActivity extends Activity{
     @Override
     protected void onResume() {
     	super.onResume();
+    	Constants.checkVersion(this, false);
     	mSensorManager.registerListener(mSensorListener,
     	        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
     	        SensorManager.SENSOR_DELAY_UI);
@@ -209,6 +234,21 @@ public class GameActivity extends Activity{
 			}
 		});
 	}
+	
+	protected void sendGameOverPush(String yourName, String opponentName) {
+		ParsePush push = new ParsePush();
+		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
+		push.setExpirationTimeInterval(86400);
+		push.setMessage("You " + getEndScorePrefix() + " your game with " + yourName);
+		push.sendInBackground(new SendCallback() {
+			
+			@Override
+			public void done(ParseException e) {
+				if(e != null)
+					Log.w("PUSH", e.getMessage());
+			}
+		});
+	}
 
 	public void reset() {
 		gameBoard.reset();
@@ -254,34 +294,31 @@ public class GameActivity extends Activity{
     	
     	lastWord.setCompleteLastWord(game.completeLastWord);
     	lastWord.setCurrentLastWord(game.currentLastWord);
-    	remainingTiles.setText(game.remainingTiles() + " Tiles Remaining");
+    	remainingTiles.setText(game.remainingTiles() + " Tiles Left");
+    	opponent.setText("You vs. " + game.waitingPlayerName);
     	setScoreText();
-    	for(int z = 0; z < game.usedWords.size() - 1; z++){
+    	int prevWordCount = game.usedWords.size();
+    	for(int z = 0; z < prevWordCount - 1; z++){
     		TextView word = new TextView(this);
     		word.setText(game.usedWords.get(z));
-    		word.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    		word.setLayoutParams(params);
     		word.setPadding(30, 2, 30, 2);
-    		word.setTextSize(18);
+    		//word.setTextSize((int)((40 * (1 - (((double)prevWordCount - z) / prevWordCount)))) + 10);
+    		word.setTextSize(Constants.getPreviousWordSize(this));
     		word.setFocusable(true);
+    		//word.setBackgroundResource(R.drawable.prev_back);
     		previousWords.addView(word);
     	}
     	
-    	final ScrollView scroll = (ScrollView)previousWords.getParent();
-    	if(Build.VERSION.SDK_INT >= 9)
-			disableOverScroll(scroll);
+    	final StarWarsScroller scroll = (StarWarsScroller)previousWords.getParent();
     	scroll.post(new Runnable() {
-
             @Override
             public void run() {
             	scroll.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
     }
-
-	@TargetApi(9)
-	private void disableOverScroll(final ScrollView scroll) {
-		scroll.setOverScrollMode(ScrollView.OVER_SCROLL_NEVER);
-	}
 	
 	private void refreshGameBoardUIFromGame() {
 		for(int z = 0; z < game.gameBoard.length; z++){
@@ -304,6 +341,14 @@ public class GameActivity extends Activity{
     		return "Losing ";
     	return "Tied ";
 	}
+	
+	private String getEndScorePrefix(){
+		if(game.currentPlayerScore > game.waitingPlayerScore)
+    		return "Won ";
+    	else if(game.currentPlayerScore < game.waitingPlayerScore)
+    		return "Lost ";
+    	return "Tied ";
+	}
 
 	public AppController getAppController(){
 		return appController;
@@ -321,5 +366,45 @@ public class GameActivity extends Activity{
 		if(activeTile != null && activeTile.isActive())
 			return activeTile;
 		return null;
+	}
+
+	@Override
+	public void onClick(View v) {
+		if(v == submit)
+			submit();
+		else if(v == reset)
+			reset();
+		else if(v == pass)
+			pass();
+	}
+
+	private void pass() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure you want to skip your turn?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   reset();
+		        	   if(game.lastPlayerPassed){
+		        		   game.save(true, true);
+		        		   sendGameOverPush(game.currentPlayerName, game.waitingPlayerName);
+		        		   finish();
+		        	   } else {
+		        		   game.save(true, false);
+		        		   sendPush(game.currentPlayerName, game.waitingPlayerName);
+		        	   }
+		        	   finish();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		builder.show();
+	}
+
+	protected void endGame() {
+		
 	}
 }

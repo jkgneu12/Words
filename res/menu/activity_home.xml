@@ -4,5 +4,13 @@
         android:id="@+id/refresh"
         android:title="@string/refresh">
     </item>
+    <item
+        android:id="@+id/link_facebook"
+        android:title="@string/link_facebook">
+    </item>
+    <item
+        android:id="@+id/link_twitter"
+        android:title="@string/link_twitter">
+    </item>
 
 </menu>

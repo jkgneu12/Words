@@ -3,82 +3,103 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light" >
-    
-    <com.example.words.view.ResetButton
-        android:id="@+id/reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp" />
 
-    <com.example.words.view.SubmitButton
-        android:id="@+id/submit"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp" />
-    
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5px" >
+
+        <Button
+            android:id="@+id/resign"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/resign" />
+        
+        <Button
+            android:id="@+id/pass"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pass" />
+
+        <Button
+            android:id="@+id/reset"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/reset" />
+
+        <Button
+            android:id="@+id/submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/submit" />
+    </LinearLayout>
+
     <com.example.words.view.MyTiles
         android:id="@+id/my_tiles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
+        android:layout_above="@id/buttons" />
 
     <com.example.words.view.GameBoard
         android:id="@+id/game_board"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/my_tiles" />
-    
-    
+
     <com.example.words.view.LastWord
         android:id="@+id/last_word"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/game_board" />
+        android:layout_above="@id/game_board"
+        android:gravity="center_horizontal" />
 
-    <ScrollView
+    <com.example.words.view.StarWarsScroller
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@id/last_word"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/submit"
-        android:layout_toRightOf="@id/reset"
         android:scrollbars="none" >
 
-        <LinearLayout
+        <com.example.words.view.StarWarsScrollerLayout
             android:id="@+id/previous_words"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical" >
-        </LinearLayout>
-    </ScrollView>
+        </com.example.words.view.StarWarsScrollerLayout>
+    </com.example.words.view.StarWarsScroller>
 
+    <TextView
+        android:id="@+id/opponent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textSize="14dp" />
     
-
     <TextView
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/submit"
         android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:textSize="14dp" />
 
     <TextView
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/remaining_tiles"
         android:layout_margin="10dp"
-        android:layout_marginTop="0dp"
+        android:layout_below="@id/opponent"
+        android:layout_alignParentLeft="true"
         android:textSize="14dp" />
-
-    
-    
 
 </RelativeLayout>
