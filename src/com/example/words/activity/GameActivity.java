@@ -349,7 +349,7 @@ public class GameActivity extends Activity implements OnClickListener{
     		}
     		
     		
-    		if(game.scores != null){
+    		if(game.scores != null && game.scores.size() > z){
 	    		String scoreText = "" + game.scores.get(z);
 	    		TextView score;
 	    		TextView space;
