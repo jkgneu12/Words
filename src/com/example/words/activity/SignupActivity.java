@@ -1,15 +1,8 @@
 package com.example.words.activity;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,10 +19,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.PushService;
-import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
-import com.parse.facebook.FacebookError;
-import com.parse.facebook.Util;
 
 public class SignupActivity extends Activity implements OnClickListener {
 
