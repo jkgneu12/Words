@@ -33,7 +33,7 @@
         </activity>
         <activity
             android:name=".activity.GameActivity"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" >
+            android:theme="@android:style/Theme.DeviceDefault" >
         </activity>
         <activity
             android:name=".activity.NewGameActivity" >

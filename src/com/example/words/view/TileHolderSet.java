@@ -28,14 +28,6 @@ public abstract class TileHolderSet extends LinearLayout {
 		return getTileHolderAt(z).getChildCount() > 0;
 	}
 
-	public String[] getLetters() {
-		String[] letters = new String[Constants.NUM_TILE_HOLDERS];
-		for(int z = 0; z < getChildCount(); z++){
-			Tile t = getTileAt(z);
-			if(t != null)
-				letters[z] = t.getLetter();
-		}
-		return letters;
-	}
+	public abstract String[] getLetters();
 	
 }

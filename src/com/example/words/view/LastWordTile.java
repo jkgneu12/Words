@@ -1,7 +1,8 @@
 package com.example.words.view;
 
-import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 
+import com.example.words.R;
 import com.example.words.activity.GameActivity;
 
 public class LastWordTile extends Tile  {
@@ -28,8 +29,13 @@ public class LastWordTile extends Tile  {
 		return index;
 	}
 	
-	protected int getBackgroundColor(){
-		return Color.YELLOW;
+	protected Drawable getBackgroundDrawable(){
+		return activity.getResources().getDrawable(R.drawable.last_word_tile_background);
+	}
+
+	@Override
+	protected Drawable getSelectedBackgroundDrawable() {
+		return activity.getResources().getDrawable(R.drawable.selected_last_word_tile_background);
 	}
 
 }

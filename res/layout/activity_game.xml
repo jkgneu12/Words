@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light" >
+    android:background="@drawable/background" >
 
     <LinearLayout
         android:id="@+id/buttons"
@@ -50,7 +50,11 @@
         android:id="@+id/game_board"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/my_tiles" />
+        android:layout_above="@id/my_tiles"
+        android:layout_marginBottom="2dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="2dp"
+        android:background="@drawable/gameboard_background" />
 
     <com.example.words.view.LastWord
         android:id="@+id/last_word"
@@ -61,16 +65,16 @@
 
     <com.example.words.view.StarWarsScroller
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_above="@id/last_word"
-        android:layout_alignParentTop="true"
         android:scrollbars="none" >
 
         <com.example.words.view.StarWarsScrollerLayout
             android:id="@+id/previous_words"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:gravity="center_horizontal|bottom"
             android:orientation="vertical" >
         </com.example.words.view.StarWarsScrollerLayout>
     </com.example.words.view.StarWarsScroller>

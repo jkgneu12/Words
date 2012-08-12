@@ -16,7 +16,7 @@ public class StarWarsScrollerLayout extends LinearLayout {
 	}
 	
 	@TargetApi(11)
-	public void onScrollChanged(int l, int t, int height) {
+	public void relayout(int t, int height) {
 		int top = t;
 		
 		for(int z = 0; z < getChildCount(); z++){
@@ -25,6 +25,7 @@ public class StarWarsScrollerLayout extends LinearLayout {
 			int childBottom = child.getBottom();
 			
 			float scale = .3f + ((((float)childBottom - top) / height));
+			
 			child.setTextSize(Constants.getPreviousWordSize((Activity)getContext()));
 			child.setScaleX(scale);
 			child.setScaleY(scale);

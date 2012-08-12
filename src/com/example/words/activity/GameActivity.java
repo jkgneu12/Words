@@ -1,13 +1,17 @@
 package com.example.words.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,8 +48,15 @@ public class GameActivity extends Activity implements OnClickListener{
 	private LastWord lastWord;
 	private GameBoard gameBoard;
 	private MyTiles myTiles;
+	private LinearLayout previousWords;
 	private TextView remainingTiles;
 	private TextView score;
+	private TextView opponent;
+	
+	private Button submit;
+	private Button reset;
+	private Button pass;
+	private Button resign;
 
 	private AppController appController;
 
@@ -53,19 +64,14 @@ public class GameActivity extends Activity implements OnClickListener{
 
 	private Tile activeTile;
 
-	private LinearLayout previousWords;
-
 	private SensorManager mSensorManager;
 
 	private ShakeEventListener mSensorListener;
 
-	private Button submit;
+	private boolean isMyTurn;
 
-	private Button reset;
+	private boolean isGameOver;
 
-	private Button pass;
-
-	private TextView opponent;
 
 
     @Override
@@ -101,10 +107,15 @@ public class GameActivity extends Activity implements OnClickListener{
         submit = (Button)findViewById(R.id.submit);
         reset = (Button)findViewById(R.id.reset);
         pass = (Button)findViewById(R.id.pass);
+        resign = (Button)findViewById(R.id.resign);
         
         submit.setOnClickListener(this);
         reset.setOnClickListener(this);
         pass.setOnClickListener(this);
+        reset.setOnClickListener(this);
+        
+        isMyTurn = getIntent().getBooleanExtra("MyTurn", true);
+        isGameOver = getIntent().getBooleanExtra("GameOver", false);
         
         
         for(int z = 0; z < Constants.NUM_TILE_HOLDERS; z++)
@@ -124,7 +135,7 @@ public class GameActivity extends Activity implements OnClickListener{
 	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
 	        	game.waitingPlayerScore = 0;
 	        	refreshUIFromGame();  
-        	} else {
+        	} else if(isMyTurn) {
         		game = new Game(this);
         		game.currentPlayerId = getIntent().getStringExtra("CurrentPlayerId");
 	        	game.currentPlayerName = getIntent().getStringExtra("CurrentPlayerName");
@@ -134,20 +145,43 @@ public class GameActivity extends Activity implements OnClickListener{
 	        	game.waitingPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
 	        	game.id = getIntent().getStringExtra("id");
         		game.refresh();
+        	} else {
+        		game = new Game(this);
+        		game.currentPlayerId = getIntent().getStringExtra("WaitingPlayerId");
+	        	game.currentPlayerName = getIntent().getStringExtra("WaitingPlayerName");
+	        	game.currentPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
+	        	game.waitingPlayerId = getIntent().getStringExtra("CurrentPlayerId");
+	        	game.waitingPlayerName = getIntent().getStringExtra("CurrentPlayerName");
+	        	game.waitingPlayerScore = getIntent().getIntExtra("CurrentPlayerScore", 0);
+	        	game.id = getIntent().getStringExtra("id");
+        		game.refresh();
+        		
         	}
-        	
-        	
         } 
+        
+        if(!isMyTurn || isGameOver){
+    		submit.setVisibility(View.GONE);
+    		resign.setVisibility(View.GONE);
+    		pass.setVisibility(View.GONE);
+    	}
     }
     
     @Override
     protected void onResume() {
     	super.onResume();
+    	if(Build.VERSION.SDK_INT >= 11)
+    		hideActionBar();
     	Constants.checkVersion(this, false);
     	mSensorManager.registerListener(mSensorListener,
     	        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
     	        SensorManager.SENSOR_DELAY_UI);
     }
+
+	@TargetApi(11)
+	public void hideActionBar() {
+		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+    		getActionBar().hide();
+	}
     
     @Override
     protected void onPause() {
@@ -290,7 +324,7 @@ public class GameActivity extends Activity implements OnClickListener{
     	lastWord.setCompleteLastWord(game.completeLastWord);
     	lastWord.setCurrentLastWord(game.currentLastWord);
     	remainingTiles.setText(game.remainingTiles() + " Tiles Left");
-    	opponent.setText("You vs. " + game.waitingPlayerName);
+    	opponent.setText(getMatchupText());
     	setScoreText();
     	int prevWordCount = game.usedWords.size();
     	for(int z = 0; z < prevWordCount - 1; z++){
@@ -299,10 +333,8 @@ public class GameActivity extends Activity implements OnClickListener{
     		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     		word.setLayoutParams(params);
     		word.setPadding(30, 2, 30, 2);
-    		//word.setTextSize((int)((40 * (1 - (((double)prevWordCount - z) / prevWordCount)))) + 10);
     		word.setTextSize(Constants.getPreviousWordSize(this));
     		word.setFocusable(true);
-    		//word.setBackgroundResource(R.drawable.prev_back);
     		previousWords.addView(word);
     	}
     	
@@ -314,11 +346,17 @@ public class GameActivity extends Activity implements OnClickListener{
             }
         });
     }
+
+	public String getMatchupText() {
+		if(isMyTurn)
+			return game.currentPlayerName + " vs. " + game.waitingPlayerName;
+		return game.waitingPlayerName + " vs. " + game.currentPlayerName;
+	}
 	
 	private void refreshGameBoardUIFromGame() {
 		for(int z = 0; z < game.gameBoard.length; z++){
         	if(!Constants.isNull(game.gameBoard[z]) && Character.isLetter(game.gameBoard[z].charAt(0))){
-        		Tile tile = Tile.create(this, "" + game.gameBoard[z], z, game.partOfLastWord[z]);
+        		Tile tile = Tile.create(this, "" + game.gameBoard[z], game.gameBoardIndices[z], game.partOfLastWord[z]);
         		gameBoard.addTile(tile, z);
         	}
         }
@@ -329,11 +367,25 @@ public class GameActivity extends Activity implements OnClickListener{
     	score.setText(scoreText);
 	}
 	
-	private String getScorePrefix(){
-		if(game.currentPlayerScore > game.waitingPlayerScore)
-    		return "Winning ";
-    	else if(game.currentPlayerScore < game.waitingPlayerScore)
-    		return "Losing ";
+	private String getScorePrefix() {
+		if(isGameOver)
+			return getEndScorePrefix();
+		else
+			return getLiveScorePrefix();
+	}
+
+	private String getLiveScorePrefix(){
+		if(isMyTurn){
+			if(game.currentPlayerScore > game.waitingPlayerScore)
+	    		return "Winning ";
+	    	else if(game.currentPlayerScore < game.waitingPlayerScore)
+	    		return "Losing ";
+		} else {
+			if(game.currentPlayerScore > game.waitingPlayerScore)
+	    		return "Losing ";
+	    	else if(game.currentPlayerScore < game.waitingPlayerScore)
+	    		return "Winning ";
+		}
     	return "Tied ";
 	}
 	

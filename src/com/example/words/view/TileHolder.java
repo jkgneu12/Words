@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.example.words.Constants;
+import com.example.words.R;
 import com.example.words.activity.GameActivity;
 import com.example.words.listener.DragAndDropListener;
 import com.example.words.listener.IDragAndDrop;
@@ -28,7 +29,6 @@ public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
 		this.index = index;
 		
 		initLayoutParams();
-		setBackgroundColor(Color.BLACK);
 		
 		initListeners();
 	}
@@ -88,7 +88,7 @@ public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
 	}
 
 	public void goodHighlight() {
-		setBackgroundColor(Color.GREEN);
+		setBackgroundColor(activity.getResources().getColor(R.color.base));
 	}
 	
 	public void badHighlight() {
@@ -96,7 +96,7 @@ public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
 	}
 
 	public void unhighlight() {
-		setBackgroundColor(Color.BLACK);
+		setBackgroundDrawable(null);
 	}
 
 	public Tile getTile() {

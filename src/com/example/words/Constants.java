@@ -107,6 +107,15 @@ public class Constants {
 		}
 		return list;
 	}
+	
+	public static ArrayList<String> arrayToListStrip(String[] wordArray) {
+		ArrayList<String> list = new ArrayList<String>(wordArray.length);
+		for(int z = 0; z < wordArray.length; z++){
+			if(!isNull(wordArray[z]))
+				list.add(wordArray[z]);
+		}
+		return list;
+	}
 
 	public static ArrayList<Integer> arrayToList(int[] intArray) {
 		ArrayList<Integer> list = new ArrayList<Integer>(intArray.length);
@@ -115,12 +124,27 @@ public class Constants {
 		}
 		return list;
 	}
+	
+	
 
 	public static String[] listToArray(List<Object> list) {
 		String[] array = new String[list.size()];
 		list.toArray(array);
 		return array;
 	}
+	
+	public static String[] listToArrayStrip(List<Object> list) {
+		String[] array = new String[list.size()];
+		int count = 0;
+		for(int z = 0; z < list.size(); z++){
+			String val = (String)list.get(z);
+			if(!isNullOrEmpty(val)){
+				array[count++] = val;
+			}
+		}
+		return array;
+	}
+
 
 	public static boolean isNull(String string) {
 		return string == null || string.equals("null");
@@ -175,8 +199,4 @@ public class Constants {
 			}
 		});
 	}
-
-
-
-
 }

@@ -127,7 +127,7 @@ public class HomeActivity extends Activity implements OnClickListener  {
 
 			GameRow row = (GameRow) ((LayoutInflater)HomeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.game_row, layout, false);
 			row.initialize(data);
-			if(data.currentPlayer)
+			//if(data.currentPlayer)
 				row.setOnClickListener(HomeActivity.this);
 
 			layout.addView(row);
@@ -246,6 +246,8 @@ public class HomeActivity extends Activity implements OnClickListener  {
 		Intent intent = new Intent();
 		intent.setClass(this, GameActivity.class);
 		intent.putExtra("NewGame", false);
+		intent.putExtra("MyTurn", row.getParent() == currentGamesLayout);
+		intent.putExtra("GameOver", row.getParent() == finishedGamesLayout);
 
 		GameRowData item = row.getData();
 

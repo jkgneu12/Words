@@ -46,16 +46,20 @@ public class Game implements Parcelable{
 	public int waitingPlayerScore;
 	public String waitingPlayerName;
 	public String[] waitingPlayerTiles;
-	public boolean lastPlayerPassed;	
+	public boolean lastPlayerPassed;
+	public int[] gameBoardIndices;
 	
 	public List<String> usedWords; 
 
 	private ParseObject parseObject;
 
+	
+
 	public Game(GameActivity activity) {
 		this.activity = activity;
 		
 		this.gameBoard = new String[Constants.NUM_TILE_HOLDERS];  
+		this.gameBoardIndices = new int[Constants.NUM_TILE_HOLDERS];  
 		this.currentPlayerTiles = new String[Constants.NUM_MY_TILES]; 
 		this.waitingPlayerTiles = new String[Constants.NUM_MY_TILES]; 
 		this.currentLastWord = new String[Constants.NUM_TILE_HOLDERS];  
@@ -80,6 +84,7 @@ public class Game implements Parcelable{
 		waitingPlayerId = in.readString();
 		waitingPlayerScore = in.readInt();
 		waitingPlayerName = in.readString();
+		in.readIntArray(gameBoardIndices);
 		in.readList(usedWords, null);
 	}
 
@@ -130,6 +135,7 @@ public class Game implements Parcelable{
 
 	public void update(GameBoard gb, MyTiles mt, LastWord lw) {
 		gameBoard = gb.getLetters();
+		gameBoardIndices = gb.getIndices();
 		currentPlayerTiles = mt.getLetters();
 		currentLastWord = lw.getLetters();
 		partOfLastWord = gb.partOfLastWordArray();
@@ -156,7 +162,7 @@ public class Game implements Parcelable{
 			parseObject = new ParseObject("Game");
 		
 		if(!passing)
-			parseObject.put("lastWord",Constants.arrayToList(gameBoard));
+			parseObject.put("lastWord",Constants.arrayToListStrip(gameBoard));
 		
 		parseObject.put("passed", passing);
 		parseObject.put("gameOver", gameOver);
@@ -204,8 +210,8 @@ public class Game implements Parcelable{
 							waitingPlayerTiles = Constants.listToArray(temp);
 						else
 							waitingPlayerTiles = currentPlayerTiles;
-						currentLastWord = Constants.listToArray(obj.getList("lastWord"));
-						completeLastWord = Constants.listToArray(obj.getList("lastWord"));
+						currentLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
+						completeLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
 						bag = obj.getMap("bag");
 						usedWords = obj.getList("usedWords");
 						lastPlayerPassed = obj.getBoolean("passed");
@@ -260,6 +266,7 @@ public class Game implements Parcelable{
 		dest.writeString(waitingPlayerId);
 		dest.writeInt(waitingPlayerScore);
 		dest.writeString(waitingPlayerName);
+		dest.writeIntArray(gameBoardIndices);
 		dest.writeList(usedWords);
 	}
 	

@@ -3,9 +3,11 @@ package com.example.words.view;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ClipData;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -14,11 +16,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.words.Constants;
+import com.example.words.R;
 import com.example.words.activity.GameActivity;
 
 public abstract class Tile extends RelativeLayout {
 
 	protected static final float DRAG_SCALE = 1.5f;
+
+	public static final boolean RIGHT_HANDED = true;//TODO: make prefernce
 
 	protected GameActivity activity;
 
@@ -44,13 +49,13 @@ public abstract class Tile extends RelativeLayout {
 		this.text = text.toUpperCase();
 		this.points = activity.getAppController().getPoints(text);
 
-		setBackgroundColor(getBackgroundColor());
+		setBackgroundDrawable(getBackgroundDrawable());
 
 		initLayoutParams();
 
 		initTextView();
 	}
-
+	
 	private void initTextView() {
 		textView = new TextView(activity);
 		textView.setText(text);
@@ -61,12 +66,13 @@ public abstract class Tile extends RelativeLayout {
 
 		scoreView = new TextView(activity);
 		scoreView.setText("" + points);
-		scoreView.setTextSize(8);
+		scoreView.setTextSize(Constants.getDIPixels(activity, 6));
 		scoreView.setTextColor(Color.BLACK);
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(ALIGN_PARENT_BOTTOM);
 		params.addRule(ALIGN_PARENT_RIGHT);
-		params.setMargins(2, 2, 5, 3);
+		int margin = (int)Constants.getDIPixels(activity, 3);
+		params.setMargins(0,0,margin*2,margin);
 		scoreView.setLayoutParams(params);
 		addView(scoreView);
 	}
@@ -142,19 +148,22 @@ public abstract class Tile extends RelativeLayout {
 
 		this.active = active;
 		if(active){
-			setBackgroundColor(Color.GREEN);
+			setBackgroundDrawable(getSelectedBackgroundDrawable());
 		}
 		else {
-			setBackgroundColor(getBackgroundColor());
+			setBackgroundDrawable(getBackgroundDrawable());
 		}
 	}
 
-	protected abstract int getBackgroundColor();
+	protected abstract Drawable getSelectedBackgroundDrawable();
+	protected abstract Drawable getBackgroundDrawable();
 	
 	@TargetApi(11)
 	class TileDragShadowBuilder extends DragShadowBuilder {
+		private Tile tile;
 		public TileDragShadowBuilder(Tile tile) {
 			super(tile);
+			this.tile = tile;
 		}
 
 		@Override
@@ -162,8 +171,24 @@ public abstract class Tile extends RelativeLayout {
 			super.onProvideShadowMetrics(shadowSize, shadowTouchPoint);
 			shadowSize.x *= DRAG_SCALE;
 			shadowSize.y *= DRAG_SCALE;
-			shadowTouchPoint.x *= DRAG_SCALE;
-			shadowTouchPoint.y *= DRAG_SCALE;
+			boolean left = false;
+			if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+				left = RIGHT_HANDED;
+			} else {
+				left = !leftSideOfScreen(shadowTouchPoint.x);
+			}
+			
+			if(!left)
+				shadowTouchPoint.x *= .5 * DRAG_SCALE;
+			else 
+				shadowTouchPoint.x *= 2 * DRAG_SCALE;
+			shadowTouchPoint.y *= 2 * DRAG_SCALE;
+		}
+		
+		private boolean leftSideOfScreen(int touchX){
+			int[] pos = new int[2];
+			tile.getLocationInWindow(pos);
+			return touchX + pos[0] < Constants.getActivityWidth(activity) / 2;
 		}
 		
 		@Override

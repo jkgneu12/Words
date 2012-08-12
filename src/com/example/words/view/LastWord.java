@@ -19,24 +19,37 @@ public class LastWord extends TileHolderSet {
 	public void setCompleteLastWord(String[] lastWordArray){
 		if(lastWord == null)
 			lastWord = Constants.arrayToString(lastWordArray);
+		for(int z = 0; z < lastWord.length(); z++){
+			addView(new LastWordTileHolder((GameActivity)getContext(), z, null));
+		}
 	}
 	
 	public void setCurrentLastWord(String[] lastWordArray) {
-		for(int z = 0; z < lastWord.length(); z++){
+		int foundCharacters = 0;
+		for(int z = 0; z < lastWordArray.length; z++){
 			String c = lastWordArray[z];
-			if(Constants.isNullOrEmpty(c)){
-				addView(new LastWordTileHolder((GameActivity)getContext(), z, null));
-			}
-			else {
-				Tile tile = new LastWordTile((GameActivity)getContext(), lastWordArray[z], z);
-				tiles[z] = tile.hashCode();
-				addView(new LastWordTileHolder((GameActivity)getContext(), z, tile));
+			if(!Constants.isNullOrEmpty(c)){
+				Tile tile = new LastWordTile((GameActivity)getContext(), lastWordArray[z], foundCharacters);
+				tiles[foundCharacters] = tile.hashCode();
+				getTileHolderAt(foundCharacters).removeAllViews();
+				getTileHolderAt(foundCharacters).addView(tile);
+				foundCharacters++;
 			}
 		}
 	}
 	
 	public String getLastWord(){
 		return lastWord.toLowerCase();
+	}
+	
+	public String[] getLetters() {
+		String[] letters = new String[Constants.NUM_TILE_HOLDERS];
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null)
+				letters[((TileHolder)t.getParent()).getIndex()] = t.getLetter();
+		}
+		return letters;
 	}
 
 	public void replaceTile(Tile oldChild, Tile newChild) {

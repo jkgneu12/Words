@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.widget.ScrollView;
 
 public class StarWarsScroller extends ScrollView {
+	
+	private boolean firstLayout = true;
 
 	public StarWarsScroller(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -20,20 +22,24 @@ public class StarWarsScroller extends ScrollView {
 		setOverScrollMode(ScrollView.OVER_SCROLL_NEVER);
 	}
 	
+	public void relayout(int t, int h){
+		if(Build.VERSION.SDK_INT >= 11 && getChildCount() > 0)
+			((StarWarsScrollerLayout)getChildAt(0)).relayout(t, h);
+	}
+	
 	@Override
-	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		super.onLayout(changed, l, t, r, b);
-		//if(Build.VERSION.SDK_INT >= 11 && getChildCount() > 0)
-		//	((StarWarsScrollerLayout)getChildAt(0)).onScrollChanged(l, t, b - t);
-			
+	public boolean fullScroll(int direction) {
+		if(!super.fullScroll(direction)){
+			relayout(0, getMeasuredHeight());
+			return false;
+		}
+		return true;
 	}
 
 	
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		super.onScrollChanged(l, t, oldl, oldt);
-		
-		if(Build.VERSION.SDK_INT >= 11 && getChildCount() > 0)
-			((StarWarsScrollerLayout)getChildAt(0)).onScrollChanged(l, t, getMeasuredHeight());
+		relayout(t, getMeasuredHeight());
 	}
 }

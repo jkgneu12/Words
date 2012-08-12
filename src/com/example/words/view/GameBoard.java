@@ -14,7 +14,6 @@ public class GameBoard extends TileHolderSet {
 		super(context, attrs);
 		setOrientation(HORIZONTAL);
 		setGravity(Gravity.CENTER);
-		setBackgroundColor(Color.WHITE);
 	}
 
 	public void goodHighlight(int z) {
@@ -42,6 +41,17 @@ public class GameBoard extends TileHolderSet {
 		}
 		return letters;
 	}
+	
+	public int[] getIndices() {
+		int[] indices = new int[Constants.NUM_TILE_HOLDERS];
+		for(int z = 0; z < getChildCount(); z++){
+			Tile t = getTileAt(z);
+			if(t != null && t.isPartOfLastWord()){
+				indices[z] = ((LastWordTile)t).getIndex();
+			}
+		}
+		return indices;
+	}
 
 	public boolean[] partOfLastWordArray() {
 		boolean[] partOfLastWord = new boolean[Constants.NUM_TILE_HOLDERS];
@@ -62,6 +72,8 @@ public class GameBoard extends TileHolderSet {
 				
 		}
 	}
+
+	
 
 	
 
