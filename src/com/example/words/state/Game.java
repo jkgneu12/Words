@@ -50,8 +50,12 @@ public class Game implements Parcelable{
 	public int[] gameBoardIndices;
 	
 	public List<String> usedWords; 
+	public List<Integer> scores;
+	public List<String> turns; 
 
 	private ParseObject parseObject;
+
+	public boolean isMyTurn = false;
 
 	
 
@@ -67,6 +71,8 @@ public class Game implements Parcelable{
 		this.lastPlayerPassed = false;
 		
 		usedWords = new ArrayList<String>();
+		scores = new ArrayList<Integer>();
+		turns = new ArrayList<String>();
 	}
 
 	public Game(Parcel in) {
@@ -86,6 +92,8 @@ public class Game implements Parcelable{
 		waitingPlayerName = in.readString();
 		in.readIntArray(gameBoardIndices);
 		in.readList(usedWords, null);
+		in.readList(scores, null);
+		in.readList(turns, null);
 	}
 
 	public void initBag() {
@@ -180,6 +188,8 @@ public class Game implements Parcelable{
 		parseObject.put("myTiles",Constants.arrayToList(currentPlayerTiles));
 		
 		parseObject.put("usedWords", usedWords);
+		parseObject.put("scores", scores);
+		parseObject.put("turns", turns);
 	}
 	
 	public void refresh(){
@@ -210,10 +220,17 @@ public class Game implements Parcelable{
 							waitingPlayerTiles = Constants.listToArray(temp);
 						else
 							waitingPlayerTiles = currentPlayerTiles;
+						if(!isMyTurn ){
+							String[] swap = waitingPlayerTiles;
+							waitingPlayerTiles = currentPlayerTiles;
+							currentPlayerTiles = swap;
+						}
 						currentLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
 						completeLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
 						bag = obj.getMap("bag");
 						usedWords = obj.getList("usedWords");
+						scores = obj.getList("scores");
+						turns = obj.getList("turns");
 						lastPlayerPassed = obj.getBoolean("passed");
 						replenishTiles();
 						activity.refreshUIFromGame();
@@ -241,8 +258,14 @@ public class Game implements Parcelable{
 		currentPlayerScore += points;
 	}
 	
-	public void addGameBoardToUsedWord() {
+	public void addGameBoardToUsedWord(int points) {
 		usedWords.add(Constants.arrayToString(gameBoard));
+		if(scores == null)
+			scores = new ArrayList<Integer>();
+		scores.add(points);
+		if(turns == null)
+			turns = new ArrayList<String>();
+		turns.add(currentPlayerId);
 	}
 	
 	@Override
@@ -268,6 +291,8 @@ public class Game implements Parcelable{
 		dest.writeString(waitingPlayerName);
 		dest.writeIntArray(gameBoardIndices);
 		dest.writeList(usedWords);
+		dest.writeList(scores);
+		dest.writeList(turns);
 	}
 	
 	public static final Parcelable.Creator<Game> CREATOR

@@ -11,13 +11,12 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -157,6 +156,7 @@ public class GameActivity extends Activity implements OnClickListener{
         		game.refresh();
         		
         	}
+        	game.isMyTurn = isMyTurn;
         } 
         
         if(!isMyTurn || isGameOver){
@@ -224,7 +224,7 @@ public class GameActivity extends Activity implements OnClickListener{
 			int points = getPointsForValidWord(usedAllTiles);
 			game.replenishTiles();
 			game.incrementCurrentScore(points);
-			game.addGameBoardToUsedWord();
+			game.addGameBoardToUsedWord(points);
 			game.save();
 			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			sendPush(game.currentPlayerName, game.waitingPlayerName);
@@ -326,16 +326,46 @@ public class GameActivity extends Activity implements OnClickListener{
     	remainingTiles.setText(game.remainingTiles() + " Tiles Left");
     	opponent.setText(getMatchupText());
     	setScoreText();
-    	int prevWordCount = game.usedWords.size();
+    	setupPreviousWords();
+    }
+
+	public void setupPreviousWords() {
+		int prevWordCount = game.usedWords.size();
     	for(int z = 0; z < prevWordCount - 1; z++){
-    		TextView word = new TextView(this);
-    		word.setText(game.usedWords.get(z));
-    		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    		word.setLayoutParams(params);
-    		word.setPadding(30, 2, 30, 2);
-    		word.setTextSize(Constants.getPreviousWordSize(this));
+    		LinearLayout row = (LinearLayout) ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
+    		
+    		TextView word = (TextView)row.findViewById(R.id.b);
+    		float fontSize = Constants.getPreviousWordSize(this);
+    		String wordText = game.usedWords.get(z);
+    		word.setText(wordText);
+    		word.setTextSize(fontSize);
     		word.setFocusable(true);
-    		previousWords.addView(word);
+    		
+    		if(game.scores != null){
+	    		String scoreText = "" + game.scores.get(z);
+	    		TextView score;
+	    		TextView space;
+	    		if(game.turns.get(z).equals(currentUser.getObjectId())){
+	    			score = (TextView)row.findViewById(R.id.c);
+	    			space = (TextView)row.findViewById(R.id.a);
+	    		} else {
+	    			score = (TextView)row.findViewById(R.id.a);
+	    			space = (TextView)row.findViewById(R.id.c);
+	    		}
+	    		score.setText(scoreText);
+	    		score.setTextSize(fontSize / 2);
+	    		String spaceText = "";
+	    		for(int y = 0; y < wordText.length(); y++)
+	    			spaceText += " ";
+	    		space.setText(spaceText);
+	    		space.setTextSize(fontSize / 2);
+    		} 
+    		
+    		
+    		
+    		
+    		
+    		previousWords.addView(row);
     	}
     	
     	final StarWarsScroller scroll = (StarWarsScroller)previousWords.getParent();
@@ -345,7 +375,7 @@ public class GameActivity extends Activity implements OnClickListener{
             	scroll.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
-    }
+	}
 
 	public String getMatchupText() {
 		if(isMyTurn)

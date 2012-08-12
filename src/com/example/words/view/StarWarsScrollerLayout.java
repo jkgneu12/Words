@@ -20,13 +20,13 @@ public class StarWarsScrollerLayout extends LinearLayout {
 		int top = t;
 		
 		for(int z = 0; z < getChildCount(); z++){
-			TextView child = (TextView)getChildAt(z);
+			LinearLayout child = (LinearLayout)getChildAt(z);
 			
 			int childBottom = child.getBottom();
 			
 			float scale = .3f + ((((float)childBottom - top) / height));
 			
-			child.setTextSize(Constants.getPreviousWordSize((Activity)getContext()));
+			//child.setTextSize(Constants.getPreviousWordSize((Activity)getContext()));
 			child.setScaleX(scale);
 			child.setScaleY(scale);
 			

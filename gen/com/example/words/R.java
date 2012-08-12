@@ -39,7 +39,10 @@ public final class R {
         public static final int selected_my_tile_background=0x7f020008;
     }
     public static final class id {
+        public static final int a=0x7f0a0023;
+        public static final int b=0x7f0a0024;
         public static final int buttons=0x7f0a0000;
+        public static final int c=0x7f0a0025;
         public static final int current_game_title=0x7f0a000d;
         public static final int current_games=0x7f0a000e;
         public static final int facebook=0x7f0a0016;
@@ -48,8 +51,8 @@ public final class R {
         public static final int game_board=0x7f0a0006;
         public static final int how_to_play=0x7f0a0014;
         public static final int last_word=0x7f0a0007;
-        public static final int link_facebook=0x7f0a0024;
-        public static final int link_twitter=0x7f0a0025;
+        public static final int link_facebook=0x7f0a0027;
+        public static final int link_twitter=0x7f0a0028;
         public static final int login_button=0x7f0a001e;
         public static final int my_tiles=0x7f0a0005;
         public static final int name=0x7f0a001b;
@@ -61,7 +64,7 @@ public final class R {
         public static final int play=0x7f0a0013;
         public static final int previous_words=0x7f0a0008;
         public static final int random=0x7f0a0018;
-        public static final int refresh=0x7f0a0023;
+        public static final int refresh=0x7f0a0026;
         public static final int remaining_tiles=0x7f0a000a;
         public static final int reset=0x7f0a0003;
         public static final int resign=0x7f0a0001;
@@ -86,8 +89,9 @@ public final class R {
         public static final int activity_pick=0x7f030004;
         public static final int activity_signup=0x7f030005;
         public static final int game_row=0x7f030006;
-        public static final int tile=0x7f030007;
-        public static final int user_row=0x7f030008;
+        public static final int prev_word=0x7f030007;
+        public static final int tile=0x7f030008;
+        public static final int user_row=0x7f030009;
     }
     public static final class menu {
         public static final int activity_game=0x7f090000;

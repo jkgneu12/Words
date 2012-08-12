@@ -65,8 +65,12 @@ public abstract class Tile extends RelativeLayout {
 		addView(textView); 
 
 		scoreView = new TextView(activity);
-		scoreView.setText("" + points);
-		scoreView.setTextSize(Constants.getDIPixels(activity, 6));
+		String text = "" + points;
+		scoreView.setText(text);
+		if(text.length() == 2)
+			scoreView.setTextSize(Constants.getDIPixels(activity, 3));
+		else
+			scoreView.setTextSize(Constants.getDIPixels(activity, 5));
 		scoreView.setTextColor(Color.BLACK);
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(ALIGN_PARENT_BOTTOM);
