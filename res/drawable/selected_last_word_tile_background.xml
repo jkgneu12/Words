@@ -3,6 +3,6 @@
 
     <solid android:color="@color/base" />
 
-    <stroke android:color="@color/brown" android:width="3dp" />
+    <stroke android:color="@color/brown" android:width="2dp" />
 
 </shape>

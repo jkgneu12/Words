@@ -264,7 +264,7 @@ public class GameActivity extends Activity implements OnClickListener{
 		ParsePush push = new ParsePush();
 		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
-		push.setMessage("You " + getEndScorePrefix() + " your game with " + yourName);
+		push.setMessage("You " + getEndScorePrefix(false) + " your game with " + yourName);
 		push.sendInBackground(new SendCallback() {
 			
 			@Override
@@ -319,14 +319,24 @@ public class GameActivity extends Activity implements OnClickListener{
     	setScoreText();
     	setupPreviousWords();
     }
+	
+	private void refreshGameBoardUIFromGame() {
+		for(int z = 0; z < game.gameBoard.length; z++){
+        	if(!Constants.isNull(game.gameBoard[z]) && Character.isLetter(game.gameBoard[z].charAt(0))){
+        		Tile tile = Tile.create(this, "" + game.gameBoard[z], game.gameBoardIndices[z], game.partOfLastWord[z]);
+        		gameBoard.addView(tile);
+        	}
+        }
+	}
 
 	public void setupPreviousWords() {
 		int prevWordCount = game.usedWords.size();
+		float fontSize = Constants.getPreviousWordSize(this);
+		
     	for(int z = 0; z < prevWordCount - 1; z++){
     		LinearLayout row = (LinearLayout) ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
     		
     		LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
-    		float fontSize = Constants.getPreviousWordSize(this);
     		String wordText = game.usedWords.get(z);
     		for(int y = 0; y < wordText.length(); y++){
     			TextView letter = new TextView(this);
@@ -334,10 +344,10 @@ public class GameActivity extends Activity implements OnClickListener{
     			letter.setTextSize(fontSize);
     			if(game.reused == null || game.reused.size() <= z || !game.reused.get(z).contains(y))
     				letter.setTextColor(getResources().getColor(R.color.brown));
+    			else 
+    				letter.setTextColor(getResources().getColor(R.color.orange));
     			word.addView(letter);
-        		//word.setFocusable(true);
     		}
-    		
     		
     		if(game.scores != null && game.scores.size() > z){
 	    		String scoreText = "" + game.scores.get(z);
@@ -359,12 +369,10 @@ public class GameActivity extends Activity implements OnClickListener{
 	    		space.setTextSize(fontSize / 2);
     		} 
     		
-    		
-    		
-    		
-    		
     		previousWords.addView(row);
     	}
+    	
+    	addDummyPreviousWord(fontSize);
     	
     	final StarWarsScroller scroll = (StarWarsScroller)previousWords.getParent();
     	scroll.post(new Runnable() {
@@ -375,29 +383,40 @@ public class GameActivity extends Activity implements OnClickListener{
         });
 	}
 
+	public void addDummyPreviousWord(float fontSize) {
+		LinearLayout row = (LinearLayout) ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
+		
+		LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
+		TextView text = new TextView(this);
+		text.setText(" ");
+		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+			fontSize *= 1.3;
+		text.setTextSize((int)fontSize);
+		word.addView(text);
+		
+    	previousWords.addView(row);
+	}
+
 	public String getMatchupText() {
 		if(isMyTurn)
 			return game.currentPlayerName + " vs. " + game.waitingPlayerName;
 		return game.waitingPlayerName + " vs. " + game.currentPlayerName;
 	}
 	
-	private void refreshGameBoardUIFromGame() {
-		for(int z = 0; z < game.gameBoard.length; z++){
-        	if(!Constants.isNull(game.gameBoard[z]) && Character.isLetter(game.gameBoard[z].charAt(0))){
-        		Tile tile = Tile.create(this, "" + game.gameBoard[z], game.gameBoardIndices[z], game.partOfLastWord[z]);
-        		gameBoard.addView(tile);
-        	}
-        }
-	}
+	
 
 	private void setScoreText() {
-		String scoreText = getScorePrefix() + game.currentPlayerScore + " : " + game.waitingPlayerScore;
+		String scoreText;
+		if(isMyTurn)
+			scoreText = getScorePrefix() + game.currentPlayerScore + " : " + game.waitingPlayerScore;
+		else
+			scoreText = getScorePrefix() + game.waitingPlayerScore + " : " + game.currentPlayerScore;
     	score.setText(scoreText);
 	}
 	
 	private String getScorePrefix() {
 		if(isGameOver)
-			return getEndScorePrefix();
+			return getEndScorePrefix(isMyTurn);
 		else
 			return getLiveScorePrefix();
 	}
@@ -417,12 +436,19 @@ public class GameActivity extends Activity implements OnClickListener{
     	return "Tied ";
 	}
 	
-	private String getEndScorePrefix(){
-		if(game.currentPlayerScore > game.waitingPlayerScore)
-    		return "Won ";
-    	else if(game.currentPlayerScore < game.waitingPlayerScore)
-    		return "Lost ";
-    	return "Tied ";
+	private String getEndScorePrefix(boolean forMe){
+		if(forMe){
+			if(game.currentPlayerScore > game.waitingPlayerScore)
+				return "Won ";
+			else if(game.currentPlayerScore < game.waitingPlayerScore)
+				return "Lost ";
+		} else {
+			if(game.currentPlayerScore > game.waitingPlayerScore)
+				return "Lost ";
+			else if(game.currentPlayerScore < game.waitingPlayerScore)
+				return "Won ";
+		}
+		return "Tied ";
 	}
 
 	public AppController getAppController(){

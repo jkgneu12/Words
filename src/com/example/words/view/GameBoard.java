@@ -6,10 +6,9 @@ import java.util.List;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
 
 import com.example.words.Constants;
-import com.example.words.activity.GameActivity;
+import com.example.words.R;
 
 public class GameBoard extends FreeFormBoard {
 
@@ -70,7 +69,15 @@ public class GameBoard extends FreeFormBoard {
 	}
 
 	
+	@Override
+	protected void goodHighlight() {
+		setBackgroundResource(R.drawable.gameboard_higlighted_background);
+	}
 
+	@Override
+	protected void unhighlight() {
+		setBackgroundResource(R.drawable.gameboard_background);
+	}
 	
 
 }

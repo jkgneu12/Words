@@ -4,7 +4,7 @@
     android:layout_height="wrap_content" 
     android:padding="10dp"
     android:layout_margin="5dp"
-    android:background="@android:color/darker_gray">
+    android:background="@drawable/game_row_background">
 
     <TextView
         android:id="@+id/opponent"

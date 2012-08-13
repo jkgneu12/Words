@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.words.Constants;
-import com.example.words.R;
 import com.example.words.activity.GameActivity;
 
 public abstract class Tile extends RelativeLayout {

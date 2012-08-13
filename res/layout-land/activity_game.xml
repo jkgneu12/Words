@@ -9,7 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_above="@+id/game_board"
-        android:layout_below="@+id/score"
         android:scrollbars="none">
 
         <com.example.words.view.StarWarsScrollerLayout
@@ -25,21 +24,15 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_alignBottom="@id/score"
-        android:background="#FF000000"
-        />
-    
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="30dp"
-        android:layout_alignTop="@id/score"
+        android:layout_alignBottom="@id/remaining_tiles"
         android:background="@drawable/fade"
         />
     
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
-       	android:layout_alignBottom="@+id/last_word"
+        android:layout_height="fill_parent"
+       	android:layout_alignTop="@id/last_word"
+       	android:layout_alignBottom="@id/last_word"
         android:background="@drawable/fade_180"
         />
     
@@ -122,14 +115,14 @@
         android:background="@drawable/gameboard_background" />
 
     <com.example.words.view.LastWord
-        android:id="@id/last_word"
+        android:id="@+id/last_word"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/game_board"
         android:gravity="center_horizontal" />
 
     
-
+    
     
 
 </RelativeLayout>

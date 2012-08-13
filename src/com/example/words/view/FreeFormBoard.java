@@ -1,10 +1,5 @@
 package com.example.words.view;
 
-import com.example.words.Constants;
-import com.example.words.activity.GameActivity;
-import com.example.words.listener.DragAndDropListener;
-import com.example.words.listener.IDragAndDrop;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +11,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.example.words.Constants;
+import com.example.words.activity.GameActivity;
+import com.example.words.listener.DragAndDropListener;
+import com.example.words.listener.IDragAndDrop;
 
 public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop {
 
@@ -30,7 +30,7 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 		setOrientation(HORIZONTAL);
 		setGravity(Gravity.CENTER);
 
-		setMinimumHeight(Constants.getTileDimensions((Activity)context));
+		setMinimumHeight((int)(Constants.getTileDimensions((Activity)context) + Constants.getDIPixels(activity, 10)));
 
 		initListeners();
 	}
@@ -41,17 +41,27 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 			setOnDragListener(new DragAndDropListener(this));
 	}
 
+	@Override
+	public void dragEntered(Tile tile) {
+    	containsDragable = true;
+    	if(canDrop(tile) && tile.getParent() != this)
+    		goodHighlight();
+	}
+
+	@Override
 	public void dragExited(Tile tile) {
 		containsDragable = false;
+        unhighlight();
 	}
 
-	public void dragEntered(Tile tile) {
-		containsDragable = true;
-	}
-
+	@Override
 	public void dragEnded(Tile tile) {
 		tile.setVisibility(View.VISIBLE);
+        unhighlight();
 	}
+	
+	protected abstract void goodHighlight();
+	protected abstract void unhighlight();
 
 	@TargetApi(11)
 	public void dragDropped(Tile tile, DragEvent dragEvent) {

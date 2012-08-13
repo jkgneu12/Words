@@ -2,23 +2,10 @@ package com.example.words.view;
 
 import java.util.Stack;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.view.DragEvent;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import com.example.words.Constants;
-import com.example.words.activity.GameActivity;
-import com.example.words.listener.DragAndDropListener;
-import com.example.words.listener.IDragAndDrop;
+import com.example.words.R;
 
 public class MyTiles extends FreeFormBoard {
 	
@@ -46,6 +33,18 @@ public class MyTiles extends FreeFormBoard {
 		while(!tiles.isEmpty()){
 			addView(tiles.pop());
 		}
+	}
+
+
+
+	@Override
+	protected void goodHighlight() {
+		setBackgroundResource(R.drawable.last_word_higlight_backround);
+	}
+
+	@Override
+	protected void unhighlight() {
+		setBackgroundDrawable(null);
 	}
 
 }

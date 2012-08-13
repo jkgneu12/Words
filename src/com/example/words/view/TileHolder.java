@@ -3,6 +3,7 @@ package com.example.words.view;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import com.example.words.activity.GameActivity;
 import com.example.words.listener.DragAndDropListener;
 import com.example.words.listener.IDragAndDrop;
 
-public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
+public class TileHolder extends FrameLayout implements IDragAndDrop {
 
 	protected GameActivity activity;
 	
@@ -51,28 +52,43 @@ public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_UP){
-			Tile active = activity.getActiveTile();
-			if(active != null && canDrop(active)){
-				ViewGroup owner = (ViewGroup) active.getParent();
-		        owner.removeView(active);
-		        addView(active);
-		        activity.setActiveTile(null);
-			}
+			((LastWord)getParent()).onTouchEvent(event);
 		}
 		return true;
 	}
 	
 
-	protected abstract boolean canDrop(Tile active);
+	protected boolean canDrop(Tile tile){
+		return tile.isPartOfLastWord() && ((LastWordTile)tile).getIndex() == index;
+	}
+
+	@TargetApi(11)
+	@Override
+	public void dragDropped(Tile tile, DragEvent dragEvent) {
+		if(canDrop(tile)) {
+			if(getChildCount() > 0){
+	    		Tile oldChild = (Tile)getChildAt(0);
+	    		removeView(oldChild);
+	    		if(tile.getParent() instanceof TileHolder && tile.getParent().getParent() instanceof GameBoard)
+	    			activity.addTileToGameBoard(oldChild);
+	    		else if(oldChild.isPartOfLastWord())
+	    			activity.replaceLastWordTile(tile, oldChild);
+	    		else
+	        		activity.replaceMyTile(tile, oldChild);
+	    	}
+	    	ViewGroup owner = (ViewGroup) tile.getParent();
+	        owner.removeView(tile);
+	        addView(tile);
+	        activity.update();
+		} else 
+			((LastWord)getParent()).dragDropped(tile, dragEvent);
+		
+	}
 	
 	@Override
 	public void dragEntered(Tile tile) {
-		if(!canDrop(tile))
-    		badHighlight();
-    	else {
-    		containsDragable = true;
-    		goodHighlight();
-    	}
+    	containsDragable = true;
+    	goodHighlight();
 	}
 	
 	@Override
@@ -106,8 +122,6 @@ public abstract class TileHolder extends FrameLayout implements IDragAndDrop {
 	protected int getIndex() {
 		return index;
 	}
-	
-	public abstract boolean isGameBoardHolder();
 	
 	public boolean containsDragable(){
 		return containsDragable;

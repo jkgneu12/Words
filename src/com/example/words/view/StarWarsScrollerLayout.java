@@ -1,13 +1,9 @@
 package com.example.words.view;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.example.words.Constants;
 
 public class StarWarsScrollerLayout extends LinearLayout {
 
