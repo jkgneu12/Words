@@ -33,7 +33,7 @@ public class Constants {
 
 	private static double VERSION = .1;
 	
-	public static final String UPDATE_SITE = "market://details?id=com.example.android";
+	public static final String UPDATE_SITE = "market://details?id=fm.asot";
 
 	public static int getActivityWidth(Activity activity){
 		DisplayMetrics pSize = new DisplayMetrics();

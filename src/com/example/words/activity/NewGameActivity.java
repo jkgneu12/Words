@@ -2,7 +2,6 @@ package com.example.words.activity;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,7 +16,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-public class NewGameActivity extends Activity implements OnClickListener {
+public class NewGameActivity extends BaseActivity implements OnClickListener {
 
 	private Button facebook;
 	private Button username;

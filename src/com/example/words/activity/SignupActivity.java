@@ -1,6 +1,5 @@
 package com.example.words.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,7 +20,7 @@ import com.parse.ParseUser;
 import com.parse.PushService;
 import com.parse.SignUpCallback;
 
-public class SignupActivity extends Activity implements OnClickListener {
+public class SignupActivity extends BaseActivity implements OnClickListener {
 
 	private EditText name;
 	private EditText password;

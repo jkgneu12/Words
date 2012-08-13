@@ -1,6 +1,5 @@
 package com.example.words.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,11 +10,12 @@ import android.widget.Button;
 import com.example.words.Constants;
 import com.example.words.R;
 
-public class MainActivity extends Activity implements OnClickListener  {
+public class MainActivity extends BaseActivity implements OnClickListener  {
 
 	private Button play;
 	private Button howToPlay;
 	private Button review;
+	private Button settings;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,10 +27,12 @@ public class MainActivity extends Activity implements OnClickListener  {
 		play = (Button)findViewById(R.id.play);
 		howToPlay = (Button)findViewById(R.id.how_to_play);
 		review = (Button)findViewById(R.id.review);
+		settings = (Button)findViewById(R.id.settings);
 		
 		play.setOnClickListener(this);
 		howToPlay.setOnClickListener(this);
 		review.setOnClickListener(this);
+		settings.setOnClickListener(this);
 
 	}
 	
@@ -40,8 +42,10 @@ public class MainActivity extends Activity implements OnClickListener  {
 			play();
 		else if(v == howToPlay)
 			howToPlay();
-		else
+		else if(v == review)
 			review();
+		else
+			settings();
 	}
 
 	private void play() {
@@ -59,6 +63,12 @@ public class MainActivity extends Activity implements OnClickListener  {
 	private void review() {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setData(Uri.parse(Constants.UPDATE_SITE));
+		startActivity(intent);
+	}
+	
+	private void settings() {
+		Intent intent = new Intent();
+		intent.setClass(this, SettingsActivity.class);
 		startActivity(intent);
 	}
 

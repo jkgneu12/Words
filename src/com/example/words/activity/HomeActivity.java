@@ -3,7 +3,6 @@ package com.example.words.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +30,7 @@ import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-public class HomeActivity extends Activity implements OnClickListener  {
+public class HomeActivity extends BaseActivity implements OnClickListener  {
 
 	private ParseUser currentUser;
 	private String userId;
@@ -174,6 +173,18 @@ public class HomeActivity extends Activity implements OnClickListener  {
 			} 
 		); 
 		
+		MenuItem settings = menu.findItem(R.id.settings);
+
+
+		settings.setOnMenuItemClickListener(
+			new MenuItem.OnMenuItemClickListener () { 
+				public boolean onMenuItemClick(MenuItem item) { 
+					settings();
+					return true;
+				}
+			} 
+		);
+		
 		if(!ParseFacebookUtils.isLinked(currentUser)){
 			MenuItem link = menu.findItem(R.id.link_facebook);
 
@@ -205,6 +216,12 @@ public class HomeActivity extends Activity implements OnClickListener  {
 		}
 
 		return true;
+	}
+
+	private void settings() {
+		Intent intent = new Intent();
+		intent.setClass(this, SettingsActivity.class);
+		startActivity(intent);
 	}
 
 	private void linkFacebook() {

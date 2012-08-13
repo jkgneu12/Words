@@ -1,7 +1,6 @@
 package com.example.words.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,7 +38,7 @@ import com.parse.ParsePush;
 import com.parse.ParseUser;
 import com.parse.SendCallback;
 
-public class GameActivity extends Activity implements OnClickListener{
+public class GameActivity extends BaseActivity implements OnClickListener{
 
 	private Game game;
 

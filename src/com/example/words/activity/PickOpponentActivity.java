@@ -3,7 +3,6 @@ package com.example.words.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,7 +23,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-public class PickOpponentActivity extends Activity implements OnItemClickListener, TextWatcher {
+public class PickOpponentActivity extends BaseActivity implements OnItemClickListener, TextWatcher {
 
 	private ListView userList;
 	private ParseUser currentUser;

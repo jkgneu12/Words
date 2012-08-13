@@ -5,6 +5,10 @@
         android:title="@string/refresh">
     </item>
     <item
+        android:id="@+id/settings"
+        android:title="@string/settings">
+    </item>
+    <item
         android:id="@+id/link_facebook"
         android:title="@string/link_facebook">
     </item>

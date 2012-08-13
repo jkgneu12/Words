@@ -1,81 +1,101 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ticker_holder"
+        android:layout_alignParentTop="true" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <com.example.words.view.NewGameButton
+                android:id="@+id/new_game"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="@string/new_game" />
+
+            <TextView
+                android:id="@+id/current_game_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/your_turn"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:id="@+id/current_games"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/waiting_game_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/their_turn"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:id="@+id/waiting_games"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical" >
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/finished_game_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/complete"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:id="@+id/finished_games"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout 
+        android:id="@id/ticker_holder"
+        android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:minHeight="1px"
+        android:layout_alignParentBottom="true">
 
-        <com.example.words.view.NewGameButton
-            android:id="@+id/new_game"
-            android:layout_width="fill_parent"
+        <com.example.words.view.Ticker
+            android:id="@+id/ticker"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/new_game" />
+             />
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/current_game_title"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/your_turn"
-            android:textSize="20dp" />
-
-        <LinearLayout
-            android:id="@+id/current_games"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/waiting_game_title"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/their_turn"
-            android:textSize="20dp" />
-
-        <LinearLayout
-            android:id="@+id/waiting_games"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical" >
-        </LinearLayout>
-        
-        <TextView
-            android:id="@+id/finished_game_title"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/complete"
-            android:textSize="20dp" />
-
-        <LinearLayout
-            android:id="@+id/finished_games"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical" >
-        </LinearLayout>
-        
-    </LinearLayout>
-
-</ScrollView>
+</RelativeLayout>

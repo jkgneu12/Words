@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background" >
-    
+
     <com.example.words.view.StarWarsScroller
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:layout_above="@+id/game_board"
         android:layout_below="@+id/score"
-        android:scrollbars="none">
+        android:layout_gravity="bottom"
+        android:scrollbars="none" >
 
         <com.example.words.view.StarWarsScrollerLayout
             android:id="@+id/previous_words"
@@ -20,61 +20,58 @@
             android:orientation="vertical" >
         </com.example.words.view.StarWarsScrollerLayout>
     </com.example.words.view.StarWarsScroller>
-    
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignBottom="@id/score"
-        android:background="#FF000000"
-        />
-    
+        android:layout_alignParentTop="true"
+        android:background="#FF000000" />
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="30dp"
         android:layout_alignTop="@id/score"
-        android:background="@drawable/fade"
-        />
-    
+        android:background="@drawable/fade" />
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-       	android:layout_alignBottom="@+id/last_word"
-        android:background="@drawable/fade_180"
-        />
-    
+        android:layout_alignBottom="@+id/last_word"
+        android:background="@drawable/fade_180" />
+
     <TextView
         android:id="@+id/opponent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
         android:textSize="14dp" />
-    
+
     <TextView
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
         android:textSize="14dp" />
 
     <TextView
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_below="@id/opponent"
         android:layout_alignParentLeft="true"
+        android:layout_below="@id/opponent"
+        android:layout_margin="10dp"
         android:textSize="14dp" />
 
     <LinearLayout
         android:id="@+id/buttons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/ticker_holder"
         android:layout_marginTop="5px" >
 
         <Button
@@ -83,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/resign" />
-        
+
         <Button
             android:id="@+id/pass"
             android:layout_width="0dp"
@@ -117,9 +114,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/my_tiles"
-        android:paddingTop="5dp"
+        android:background="@drawable/gameboard_background"
         android:paddingBottom="5dp"
-        android:background="@drawable/gameboard_background" />
+        android:paddingTop="5dp" />
 
     <com.example.words.view.LastWord
         android:id="@id/last_word"
@@ -128,8 +125,18 @@
         android:layout_above="@id/game_board"
         android:gravity="center_horizontal" />
 
-    
+    <FrameLayout
+        android:id="@id/ticker_holder"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:minHeight="1px" >
 
-    
+        <com.example.words.view.Ticker
+            android:id="@+id/ticker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+    </FrameLayout>
 
 </RelativeLayout>

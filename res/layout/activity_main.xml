@@ -1,26 +1,41 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   	android:background="@drawable/background"
-    android:orientation="vertical" >
+   	android:background="@drawable/background" >
 
     <Button
         android:id="@+id/play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:text="@string/play" />
 
     <Button
         android:id="@+id/how_to_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/play"
         android:text="@string/how_to_play" />
 
     <Button
         android:id="@+id/review"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/how_to_play"
         android:text="@string/review" />
+    
+    <Button
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/review"
+        android:text="@string/settings" />
+    
+    <com.example.words.view.Ticker 
+        android:id="@+id/ticker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>
