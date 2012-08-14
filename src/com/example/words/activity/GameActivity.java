@@ -153,7 +153,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	        	game.currentPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
 	        	game.waitingPlayerId = getIntent().getStringExtra("CurrentPlayerId");
 	        	game.waitingPlayerName = getIntent().getStringExtra("CurrentPlayerName");
-	        	game.waitingPlayerName = getIntent().getStringExtra("CurrentPlayerUserName");
+	        	game.waitingPlayerUserName = getIntent().getStringExtra("CurrentPlayerUserName");
 	        	game.waitingPlayerScore = getIntent().getIntExtra("CurrentPlayerScore", 0);
 	        	game.id = getIntent().getStringExtra("id");
         		game.refresh();
@@ -275,6 +275,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	}
 	
 	private void sendPush(String opponentName) {
+		if(opponentName == null)return;
 		ParsePush push = new ParsePush();
 		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
@@ -290,6 +291,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	}
 	
 	protected void sendGameOverPush(String opponentName) {
+		if(opponentName == null)return;
 		ParsePush push = new ParsePush();
 		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
