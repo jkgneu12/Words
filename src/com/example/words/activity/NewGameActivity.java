@@ -61,14 +61,15 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 				@Override
 				public void done(List<ParseObject> objects, ParseException e) {
 					int index = (int)(Math.random() * objects.size());
-					ParseObject user = objects.get(index);
+					ParseUser user = (ParseUser)objects.get(index);
 					
 					Intent intent = new Intent();
 					intent.setClass(NewGameActivity.this, GameActivity.class);
 					intent.putExtra("NewGame", true);
 					
 					intent.putExtra("WaitingPlayerId", user.getObjectId());
-					intent.putExtra("WaitingPlayerName", user.getString("username"));
+					intent.putExtra("WaitingPlayerName", user.getString("displayName"));
+					intent.putExtra("WaitingPlayerUserName", user.getUsername());
 					
 					startActivity(intent);
 					

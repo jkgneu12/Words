@@ -90,9 +90,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 
 						boolean currentPlayer = currentPlayerId.equals(userId);
 						if(currentPlayer)
-							data = new GameRowData(obj.getObjectId(), obj.getString("waitingPlayerName"), waitingPlayerId, waitingPlayerScore, currentPlayerScore, currentPlayer, gameOver);
+							data = new GameRowData(obj.getObjectId(), obj.getString("waitingPlayerName"), obj.getString("waitingPlayerUserName"), waitingPlayerId, waitingPlayerScore, currentPlayerScore, currentPlayer, gameOver);
 						else
-							data = new GameRowData(obj.getObjectId(), obj.getString("currentPlayerName"), currentPlayerId, currentPlayerScore, waitingPlayerScore, currentPlayer, gameOver);
+							data = new GameRowData(obj.getObjectId(), obj.getString("currentPlayerName"), obj.getString("currentPlayerUserName"), currentPlayerId, currentPlayerScore, waitingPlayerScore, currentPlayer, gameOver);
 
 						games.add(data);
 					}
@@ -271,9 +271,11 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 
 		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
 		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
+		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
 		intent.putExtra("CurrentPlayerScore", item.yourScore);
 		intent.putExtra("WaitingPlayerId", item.opponentId);
 		intent.putExtra("WaitingPlayerName", item.opponent);
+		intent.putExtra("WaitingPlayerUserName", item.opponentUserName);
 		intent.putExtra("WaitingPlayerScore", item.opponentScore);
 
 		intent.putExtra("id", item.id);

@@ -41,10 +41,12 @@ public class Game implements Parcelable{
 	public String currentPlayerId;
 	public int currentPlayerScore;
 	public String currentPlayerName;
+	public String currentPlayerUserName;
 	public String[] currentPlayerTiles;
 	public String waitingPlayerId;
 	public int waitingPlayerScore;
 	public String waitingPlayerName;
+	public String waitingPlayerUserName;
 	public String[] waitingPlayerTiles;
 	public boolean lastPlayerPassed;
 	public int[] gameBoardIndices;
@@ -89,9 +91,11 @@ public class Game implements Parcelable{
 		currentPlayerId = in.readString();
 		currentPlayerScore = in.readInt();
 		currentPlayerName = in.readString();
+		currentPlayerUserName = in.readString();
 		waitingPlayerId = in.readString();
 		waitingPlayerScore = in.readInt();
 		waitingPlayerName = in.readString();
+		waitingPlayerUserName = in.readString();
 		in.readIntArray(gameBoardIndices);
 		in.readList(usedWords, null);
 		in.readList(scores, null);
@@ -182,10 +186,12 @@ public class Game implements Parcelable{
 		
 		parseObject.put("currentPlayerId", waitingPlayerId);
 		parseObject.put("currentPlayerName", waitingPlayerName);
+		parseObject.put("currentPlayerUserName", waitingPlayerUserName);
 		parseObject.put("currentPlayerScore", waitingPlayerScore);
 		parseObject.put("currentPlayerTiles",Constants.arrayToList(waitingPlayerTiles));
 		parseObject.put("waitingPlayerId", currentPlayerId);
 		parseObject.put("waitingPlayerName", currentPlayerName);
+		parseObject.put("waitingPlayerUserName", currentPlayerUserName);
 		parseObject.put("waitingPlayerScore", currentPlayerScore);
 		parseObject.put("waitingPlayerTiles",Constants.arrayToList(currentPlayerTiles));
 		parseObject.put("myTiles",Constants.arrayToList(currentPlayerTiles));
@@ -295,9 +301,11 @@ public class Game implements Parcelable{
 		dest.writeString(currentPlayerId);
 		dest.writeInt(currentPlayerScore);
 		dest.writeString(currentPlayerName);
+		dest.writeString(currentPlayerUserName);
 		dest.writeString(waitingPlayerId);
 		dest.writeInt(waitingPlayerScore);
 		dest.writeString(waitingPlayerName);
+		dest.writeString(waitingPlayerUserName);
 		dest.writeIntArray(gameBoardIndices);
 		dest.writeList(usedWords);
 		dest.writeList(scores);

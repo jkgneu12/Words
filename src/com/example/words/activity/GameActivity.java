@@ -126,18 +126,22 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	        	game.initMyTiles();
 	        	game.currentPlayerId = currentUser.getObjectId();
 	        	game.currentPlayerName = currentUser.getString("displayName");
+	        	game.currentPlayerUserName = currentUser.getUsername();
 	        	game.currentPlayerScore = 0;
 	        	game.waitingPlayerId = getIntent().getStringExtra("WaitingPlayerId");
 	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
+	        	game.waitingPlayerUserName = getIntent().getStringExtra("WaitingPlayerUserName");
 	        	game.waitingPlayerScore = 0;
 	        	refreshUIFromGame();  
         	} else if(isMyTurn) {
         		game = new Game(this);
         		game.currentPlayerId = getIntent().getStringExtra("CurrentPlayerId");
 	        	game.currentPlayerName = getIntent().getStringExtra("CurrentPlayerName");
+	        	game.currentPlayerUserName = getIntent().getStringExtra("CurrentPlayerUserName");
 	        	game.currentPlayerScore = getIntent().getIntExtra("CurrentPlayerScore", 0);
 	        	game.waitingPlayerId = getIntent().getStringExtra("WaitingPlayerId");
 	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
+	        	game.waitingPlayerUserName = getIntent().getStringExtra("WaitingPlayerUserName");
 	        	game.waitingPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
 	        	game.id = getIntent().getStringExtra("id");
         		game.refresh();
@@ -145,9 +149,11 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         		game = new Game(this);
         		game.currentPlayerId = getIntent().getStringExtra("WaitingPlayerId");
 	        	game.currentPlayerName = getIntent().getStringExtra("WaitingPlayerName");
+	        	game.currentPlayerUserName = getIntent().getStringExtra("WaitingPlayerUserName");
 	        	game.currentPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
 	        	game.waitingPlayerId = getIntent().getStringExtra("CurrentPlayerId");
 	        	game.waitingPlayerName = getIntent().getStringExtra("CurrentPlayerName");
+	        	game.waitingPlayerName = getIntent().getStringExtra("CurrentPlayerUserName");
 	        	game.waitingPlayerScore = getIntent().getIntExtra("CurrentPlayerScore", 0);
 	        	game.id = getIntent().getStringExtra("id");
         		game.refresh();
@@ -226,7 +232,8 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		Intent intent = new Intent();
 		intent.setClass(this, ChatActivity.class);
 		intent.putExtra("receivingUser", isMyTurn ? game.waitingPlayerId : game.currentPlayerId);
-		intent.putExtra("receivingUserName", isMyTurn ? game.waitingPlayerName : game.currentPlayerName);
+		intent.putExtra("receivingUserName", isMyTurn ? game.waitingPlayerUserName : game.currentPlayerUserName);
+		intent.putExtra("receivingName", isMyTurn ? game.waitingPlayerName : game.currentPlayerName);
 		startActivity(intent);
 	}
 
@@ -245,7 +252,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 			game.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
 			game.save();
 			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
-			sendPush(game.currentPlayerName, game.waitingPlayerName);
+			sendPush(game.waitingPlayerUserName);
 			finish();
 		}
 		else
@@ -267,11 +274,11 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		
 	}
 	
-	private void sendPush(String yourName, String opponentName) {
+	private void sendPush(String opponentName) {
 		ParsePush push = new ParsePush();
 		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
-		push.setMessage("Your turn with " + yourName);
+		push.setMessage("Your turn with " + currentUser.get("displayName"));
 		push.sendInBackground(new SendCallback() {
 			
 			@Override
@@ -282,11 +289,11 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		});
 	}
 	
-	protected void sendGameOverPush(String yourName, String opponentName) {
+	protected void sendGameOverPush(String opponentName) {
 		ParsePush push = new ParsePush();
 		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
 		push.setExpirationTimeInterval(86400);
-		push.setMessage("You " + getEndScorePrefix(false) + " your game with " + yourName);
+		push.setMessage("You " + getEndScorePrefix(false) + " your game with " + currentUser.get(""));
 		push.sendInBackground(new SendCallback() {
 			
 			@Override
@@ -510,11 +517,11 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		        	   reset();
 		        	   if(game.lastPlayerPassed){
 		        		   game.save(true, true);
-		        		   sendGameOverPush(game.currentPlayerName, game.waitingPlayerName);
+		        		   sendGameOverPush(game.waitingPlayerUserName);
 		        		   finish();
 		        	   } else {
 		        		   game.save(true, false);
-		        		   sendPush(game.currentPlayerName, game.waitingPlayerName);
+		        		   sendPush(game.waitingPlayerUserName);
 		        	   }
 		        	   finish();
 		           }

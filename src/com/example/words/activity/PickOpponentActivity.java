@@ -58,9 +58,11 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
 				for(ParseObject obj : objects){
-					String userName = obj.getString("displayName");
-					String userId = obj.getObjectId();
-					users.add(new UserRowData(userId, userName));
+					ParseUser pUser = (ParseUser)obj;
+					String user = pUser.getString("displayName");
+					String userName = pUser.getUsername();
+					String userId = pUser.getObjectId();
+					users.add(new UserRowData(userId, user, userName));
 				}
 				
 				adapter = new UserListAdpater(PickOpponentActivity.this, R.layout.user_row, users);
@@ -80,7 +82,8 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
 		
 		UserRowData item = adapter.getItem(position);
 		intent.putExtra("WaitingPlayerId", item.userId);
-		intent.putExtra("WaitingPlayerName", item.userName);
+		intent.putExtra("WaitingPlayerName", item.user);
+		intent.putExtra("WaitingPlayerUserName", item.userName);
 		
 		startActivity(intent);
 		

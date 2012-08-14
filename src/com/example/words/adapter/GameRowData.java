@@ -12,11 +12,13 @@ public class GameRowData implements Parcelable{
 	public int yourScore;
 	public boolean currentPlayer;
 	public boolean gameOver;
+	public String opponentUserName;
 
 
-	public GameRowData(String id, String opponent, String opponentId, int opponentScore, int yourScore, boolean currentPlayer, boolean gameOver) {
+	public GameRowData(String id, String opponent, String opponentUserName, String opponentId, int opponentScore, int yourScore, boolean currentPlayer, boolean gameOver) {
 		this.id = id;
 		this.opponent = opponent;
+		this.opponentUserName = opponentUserName;
 		this.opponentId = opponentId;
 		this.opponentScore = opponentScore;
 		this.yourScore = yourScore;
@@ -28,6 +30,7 @@ public class GameRowData implements Parcelable{
 	public GameRowData(Parcel in) {
 		this.id = in.readString();
 		this.opponent = in.readString();
+		this.opponentUserName = in.readString();
 		this.opponentId = in.readString();
 		this.opponentScore = in.readInt();
 		this.yourScore = in.readInt();
@@ -46,6 +49,7 @@ public class GameRowData implements Parcelable{
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(id);
 		dest.writeString(opponent);
+		dest.writeString(opponentUserName);
 		dest.writeString(opponentId);
 		dest.writeInt(opponentScore);
 		dest.writeInt(yourScore);

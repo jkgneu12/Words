@@ -88,6 +88,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 					for(ParseObject obj : objs){
 						addText(obj.getString("text"), obj.getString("sendingUser").equals(userId));
 					}
+					scrollToBottom();
 				}
 			}
 		});
@@ -135,12 +136,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 					Toast.makeText(ChatActivity.this, "Could not send message", Toast.LENGTH_LONG).show();
 				} else {
 					addText(text, true);
-					chatWindowScroll.post(new Runnable() {
-			            @Override
-			            public void run() {
-			            	chatWindowScroll.fullScroll(ScrollView.FOCUS_DOWN);
-			            }
-			        });
+					scrollToBottom();
 					
 					ParsePush push = new ParsePush();
 					push.setChannel("User" + opponentName.replaceAll("\\s", ""));
@@ -161,6 +157,14 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		input.setText("");
 	}
 
+	public void scrollToBottom() {
+		chatWindowScroll.post(new Runnable() {
+		    @Override
+		    public void run() {
+		    	chatWindowScroll.fullScroll(ScrollView.FOCUS_DOWN);
+		    }
+		});
+	}
 	
 
 }
