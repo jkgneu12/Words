@@ -1,13 +1,11 @@
 package com.example.words.activity;
 
-import java.text.RuleBasedCollator;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -15,6 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +24,10 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SendCallback;
-import com.parse.ParseQuery.CachePolicy;
 
 public class ChatActivity extends BaseActivity implements OnClickListener {
 	
@@ -39,6 +38,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 	private String userId;
 	private String opponentId;
 	private String opponentName;
+	private ScrollView chatWindowScroll;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		
 		Constants.initParse(this); 
 		
+		chatWindowScroll = (ScrollView)findViewById(R.id.chat_window_scroll);
 		chatWindow = (LinearLayout)findViewById(R.id.chat_window);
 		input = (EditText)findViewById(R.id.input);
 		submit = (Button)findViewById(R.id.submit);
@@ -134,6 +135,12 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 					Toast.makeText(ChatActivity.this, "Could not send message", Toast.LENGTH_LONG).show();
 				} else {
 					addText(text, true);
+					chatWindowScroll.post(new Runnable() {
+			            @Override
+			            public void run() {
+			            	chatWindowScroll.fullScroll(ScrollView.FOCUS_DOWN);
+			            }
+			        });
 					
 					ParsePush push = new ParsePush();
 					push.setChannel("User" + opponentName.replaceAll("\\s", ""));

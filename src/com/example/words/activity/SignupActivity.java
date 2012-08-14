@@ -41,7 +41,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 
 
 		if (currentUser != null) {
-			navigate(currentUser.getString("displayName"));
+			navigate(currentUser.getUsername());
 		} else {
 
 			setContentView(R.layout.activity_signup);
@@ -135,7 +135,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 			public void done(ParseUser user, ParseException e) {
 				if(e == null){
 					currentUser = user;
-					navigate(currentUser.getString("displayName"));
+					navigate(currentUser.getUsername());
 				} else 
 					Toast.makeText(SignupActivity.this, "Could not login " + e.getMessage(), Toast.LENGTH_LONG).show();
 			}
@@ -150,7 +150,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 					if (ParseFacebookUtils.isLinked(user)) {
 						new FacebookGetTask(user).execute("/me");
 						currentUser = user;
-						navigate(currentUser.getString("displayName"));
+						navigate(currentUser.getUsername());
 
 					} else {
 						Toast.makeText(SignupActivity.this, "Facebook Linking Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -170,7 +170,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 					if (ParseTwitterUtils.isLinked(user)) {
 						new TwitterGetTask(user).execute();
 						currentUser = user;
-						navigate(currentUser.getString("displayName"));
+						navigate(currentUser.getUsername());
 
 					} else {
 						Toast.makeText(SignupActivity.this, "Twitter Linking Failed " + e.getMessage(), Toast.LENGTH_LONG).show();
