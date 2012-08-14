@@ -219,4 +219,8 @@ public class Constants {
 		}
 		return ret;
 	}
+	
+	public static boolean getSharedPrefBool(Activity activity, String pref){
+		return activity.getSharedPreferences("SETTINGS", Activity.MODE_PRIVATE).getBoolean(pref, false);
+	}
 }

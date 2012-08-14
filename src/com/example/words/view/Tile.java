@@ -174,14 +174,14 @@ public abstract class Tile extends RelativeLayout {
 			super.onProvideShadowMetrics(shadowSize, shadowTouchPoint);
 			shadowSize.x *= DRAG_SCALE;
 			shadowSize.y *= DRAG_SCALE;
-			boolean left = false;
+			boolean right;
 			if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-				left = RIGHT_HANDED;
+				right = Constants.getSharedPrefBool(activity, "leftHanded");
 			} else {
-				left = !leftSideOfScreen(shadowTouchPoint.x);
+				right = leftSideOfScreen(shadowTouchPoint.x);
 			}
 			
-			if(!left)
+			if(right)
 				shadowTouchPoint.x *= .5 * DRAG_SCALE;
 			else 
 				shadowTouchPoint.x *= 2 * DRAG_SCALE;

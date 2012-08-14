@@ -67,6 +67,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		queries.add(new ParseQuery("Game").whereEqualTo("currentPlayerId", currentUser.getObjectId()));
 		queries.add(new ParseQuery("Game").whereEqualTo("waitingPlayerId", currentUser.getObjectId()));
 		ParseQuery query = ParseQuery.or(queries); 
+		query.orderByDescending("updatedAt");
 		query.setCachePolicy(CachePolicy.CACHE_THEN_NETWORK);
 		query.findInBackground(new FindCallback() {
 			@Override
@@ -269,7 +270,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		GameRowData item = row.getData();
 
 		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
-		intent.putExtra("CurrentPlayerName", currentUser.getUsername());
+		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
 		intent.putExtra("CurrentPlayerScore", item.yourScore);
 		intent.putExtra("WaitingPlayerId", item.opponentId);
 		intent.putExtra("WaitingPlayerName", item.opponent);

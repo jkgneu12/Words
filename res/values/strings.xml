@@ -36,5 +36,8 @@
     <string name="ticker_text">Using all of the letters from the last word earns you Double Points… You must use at least one letter from the last word…  The game is over when there are no more tiles, both players have passed consecutively, or a player resigns…  Each word can be at most 7-letters long.</string>
     <string name="settings">Settings</string>
     <string name="hide_ticker">Hide Ticker</string>
+    <string name="chat_hint">Chat…</string>
+    <string name="send">Send</string>
+    <string name="left_handed">Left Handed</string>
 
 </resources>

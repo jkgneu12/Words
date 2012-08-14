@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -123,7 +125,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	        	game.initBag();
 	        	game.initMyTiles();
 	        	game.currentPlayerId = currentUser.getObjectId();
-	        	game.currentPlayerName = currentUser.getUsername();
+	        	game.currentPlayerName = currentUser.getString("displayName");
 	        	game.currentPlayerScore = 0;
 	        	game.waitingPlayerId = getIntent().getStringExtra("WaitingPlayerId");
 	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
@@ -204,8 +206,29 @@ public class GameActivity extends BaseActivity implements OnClickListener{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_game, menu);
+        
+        MenuItem refresh = menu.findItem(R.id.chat);
+
+
+		refresh.setOnMenuItemClickListener(
+			new MenuItem.OnMenuItemClickListener () { 
+				public boolean onMenuItemClick(MenuItem item) { 
+					chat();
+					return true;
+				}
+			} 
+		); 
+        
         return true;
     }
+
+	protected void chat() {
+		Intent intent = new Intent();
+		intent.setClass(this, ChatActivity.class);
+		intent.putExtra("receivingUser", isMyTurn ? game.waitingPlayerId : game.currentPlayerId);
+		intent.putExtra("receivingUserName", isMyTurn ? game.waitingPlayerName : game.currentPlayerName);
+		startActivity(intent);
+	}
 
 	public void update() {
 		game.update(gameBoard, myTiles, lastWord);

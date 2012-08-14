@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background" >
+
+    <ScrollView
+        android:id="@+id/chat_window_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/submit"
+        android:layout_alignParentTop="true" >
+
+        <LinearLayout
+            android:id="@+id/chat_window"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ticker_holder"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/submit"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="@string/chat_hint"
+        android:textSize="18dp" />
+
+    <Button
+        android:id="@id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ticker_holder"
+        android:layout_alignParentRight="true"
+        android:text="@string/send" />
+
+    <FrameLayout
+        android:id="@id/ticker_holder"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:minHeight="1px" >
+
+        <com.example.words.view.Ticker
+            android:id="@+id/ticker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+    </FrameLayout>
+
+</RelativeLayout>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.view.Ticker;
 
@@ -19,7 +20,7 @@ public class BaseActivity extends Activity {
 		super.onResume();
 		View ticker = findViewById(R.id.ticker);
 		if(ticker != null){
-			if(getSharedPreferences("SETTINGS", MODE_PRIVATE).getBoolean("hideTicker", false)){
+			if(Constants.getSharedPrefBool(this, "hideTicker")){
 				((Ticker)ticker).pauseScroll();
 				((Ticker)ticker).setVisibility(View.GONE);
 			} else {
