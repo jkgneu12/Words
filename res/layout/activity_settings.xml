@@ -17,6 +17,20 @@
        android:layout_height="wrap_content"
        android:text="@string/left_handed"
        android:layout_below="@id/hide_ticker"/>
+   
+   <CheckBox
+       android:id="@+id/chat_push"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/chat_push"
+       android:layout_below="@id/left_handed"/>
+   
+   <CheckBox
+       android:id="@+id/game_push"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="@string/game_push"
+       android:layout_below="@id/chat_push"/>
 
     <com.example.words.view.Ticker 
         android:id="@id/ticker"

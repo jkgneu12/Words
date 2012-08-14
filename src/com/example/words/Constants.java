@@ -16,6 +16,9 @@ import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
+import com.example.words.activity.ChatActivity;
+import com.example.words.activity.HomeActivity;
+import com.example.words.activity.SignupActivity;
 import com.example.words.state.Game;
 import com.example.words.view.LastWord;
 import com.parse.GetCallback;
@@ -25,6 +28,7 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseTwitterUtils;
+import com.parse.PushService;
 
 public class Constants {
 
@@ -160,6 +164,37 @@ public class Constants {
 		Parse.initialize(a, "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", "r4BwcVVLoX7wo92garHMfPa10O6xdmlVIS57ymt8");
 		ParseFacebookUtils.initialize("490350197661440");
 		ParseTwitterUtils.initialize("gruvvPslY6g4e8uEGgLqtA", "wcpS5Bt5NEfoooibKRg650Beww7EtQEPFGJTQvJs");
+	}
+	
+	public static void pushSubscribe(Activity activity, String userName){
+		userName = sanitizeUserName(userName);
+		PushService.subscribe(activity, "UserInit" + userName, SignupActivity.class);
+		PushService.subscribe(activity, "UserGame" + userName, HomeActivity.class);	
+		PushService.subscribe(activity, "UserChat" + userName, ChatActivity.class);
+	}
+	
+	public static void pushSubscribeGame(Activity activity, String userName){
+		userName = sanitizeUserName(userName);
+		PushService.subscribe(activity, "UserGame" + userName, HomeActivity.class);	
+	}
+	
+	public static void pushSubscribeChat(Activity activity, String userName){
+		userName = sanitizeUserName(userName);
+		PushService.subscribe(activity, "UserChat" + userName, ChatActivity.class);
+	}
+	
+	public static void pushUnsubscribeGame(Activity activity, String userName){
+		userName = sanitizeUserName(userName);
+		PushService.unsubscribe(activity, "UserGame" + userName);
+	}
+	
+	public static void pushUnsubscribeChat(Activity activity, String userName){
+		userName = sanitizeUserName(userName);
+		PushService.unsubscribe(activity, "UserChat" + userName);
+	}
+	
+	public static String sanitizeUserName(String userName){
+		return userName.replaceAll("\\s", "");
 	}
 
 	public static float getPreviousWordSize(Activity activity) {

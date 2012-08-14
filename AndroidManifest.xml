@@ -14,35 +14,26 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo" >
-        <activity
-            android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.SignupActivity" >
+        <activity android:name=".activity.SignupActivity" >
         </activity>
-        <activity
-            android:name=".activity.HowToActivity" >
+        <activity android:name=".activity.HowToActivity" >
         </activity>
-        <activity
-            android:name=".activity.HomeActivity" >
+        <activity android:name=".activity.HomeActivity" >
         </activity>
-        <activity
-            android:name=".activity.GameActivity"
-             >
+        <activity android:name=".activity.GameActivity" >
         </activity>
-        <activity
-            android:name=".activity.NewGameActivity" >
+        <activity android:name=".activity.NewGameActivity" >
         </activity>
-        <activity
-            android:name=".activity.PickOpponentActivity" >
+        <activity android:name=".activity.PickOpponentActivity" >
         </activity>
-        <activity
-            android:name=".activity.SettingsActivity" >
+        <activity android:name=".activity.SettingsActivity" >
         </activity>
         <activity
             android:name=".activity.ChatActivity"
@@ -57,6 +48,7 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+        
     </application>
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

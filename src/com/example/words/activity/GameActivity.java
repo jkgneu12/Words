@@ -277,7 +277,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	private void sendPush(String opponentName) {
 		if(opponentName == null)return;
 		ParsePush push = new ParsePush();
-		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
+		push.setChannel("UserGame" + Constants.sanitizeUserName(opponentName));
 		push.setExpirationTimeInterval(86400);
 		push.setMessage("Your turn with " + currentUser.get("displayName"));
 		push.sendInBackground(new SendCallback() {
@@ -293,7 +293,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	protected void sendGameOverPush(String opponentName) {
 		if(opponentName == null)return;
 		ParsePush push = new ParsePush();
-		push.setChannel("User" + opponentName.replaceAll("\\s", ""));
+		push.setChannel("UserGame" + Constants.sanitizeUserName(opponentName));
 		push.setExpirationTimeInterval(86400);
 		push.setMessage("You " + getEndScorePrefix(false) + " your game with " + currentUser.get(""));
 		push.sendInBackground(new SendCallback() {

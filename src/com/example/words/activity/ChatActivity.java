@@ -3,6 +3,9 @@ package com.example.words.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -138,20 +141,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 					addText(text, true);
 					scrollToBottom();
 					
-					ParsePush push = new ParsePush();
-					push.setChannel("User" + opponentName.replaceAll("\\s", ""));
-					push.setExpirationTimeInterval(86400);
-					push.setMessage(currentUser.getString("displayName") + " said: " + text);
-					push.sendInBackground(new SendCallback() {
-						
-						@Override
-						public void done(ParseException e) {
-							if(e != null)
-								Log.w("PUSH", e.getMessage());
-						}
-					});
+					sendPush(text);
 				}
 			}
+			
 		});
 		
 		input.setText("");
@@ -164,6 +157,35 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		    	chatWindowScroll.fullScroll(ScrollView.FOCUS_DOWN);
 		    }
 		});
+	}
+	
+	public void sendPush(final String text) {
+		try {
+			ParsePush push = new ParsePush();
+			push.setChannel("UserChat" + Constants.sanitizeUserName(opponentName));
+			push.setExpirationTimeInterval(86400);
+			
+			JSONObject json = new JSONObject();
+			json.put("title", currentUser.getString("displayName") + " sent you a message");
+			json.put("alert", text);
+			json.put("action", "com.example.words.activity.ChatActivity");
+			json.put("opponentId", currentUser.getObjectId());
+			json.put("opponentName", currentUser.getString("displayName"));
+			
+			push.setData(json);
+			
+			push.sendInBackground(new SendCallback() {
+				
+				@Override
+				public void done(ParseException e) {
+					if(e != null)
+						Log.w("PUSH", e.getMessage());
+				}
+			});
+		
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 	
 

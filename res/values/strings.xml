@@ -39,5 +39,7 @@
     <string name="chat_hint">Chat…</string>
     <string name="send">Send</string>
     <string name="left_handed">Left Handed</string>
+    <string name="chat_push">Receive Notifications for Chat</string>
+    <string name="game_push">Receive Notifications for Games</string>
 
 </resources>

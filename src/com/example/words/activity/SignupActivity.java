@@ -64,7 +64,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private void navigate(String userName) {
-		PushService.subscribe(this, "User" + userName.replaceAll("\\s", ""), SignupActivity.class);
+		Constants.pushSubscribe(this, userName);
 		Intent intent = new Intent();
 		intent.setClass(this, HomeActivity.class);
 		startActivity(intent);
