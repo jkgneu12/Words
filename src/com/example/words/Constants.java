@@ -64,9 +64,9 @@ public class Constants {
 		if(!lastWord.usedAtLeastOneTile())
 			return "You must use at least 1 tile from the last word";
 
-		String[] wordArray = game.gameBoard;
+		String[] wordArray = game.board.tiles;
 		String word = arrayToString(wordArray).trim().toUpperCase();
-		if(game.usedWords.contains(word)) 
+		if(game.prevWords.usedWords.contains(word)) 
 			return "Already Used";
 
 		String lastWordString = lastWord.getLastWord().toUpperCase();

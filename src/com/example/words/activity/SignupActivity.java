@@ -17,7 +17,6 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
-import com.parse.PushService;
 import com.parse.SignUpCallback;
 
 public class SignupActivity extends BaseActivity implements OnClickListener {

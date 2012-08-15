@@ -1,20 +1,17 @@
 package com.example.words.state;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.words.Constants;
-import com.example.words.R;
 import com.example.words.activity.GameActivity;
 import com.example.words.view.GameBoard;
 import com.example.words.view.LastWord;
@@ -28,132 +25,73 @@ import com.parse.SaveCallback;
 public class Game implements Parcelable{
 	
 	private GameActivity activity;
+	private ParseObject parseObject;
 	
 	public String id;
-	
-	public String[] gameBoard;
-	public String[] currentLastWord;
-	public String[] completeLastWord;
-	public boolean[] partOfLastWord;
-	
-	public Map<String, Object> bag;
-	
-	public String currentPlayerId;
-	public int currentPlayerScore;
-	public String currentPlayerName;
-	public String currentPlayerUserName;
-	public String[] currentPlayerTiles;
-	public String waitingPlayerId;
-	public int waitingPlayerScore;
-	public String waitingPlayerName;
-	public String waitingPlayerUserName;
-	public String[] waitingPlayerTiles;
-	public boolean lastPlayerPassed;
-	public int[] gameBoardIndices;
-	
-	public List<String> usedWords; 
-	public List<Integer> scores;
-	public List<String> turns; 
-	public List<List<Integer>> reused;
-
-	private ParseObject parseObject;
 
 	public boolean isMyTurn = false;
 
+	public Player currentPlayer;
+	public Player waitingPlayer;
+
+	public Board board;
+	public Bag bag;
+	
+	public PreviousWords prevWords;
+	public LastTurn lastTurn;
+
 	
 
-	public Game(GameActivity activity) {
+	public Game(GameActivity activity, Intent intent, boolean isNewGame, boolean isMyTurn) {
 		this.activity = activity;
 		
-		this.gameBoard = new String[Constants.NUM_TILE_HOLDERS];  
-		this.gameBoardIndices = new int[Constants.NUM_TILE_HOLDERS];  
-		this.currentPlayerTiles = new String[Constants.NUM_MY_TILES]; 
-		this.waitingPlayerTiles = new String[Constants.NUM_MY_TILES]; 
-		this.currentLastWord = new String[Constants.NUM_TILE_HOLDERS];  
-		this.completeLastWord = new String[Constants.NUM_TILE_HOLDERS];  
-		this.lastPlayerPassed = false;
+		this.currentPlayer = new Player(this);
+		this.waitingPlayer = new Player(this);
 		
-		usedWords = new ArrayList<String>();
-		scores = new ArrayList<Integer>();
-		turns = new ArrayList<String>();
-		reused = new ArrayList<List<Integer>>();
+		this.board = new Board(this);
+		this.bag = new Bag(activity, this);
+		
+		this.prevWords = new PreviousWords(this);
+		
+		this.lastTurn = new LastTurn(this);
+		
+		this.isMyTurn = isMyTurn;
+		
+		init(intent, isNewGame);
 	}
 
-	public Game(Parcel in) {
-		in.readStringArray(gameBoard);
-		in.readStringArray(currentPlayerTiles);
-		in.readStringArray(waitingPlayerTiles);
-		in.readStringArray(currentLastWord);
-		in.readStringArray(completeLastWord);
-		in.readBooleanArray(partOfLastWord);
-		id = in.readString();
-		in.readMap(bag, null);
-		currentPlayerId = in.readString();
-		currentPlayerScore = in.readInt();
-		currentPlayerName = in.readString();
-		currentPlayerUserName = in.readString();
-		waitingPlayerId = in.readString();
-		waitingPlayerScore = in.readInt();
-		waitingPlayerName = in.readString();
-		waitingPlayerUserName = in.readString();
-		in.readIntArray(gameBoardIndices);
-		in.readList(usedWords, null);
-		in.readList(scores, null);
-		in.readList(turns, null);
-		in.readList(reused, null);
-	}
-
-	public void initBag() {
-		bag = new HashMap<String, Object>();
-		String[] alpha = activity.getResources().getStringArray(R.array.alpha);
-		int[] count = activity.getResources().getIntArray(R.array.count);
-		
-		for(int z = 0; z < alpha.length; z++){
-			bag.put(alpha[z], count[z]);
-		}
+	public void init(Intent intent, boolean isNewGame) {
+		if(isNewGame){
+        	bag.initBag();
+        	initMyTiles();
+        	setupUsers(intent);
+        	activity.refreshUIFromGame();  
+    	} else {
+    		id = intent.getStringExtra("id");
+    		setupUsers(intent);
+    		refresh();
+    	}
 	}
 	
 	public void initMyTiles(){
-		for(int z = 0; z < currentPlayerTiles.length; z++){
-			currentPlayerTiles[z] = takeFromBag();
-			waitingPlayerTiles[z] = takeFromBag();
+		currentPlayer.initMyTiles();
+		waitingPlayer.initMyTiles();
+	}
+	
+	public void setupUsers(Intent intent) {
+		if(isMyTurn){
+			currentPlayer.init(intent, "CurrentPlayer");
+			waitingPlayer.init(intent, "WaitingPlayer");
+		} else {
+			currentPlayer.init(intent, "WaitingPlayer");
+			waitingPlayer.init(intent, "CurrentPlayer");
 		}
 	}
 	
-	public String takeFromBag(){
-		if(isBagEmpty())
-			return null;
-		int randomLetter = (int) (Math.random() * bag.size());
-		String key = activity.getAppController().getLetter(randomLetter);
-		int remaining = (Integer)bag.get(key);
-		if(remaining > 0){
-			bag.put(key, remaining - 1);
-			return key;
-		}
-		return takeFromBag();
-	}
-	
-	public boolean isBagEmpty(){
-		for(String c : bag.keySet()){
-			if((Integer)bag.get(c) > 0)
-				return false;
-		}
-		return true;
-	}
-	
-	public int remainingTiles(){
-		int sum = 0;
-		for(String c : bag.keySet())
-			sum += (Integer)bag.get(c);
-		return sum;
-	}
-
 	public void update(GameBoard gb, MyTiles mt, LastWord lw) {
-		gameBoard = gb.getLetters();
-		gameBoardIndices = gb.getIndices();
-		currentPlayerTiles = mt.getLetters();
-		currentLastWord = lw.getLetters();
-		partOfLastWord = gb.partOfLastWordArray();
+		board.update(gb);
+		currentPlayer.update(mt);
+		lastTurn.update(gb, lw);
 	}
 	
 	public void save(){
@@ -177,36 +115,26 @@ public class Game implements Parcelable{
 			parseObject = new ParseObject("Game");
 		
 		if(!passing)
-			parseObject.put("lastWord",Constants.arrayToListStrip(gameBoard));
+			parseObject.put("lastWord", board.getTilesList());
 		
 		parseObject.put("passed", passing);
 		parseObject.put("gameOver", gameOver);
 		
-		parseObject.put("bag", bag);
+		parseObject.put("bag", bag.tiles);
 		
-		parseObject.put("currentPlayerId", waitingPlayerId);
-		parseObject.put("currentPlayerName", waitingPlayerName);
-		parseObject.put("currentPlayerUserName", waitingPlayerUserName);
-		parseObject.put("currentPlayerScore", waitingPlayerScore);
-		parseObject.put("currentPlayerTiles",Constants.arrayToList(waitingPlayerTiles));
-		parseObject.put("waitingPlayerId", currentPlayerId);
-		parseObject.put("waitingPlayerName", currentPlayerName);
-		parseObject.put("waitingPlayerUserName", currentPlayerUserName);
-		parseObject.put("waitingPlayerScore", currentPlayerScore);
-		parseObject.put("waitingPlayerTiles",Constants.arrayToList(currentPlayerTiles));
-		parseObject.put("myTiles",Constants.arrayToList(currentPlayerTiles));
+		currentPlayer.updateParseObject(parseObject, "waitingPlayer");
+		waitingPlayer.updateParseObject(parseObject, "currentPlayer");
 		
-		parseObject.put("usedWords", usedWords);
-		parseObject.put("scores", scores);
-		parseObject.put("turns", turns);
-		parseObject.put("reused", reused);
+		parseObject.put("myTiles",currentPlayer.getTilesList());//TODO: DEPRECIATE
+		
+		prevWords.updateParseObject(parseObject);
 	}
 	
 	public void refresh(){
 		if(parseObject == null){
-			final ProgressDialog waiting = new ProgressDialog(activity, ProgressDialog.STYLE_SPINNER);
+			ProgressDialog waiting = new ProgressDialog(activity, ProgressDialog.STYLE_SPINNER);
 			waiting.setTitle("Please Wait");
-			waiting.setMessage("Loading Game vs. " + waitingPlayerName);
+			waiting.setMessage("Loading Game vs. " + waitingPlayer.displayName);
 			waiting.setOnCancelListener(new OnCancelListener() {
 				@Override
 				public void onCancel(DialogInterface dialog) {
@@ -214,74 +142,80 @@ public class Game implements Parcelable{
 				}
 			});
 			waiting.show();
-			ParseQuery query = new ParseQuery("Game");
-			query.getInBackground(id, new GetCallback() {
-				@Override
-				public void done(ParseObject obj, ParseException e) {
-					if(e == null){
-						parseObject = obj;
-						List temp = obj.getList("currentPlayerTiles");
-						if(temp == null)
-							currentPlayerTiles = Constants.listToArray(obj.getList("myTiles"));
-						else
-							currentPlayerTiles = Constants.listToArray(temp);
-						temp = obj.getList("waitingPlayerTiles");
-						if(temp != null)
-							waitingPlayerTiles = Constants.listToArray(temp);
-						else
-							waitingPlayerTiles = currentPlayerTiles;
-						if(!isMyTurn ){
-							String[] swap = waitingPlayerTiles;
-							waitingPlayerTiles = currentPlayerTiles;
-							currentPlayerTiles = swap;
-						}
-						currentLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
-						completeLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
-						bag = obj.getMap("bag");
-						usedWords = obj.getList("usedWords");
-						scores = obj.getList("scores");
-						turns = obj.getList("turns");
-						reused = Constants.handleJSONArray(obj.getList("reused"));
-						lastPlayerPassed = obj.getBoolean("passed");
-						replenishTiles();
-						activity.refreshUIFromGame();
-						
-					} else {
-						Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();
-						activity.finish();
-					}
-					waiting.dismiss();
-				}
-			});
+			
+			
+			queryForParseObject(waiting);
 		} else {
 			parseObject.refreshInBackground(null);
 		}
 	}
-	
-	public void replenishTiles() {
-		for(int z = 0; z < currentPlayerTiles.length; z++){
-			if(Constants.isNull(currentPlayerTiles[z]))
-				currentPlayerTiles[z] = takeFromBag();
-		}
+
+	public void queryForParseObject(final ProgressDialog waiting) {
+		ParseQuery query = new ParseQuery("Game");
+		query.getInBackground(id, new GetCallback() {
+			@Override
+			public void done(ParseObject obj, ParseException e) {
+				if(e == null){
+					parseObject = obj;
+					
+					refreshPlayers(obj);
+					lastTurn.refresh(obj);
+					prevWords.refresh(obj);
+					bag.refresh(obj);
+					
+					currentPlayer.replenishTiles();//they should be full, but just in case something went wrong
+					activity.refreshUIFromGame();
+					
+				} else {
+					Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();
+					activity.finish();
+				}
+				waiting.dismiss();
+			}
+
+			//TODO: DEPRECIATE myTiles and simplify this
+			public void refreshPlayers(ParseObject obj) {
+				List temp = obj.getList("currentPlayerTiles");
+				if(temp == null)
+					currentPlayer.tiles = Constants.listToArray(obj.getList("myTiles"));
+				else
+					currentPlayer.tiles = Constants.listToArray(temp);
+				
+				temp = obj.getList("waitingPlayerTiles");
+				if(temp != null)
+					waitingPlayer.tiles = Constants.listToArray(temp);
+				else
+					waitingPlayer.tiles = currentPlayer.tiles;
+				
+				if(!isMyTurn ){
+					String[] swap = waitingPlayer.tiles;
+					waitingPlayer.tiles = currentPlayer.tiles;
+					currentPlayer.tiles = swap;
+				}
+			}
+		});
 	}
 
-	public void incrementCurrentScore(int points) {
-		currentPlayerScore += points;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public Game(Parcel in) {
+		currentPlayer = in.readParcelable(null);
+		waitingPlayer = in.readParcelable(null);
+		board = in.readParcelable(null);
+		bag = in.readParcelable(null);
+		prevWords = in.readParcelable(null);
+		lastTurn = in.readParcelable(null);
+		id = in.readString();
 	}
 	
-	public void addGameBoardToUsedWord(int points, List<Integer> reusedIndices) {
-		usedWords.add(Constants.arrayToString(gameBoard));
-		if(scores == null)
-			scores = new ArrayList<Integer>();
-		scores.add(points);
-		if(turns == null)
-			turns = new ArrayList<String>();
-		turns.add(currentPlayerId);
-		if(reused == null)
-			reused = new ArrayList<List<Integer>>();
-		reused.add(reusedIndices);
-		
-	}
 	
 	@Override
 	public int describeContents() {
@@ -290,27 +224,13 @@ public class Game implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeStringArray(gameBoard);
-		dest.writeStringArray(currentPlayerTiles);
-		dest.writeStringArray(waitingPlayerTiles);
-		dest.writeStringArray(currentLastWord);
-		dest.writeStringArray(completeLastWord);
-		dest.writeBooleanArray(partOfLastWord);
+		dest.writeParcelable(currentPlayer, 0);
+		dest.writeParcelable(waitingPlayer, 0);
+		dest.writeParcelable(board, 0);
+		dest.writeParcelable(bag, 0);
+		dest.writeParcelable(prevWords, 0);
+		dest.writeParcelable(lastTurn, 0);
 		dest.writeString(id);
-		dest.writeMap(bag);
-		dest.writeString(currentPlayerId);
-		dest.writeInt(currentPlayerScore);
-		dest.writeString(currentPlayerName);
-		dest.writeString(currentPlayerUserName);
-		dest.writeString(waitingPlayerId);
-		dest.writeInt(waitingPlayerScore);
-		dest.writeString(waitingPlayerName);
-		dest.writeString(waitingPlayerUserName);
-		dest.writeIntArray(gameBoardIndices);
-		dest.writeList(usedWords);
-		dest.writeList(scores);
-		dest.writeList(turns);
-		dest.writeList(reused);
 	}
 	
 	public static final Parcelable.Creator<Game> CREATOR
@@ -323,6 +243,10 @@ public class Game implements Parcelable{
 			return new Game[size];
 		}
 	};
+
+
+
+	
 
 	
 	

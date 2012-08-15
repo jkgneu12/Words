@@ -10,7 +10,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.words.AppController;
 import com.example.words.Constants;
+import com.example.words.PushManager;
 import com.example.words.R;
 import com.example.words.listener.ShakeEventListener;
 import com.example.words.state.Game;
@@ -35,14 +35,9 @@ import com.example.words.view.MyTiles;
 import com.example.words.view.MyTilesTile;
 import com.example.words.view.StarWarsScroller;
 import com.example.words.view.Tile;
-import com.parse.ParseException;
-import com.parse.ParsePush;
 import com.parse.ParseUser;
-import com.parse.SendCallback;
 
 public class GameActivity extends BaseActivity implements OnClickListener{
-
-	private Game game;
 
 	private LastWord lastWord;
 	private GameBoard gameBoard;
@@ -51,26 +46,24 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	private TextView remainingTiles;
 	private TextView score;
 	private TextView opponent;
-	
 	private Button submit;
 	private Button reset;
 	private Button pass;
 	private Button resign;
 
 	private AppController appController;
+	
+	private Game game;
 
 	private ParseUser currentUser;
 
 	private Tile activeTile;
-
-	private SensorManager mSensorManager;
-
-	private ShakeEventListener mSensorListener;
-
+	
 	private boolean isMyTurn;
-
 	private boolean isGameOver;
-
+	
+	private SensorManager mSensorManager;
+	private ShakeEventListener mSensorListener;
 
 
     @Override
@@ -83,15 +76,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         
         appController = (AppController)getApplication();
         
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mSensorListener = new ShakeEventListener();   
-
-        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
-
-          public void onShake() {
-            myTiles.shuffle();
-          }
-        });
+        setupShakeListener();
         
         currentUser = ParseUser.getCurrentUser();
         
@@ -118,48 +103,8 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         
         
         if(savedInstanceState == null){
-        	
-        	
-        	if(getIntent().getBooleanExtra("NewGame", true)){
-	        	game = new Game(this);
-	        	game.initBag();
-	        	game.initMyTiles();
-	        	game.currentPlayerId = currentUser.getObjectId();
-	        	game.currentPlayerName = currentUser.getString("displayName");
-	        	game.currentPlayerUserName = currentUser.getUsername();
-	        	game.currentPlayerScore = 0;
-	        	game.waitingPlayerId = getIntent().getStringExtra("WaitingPlayerId");
-	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
-	        	game.waitingPlayerUserName = getIntent().getStringExtra("WaitingPlayerUserName");
-	        	game.waitingPlayerScore = 0;
-	        	refreshUIFromGame();  
-        	} else if(isMyTurn) {
-        		game = new Game(this);
-        		game.currentPlayerId = getIntent().getStringExtra("CurrentPlayerId");
-	        	game.currentPlayerName = getIntent().getStringExtra("CurrentPlayerName");
-	        	game.currentPlayerUserName = getIntent().getStringExtra("CurrentPlayerUserName");
-	        	game.currentPlayerScore = getIntent().getIntExtra("CurrentPlayerScore", 0);
-	        	game.waitingPlayerId = getIntent().getStringExtra("WaitingPlayerId");
-	        	game.waitingPlayerName = getIntent().getStringExtra("WaitingPlayerName");
-	        	game.waitingPlayerUserName = getIntent().getStringExtra("WaitingPlayerUserName");
-	        	game.waitingPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
-	        	game.id = getIntent().getStringExtra("id");
-        		game.refresh();
-        	} else {
-        		game = new Game(this);
-        		game.currentPlayerId = getIntent().getStringExtra("WaitingPlayerId");
-	        	game.currentPlayerName = getIntent().getStringExtra("WaitingPlayerName");
-	        	game.currentPlayerUserName = getIntent().getStringExtra("WaitingPlayerUserName");
-	        	game.currentPlayerScore = getIntent().getIntExtra("WaitingPlayerScore", 0);
-	        	game.waitingPlayerId = getIntent().getStringExtra("CurrentPlayerId");
-	        	game.waitingPlayerName = getIntent().getStringExtra("CurrentPlayerName");
-	        	game.waitingPlayerUserName = getIntent().getStringExtra("CurrentPlayerUserName");
-	        	game.waitingPlayerScore = getIntent().getIntExtra("CurrentPlayerScore", 0);
-	        	game.id = getIntent().getStringExtra("id");
-        		game.refresh();
-        		
-        	}
-        	game.isMyTurn = isMyTurn;
+        	boolean isNewGame = getIntent().getBooleanExtra("NewGame", true);
+        	game = new Game(this, getIntent(), isNewGame, isMyTurn);
         } 
         
         if(!isMyTurn || isGameOver){
@@ -168,7 +113,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
     		pass.setVisibility(View.GONE);
     	}
     }
-    
+
     @Override
     protected void onResume() {
     	super.onResume();
@@ -231,9 +176,9 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	protected void chat() {
 		Intent intent = new Intent();
 		intent.setClass(this, ChatActivity.class);
-		intent.putExtra("receivingUser", isMyTurn ? game.waitingPlayerId : game.currentPlayerId);
-		intent.putExtra("receivingUserName", isMyTurn ? game.waitingPlayerUserName : game.currentPlayerUserName);
-		intent.putExtra("receivingName", isMyTurn ? game.waitingPlayerName : game.currentPlayerName);
+		intent.putExtra("receivingUser", isMyTurn ? game.waitingPlayer.id : game.currentPlayer.id);
+		intent.putExtra("receivingUserName", isMyTurn ? game.waitingPlayer.userName : game.currentPlayer.userName);
+		intent.putExtra("receivingName", isMyTurn ? game.waitingPlayer.displayName : game.currentPlayer.displayName);
 		startActivity(intent);
 	}
 
@@ -247,12 +192,12 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		if(validation.equals("1")){
 			boolean usedAllTiles = lastWord.usedAllTiles() || myTiles.usedAllTiles();
 			int points = getPointsForValidWord(usedAllTiles);
-			game.replenishTiles();
-			game.incrementCurrentScore(points);
-			game.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
+			game.currentPlayer.replenishTiles();
+			game.currentPlayer.incrementCurrentScore(points);
+			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
 			game.save();
 			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
-			sendPush(game.waitingPlayerUserName);
+			PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 			finish();
 		}
 		else
@@ -267,43 +212,11 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	}
 
 	private int getPointsForValidWord(boolean usedAllTiles) {
-		int points = appController.getPoints(game.gameBoard);
+		int points = appController.getPoints(game.board.tiles);
 		if(usedAllTiles)
 			points *= 2;
 		return points;
 		
-	}
-	
-	private void sendPush(String opponentName) {
-		if(opponentName == null)return;
-		ParsePush push = new ParsePush();
-		push.setChannel("UserGame" + Constants.sanitizeUserName(opponentName));
-		push.setExpirationTimeInterval(86400);
-		push.setMessage("Your turn with " + currentUser.get("displayName"));
-		push.sendInBackground(new SendCallback() {
-			
-			@Override
-			public void done(ParseException e) {
-				if(e != null)
-					Log.w("PUSH", e.getMessage());
-			}
-		});
-	}
-	
-	protected void sendGameOverPush(String opponentName) {
-		if(opponentName == null)return;
-		ParsePush push = new ParsePush();
-		push.setChannel("UserGame" + Constants.sanitizeUserName(opponentName));
-		push.setExpirationTimeInterval(86400);
-		push.setMessage("You " + getEndScorePrefix(false) + " your game with " + currentUser.get(""));
-		push.sendInBackground(new SendCallback() {
-			
-			@Override
-			public void done(ParseException e) {
-				if(e != null)
-					Log.w("PUSH", e.getMessage());
-			}
-		});
 	}
 
 	public void reset() {
@@ -338,53 +251,53 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 
 	public void refreshUIFromGame(){
     	myTiles.removeAllViews();
-    	for(int z = 0; z < game.currentPlayerTiles.length; z++){
-    		if(!Constants.isNull(game.currentPlayerTiles[z]))
-    			myTiles.addView(new MyTilesTile(this, "" + game.currentPlayerTiles[z]));
+    	for(int z = 0; z < game.currentPlayer.tiles.length; z++){
+    		if(!Constants.isNull(game.currentPlayer.tiles[z]))
+    			myTiles.addView(new MyTilesTile(this, "" + game.currentPlayer.tiles[z]));
     	}
     	
-    	lastWord.setCompleteLastWord(game.completeLastWord);
-    	lastWord.setCurrentLastWord(game.currentLastWord);
-    	remainingTiles.setText(game.remainingTiles() + " Tiles Left");
+    	lastWord.setCompleteLastWord(game.lastTurn.completeLastWord);
+    	lastWord.setCurrentLastWord(game.lastTurn.currentLastWord);
+    	remainingTiles.setText(game.bag.remainingTiles() + " Tiles Left");
     	opponent.setText(getMatchupText());
     	setScoreText();
     	setupPreviousWords();
     }
 	
 	private void refreshGameBoardUIFromGame() {
-		for(int z = 0; z < game.gameBoard.length; z++){
-        	if(!Constants.isNull(game.gameBoard[z]) && Character.isLetter(game.gameBoard[z].charAt(0))){
-        		Tile tile = Tile.create(this, "" + game.gameBoard[z], game.gameBoardIndices[z], game.partOfLastWord[z]);
+		for(int z = 0; z < game.board.tiles.length; z++){
+        	if(!Constants.isNull(game.board.tiles[z]) && Character.isLetter(game.board.tiles[z].charAt(0))){
+        		Tile tile = Tile.create(this, "" + game.board.tiles[z], game.board.indices[z], game.lastTurn.partOfLastWord[z]);
         		gameBoard.addView(tile);
         	}
         }
 	}
 
 	public void setupPreviousWords() {
-		int prevWordCount = game.usedWords.size();
+		int prevWordCount = game.prevWords.usedWords.size();
 		float fontSize = Constants.getPreviousWordSize(this);
 		
     	for(int z = 0; z < prevWordCount - 1; z++){
     		LinearLayout row = (LinearLayout) ((LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
     		
     		LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
-    		String wordText = game.usedWords.get(z);
+    		String wordText = game.prevWords.usedWords.get(z);
     		for(int y = 0; y < wordText.length(); y++){
     			TextView letter = new TextView(this);
     			letter.setText("" + wordText.charAt(y));
     			letter.setTextSize(fontSize);
-    			if(game.reused == null || game.reused.size() <= z || !game.reused.get(z).contains(y))
+    			if(game.prevWords.reused == null || game.prevWords.reused.size() <= z || !game.prevWords.reused.get(z).contains(y))
     				letter.setTextColor(getResources().getColor(R.color.brown));
     			else 
     				letter.setTextColor(getResources().getColor(R.color.orange));
     			word.addView(letter);
     		}
     		
-    		if(game.scores != null && game.scores.size() > z){
-	    		String scoreText = "" + game.scores.get(z);
+    		if(game.prevWords.scores != null && game.prevWords.scores.size() > z){
+	    		String scoreText = "" + game.prevWords.scores.get(z);
 	    		TextView score;
 	    		TextView space;
-	    		if(game.turns.size() > z && game.turns.get(z).equals(currentUser.getObjectId())){
+	    		if(game.prevWords.turns.size() > z && game.prevWords.turns.get(z).equals(currentUser.getObjectId())){
 	    			score = (TextView)row.findViewById(R.id.a);
 	    			space = (TextView)row.findViewById(R.id.c);
 	    		} else {
@@ -430,8 +343,8 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 
 	public String getMatchupText() {
 		if(isMyTurn)
-			return game.currentPlayerName + " vs. " + game.waitingPlayerName;
-		return game.waitingPlayerName + " vs. " + game.currentPlayerName;
+			return game.currentPlayer.displayName + " vs. " + game.waitingPlayer.displayName;
+		return game.waitingPlayer.displayName + " vs. " + game.currentPlayer.displayName;
 	}
 	
 	
@@ -439,9 +352,9 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	private void setScoreText() {
 		String scoreText;
 		if(isMyTurn)
-			scoreText = getScorePrefix() + game.currentPlayerScore + " : " + game.waitingPlayerScore;
+			scoreText = getScorePrefix() + game.currentPlayer.score + " : " + game.waitingPlayer.score;
 		else
-			scoreText = getScorePrefix() + game.waitingPlayerScore + " : " + game.currentPlayerScore;
+			scoreText = getScorePrefix() + game.waitingPlayer.score + " : " + game.currentPlayer.score;
     	score.setText(scoreText);
 	}
 	
@@ -454,14 +367,14 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 
 	private String getLiveScorePrefix(){
 		if(isMyTurn){
-			if(game.currentPlayerScore > game.waitingPlayerScore)
+			if(game.currentPlayer.score > game.waitingPlayer.score)
 	    		return "Winning ";
-	    	else if(game.currentPlayerScore < game.waitingPlayerScore)
+	    	else if(game.currentPlayer.score < game.waitingPlayer.score)
 	    		return "Losing ";
 		} else {
-			if(game.currentPlayerScore > game.waitingPlayerScore)
+			if(game.currentPlayer.score > game.waitingPlayer.score)
 	    		return "Losing ";
-	    	else if(game.currentPlayerScore < game.waitingPlayerScore)
+	    	else if(game.currentPlayer.score < game.waitingPlayer.score)
 	    		return "Winning ";
 		}
     	return "Tied ";
@@ -469,14 +382,14 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	
 	private String getEndScorePrefix(boolean forMe){
 		if(forMe){
-			if(game.currentPlayerScore > game.waitingPlayerScore)
+			if(game.currentPlayer.score > game.waitingPlayer.score)
 				return "Won ";
-			else if(game.currentPlayerScore < game.waitingPlayerScore)
+			else if(game.currentPlayer.score < game.waitingPlayer.score)
 				return "Lost ";
 		} else {
-			if(game.currentPlayerScore > game.waitingPlayerScore)
+			if(game.currentPlayer.score > game.waitingPlayer.score)
 				return "Lost ";
-			else if(game.currentPlayerScore < game.waitingPlayerScore)
+			else if(game.currentPlayer.score < game.waitingPlayer.score)
 				return "Won ";
 		}
 		return "Tied ";
@@ -517,13 +430,13 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   reset();
-		        	   if(game.lastPlayerPassed){
+		        	   if(game.lastTurn.lastPlayerPassed){
 		        		   game.save(true, true);
-		        		   sendGameOverPush(game.waitingPlayerUserName);
+		        		   PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, getEndScorePrefix(false));
 		        		   finish();
 		        	   } else {
 		        		   game.save(true, false);
-		        		   sendPush(game.waitingPlayerUserName);
+		        		   PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 		        	   }
 		        	   finish();
 		           }
@@ -538,5 +451,17 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 
 	protected void endGame() {
 		
+	}
+	
+	public void setupShakeListener() {
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorListener = new ShakeEventListener();   
+
+        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
+
+          public void onShake() {
+            myTiles.shuffle();
+          }
+        });
 	}
 }
