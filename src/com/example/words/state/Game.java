@@ -94,10 +94,10 @@ public class Game implements Parcelable{
 	}
 	
 	public void save(){
-		save(false, false);
+		save(false, false, false);
 	}
 	
-	public void save(boolean passing, boolean gameOver) {
+	public void save(boolean passing, boolean gameOver, boolean resigning) {
 		updateParseObject(passing, gameOver);
 		parseObject.saveInBackground(new SaveCallback() {
 			

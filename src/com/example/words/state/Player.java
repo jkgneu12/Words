@@ -29,7 +29,7 @@ public class Player implements Parcelable{
 		id = intent.getStringExtra(prefix + "Id");
     	displayName = intent.getStringExtra(prefix + "Name");
     	userName = intent.getStringExtra(prefix + "UserName");
-    	score = 0;
+    	score = intent.getIntExtra(prefix + "Score", 0);
 	}
 
 	public void initMyTiles(){

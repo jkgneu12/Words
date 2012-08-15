@@ -97,13 +97,15 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         reset.setOnClickListener(this);
         pass.setOnClickListener(this);
         reset.setOnClickListener(this);
+        resign.setOnClickListener(this);
         
         isMyTurn = getIntent().getBooleanExtra("MyTurn", true);
         isGameOver = getIntent().getBooleanExtra("GameOver", false);
+        boolean isNewGame = getIntent().getBooleanExtra("NewGame", true);
+    	
         
         
         if(savedInstanceState == null){
-        	boolean isNewGame = getIntent().getBooleanExtra("NewGame", true);
         	game = new Game(this, getIntent(), isNewGame, isMyTurn);
         	if(isNewGame)
             	refreshUIFromGame();  
@@ -111,6 +113,9 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         
         if(!isMyTurn || isGameOver){
     		submit.setVisibility(View.GONE);
+    		resign.setVisibility(View.GONE);
+    		pass.setVisibility(View.GONE);
+    	} else if(isNewGame){
     		resign.setVisibility(View.GONE);
     		pass.setVisibility(View.GONE);
     	}
@@ -187,45 +192,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	public void update() {
 		game.update(gameBoard, myTiles, lastWord);
 	}
-	
-	public void submit(){
-		update();
-		String validation = Constants.validateGameBoard(game, lastWord);
-		if(validation.equals("1")){
-			boolean usedAllTiles = lastWord.usedAllTiles() || myTiles.usedAllTiles();
-			int points = getPointsForValidWord(usedAllTiles);
-			game.currentPlayer.replenishTiles();
-			game.currentPlayer.incrementCurrentScore(points);
-			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
-			game.save();
-			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
-			PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
-			finish();
-		}
-		else
-			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
-	}
-	
-	private String getMessageForValidWord(boolean usedAllTiles, int points){
-		if(usedAllTiles)
-			return "Double Points!!! " + points + " Points";
-		else
-			return points + " Points!!";
-	}
 
-	private int getPointsForValidWord(boolean usedAllTiles) {
-		int points = appController.getPoints(game.board.tiles);
-		if(usedAllTiles)
-			points *= 2;
-		return points;
-		
-	}
-
-	public void reset() {
-		gameBoard.reset();
-		setActiveTile(null);
-		update();
-	}
 
 	public void replaceMyTile(Tile oldChild, Tile newChild) {
 		myTiles.replaceTile(oldChild, newChild);
@@ -423,6 +390,47 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 			reset();
 		else if(v == pass)
 			pass();
+		else if(v == resign)
+			resign();
+	}
+	
+	public void submit(){
+		update();
+		String validation = Constants.validateGameBoard(game, lastWord);
+		if(validation.equals("1")){
+			boolean usedAllTiles = lastWord.usedAllTiles() || myTiles.usedAllTiles();
+			int points = getPointsForValidWord(usedAllTiles);
+			game.currentPlayer.replenishTiles();
+			game.currentPlayer.incrementCurrentScore(points);
+			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
+			game.save();
+			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
+			PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
+			finish();
+		}
+		else
+			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
+	}
+	
+	private String getMessageForValidWord(boolean usedAllTiles, int points){
+		if(usedAllTiles)
+			return "Double Points!!! " + points + " Points";
+		else
+			return points + " Points!!";
+	}
+
+	private int getPointsForValidWord(boolean usedAllTiles) {
+		int points = appController.getPoints(game.board.tiles);
+		if(usedAllTiles)
+			points *= 2;
+		return points;
+		
+	}
+	
+	public void reset() {
+		gameBoard.reset();
+		setActiveTile(null);
+		update();
 	}
 
 	private void pass() {
@@ -433,11 +441,10 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		           public void onClick(DialogInterface dialog, int id) {
 		        	   reset();
 		        	   if(game.lastTurn.lastPlayerPassed){
-		        		   game.save(true, true);
+		        		   game.save(true, true, false);
 		        		   PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, getEndScorePrefix(false));
-		        		   finish();
 		        	   } else {
-		        		   game.save(true, false);
+		        		   game.save(true, false, false);
 		        		   PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 		        	   }
 		        	   finish();
@@ -450,10 +457,30 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		       });
 		builder.show();
 	}
-
-	protected void endGame() {
-		
+	
+	private void resign() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure you want to resign and lose this game?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   game.save(false, true, true);
+	        		   PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, "Won ");
+	        		   finish();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		builder.show();
 	}
+	
+	
+	
+	
+	
 	
 	public void setupShakeListener() {
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
