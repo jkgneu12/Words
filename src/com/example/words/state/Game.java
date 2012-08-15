@@ -65,7 +65,6 @@ public class Game implements Parcelable{
         	bag.initBag();
         	initMyTiles();
         	setupUsers(intent);
-        	activity.refreshUIFromGame();  
     	} else {
     		id = intent.getStringExtra("id");
     		setupUsers(intent);

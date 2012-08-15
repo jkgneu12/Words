@@ -105,6 +105,8 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         if(savedInstanceState == null){
         	boolean isNewGame = getIntent().getBooleanExtra("NewGame", true);
         	game = new Game(this, getIntent(), isNewGame, isMyTurn);
+        	if(isNewGame)
+            	refreshUIFromGame();  
         } 
         
         if(!isMyTurn || isGameOver){

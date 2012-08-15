@@ -79,6 +79,10 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
 		Intent intent = new Intent();
 		intent.setClass(this, GameActivity.class);
 		intent.putExtra("NewGame", true);
+
+		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
+		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
+		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
 		
 		UserRowData item = adapter.getItem(position);
 		intent.putExtra("WaitingPlayerId", item.userId);
