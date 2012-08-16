@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 
 import com.example.words.Constants;
 import com.example.words.R;
@@ -67,7 +68,6 @@ public class GameBoard extends FreeFormBoard {
 	protected boolean canDrop(Tile tile) {
 		return getChildCount() < Constants.NUM_MY_TILES;
 	}
-
 	
 	@Override
 	protected void goodHighlight() {
@@ -78,6 +78,5 @@ public class GameBoard extends FreeFormBoard {
 	protected void unhighlight() {
 		setBackgroundResource(R.drawable.gameboard_background);
 	}
-	
 
 }

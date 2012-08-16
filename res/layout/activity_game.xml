@@ -116,7 +116,22 @@
         android:layout_above="@id/my_tiles"
         android:background="@drawable/gameboard_background"
         android:paddingBottom="5dp"
-        android:paddingTop="5dp" />
+        android:paddingTop="5dp" >
+        
+    </com.example.words.view.GameBoard>
+    
+    <TextView 
+            android:id="@+id/current_score"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/game_board"
+            android:layout_alignBottom="@id/game_board"
+            android:text="@string/zero"/>
+    
 
     <com.example.words.view.LastWord
         android:id="@id/last_word"

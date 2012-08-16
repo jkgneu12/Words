@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -64,6 +65,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	
 	private SensorManager mSensorManager;
 	private ShakeEventListener mSensorListener;
+	private TextView currentScore;
 
 
     @Override
@@ -92,6 +94,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         reset = (Button)findViewById(R.id.reset);
         pass = (Button)findViewById(R.id.pass);
         resign = (Button)findViewById(R.id.resign);
+        currentScore = (TextView)findViewById(R.id.current_score);
         
         submit.setOnClickListener(this);
         reset.setOnClickListener(this);
@@ -130,6 +133,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
     	mSensorManager.registerListener(mSensorListener,
     	        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
     	        SensorManager.SENSOR_DELAY_UI);
+    	update();
     }
 
 	@TargetApi(11)
@@ -191,6 +195,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 
 	public void update() {
 		game.update(gameBoard, myTiles, lastWord);
+		updateCurrentScore();
 	}
 
 
@@ -215,6 +220,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		} else {
 			myTiles.addView(tile);
 		}
+		update();
 		return true;
 	}
 
@@ -398,18 +404,22 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		update();
 		String validation = Constants.validateGameBoard(game, lastWord);
 		if(validation.equals("1")){
-			boolean usedAllTiles = lastWord.usedAllTiles() || myTiles.usedAllTiles();
+			boolean usedAllTiles = usedAllTiles();
 			int points = getPointsForValidWord(usedAllTiles);
 			game.currentPlayer.replenishTiles();
 			game.currentPlayer.incrementCurrentScore(points);
 			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
 			game.save();
 			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
-			PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
+			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 			finish();
 		}
 		else
 			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
+	}
+
+	public boolean usedAllTiles() {
+		return lastWord.usedAllTiles() || myTiles.usedAllTiles();
 	}
 	
 	private String getMessageForValidWord(boolean usedAllTiles, int points){
@@ -445,7 +455,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		        		   PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, getEndScorePrefix(false));
 		        	   } else {
 		        		   game.save(true, false, false);
-		        		   PushManager.sendPush(game.currentPlayer.displayName, game.waitingPlayer.userName);
+		        		   PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 		        	   }
 		        	   finish();
 		           }
@@ -492,5 +502,13 @@ public class GameActivity extends BaseActivity implements OnClickListener{
             myTiles.shuffle();
           }
         });
+	}
+
+	public void updateCurrentScore() {
+		boolean usedAllTiles = usedAllTiles();
+		int points = getPointsForValidWord(usedAllTiles);
+		currentScore.setText("" + points);
+		currentScore.setTextColor(usedAllTiles ? getResources().getColor(R.color.orange) : getResources().getColor(R.color.text_light));
+		currentScore.setTextSize(TypedValue.COMPLEX_UNIT_DIP, usedAllTiles ? 15 : 13);
 	}
 }

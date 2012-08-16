@@ -11,14 +11,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/text_light" />
 
     <TextView
         android:id="@+id/opponent_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:textColor="@color/text_light" />
     
     <TextView
         android:id="@+id/you"
@@ -26,13 +28,15 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/opponent"
         android:layout_alignParentLeft="true"
-        android:text="@string/you" />
+        android:text="@string/you"
+        android:textColor="@color/text_light" />
 
     <TextView
         android:id="@+id/your_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/opponent_score"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:textColor="@color/text_light" />
 
 </com.example.words.view.GameRow>

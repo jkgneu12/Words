@@ -41,5 +41,6 @@
     <string name="left_handed">Left Handed</string>
     <string name="chat_push">Receive Notifications for Chat</string>
     <string name="game_push">Receive Notifications for Games</string>
+    <string name="zero">0</string>
 
 </resources>

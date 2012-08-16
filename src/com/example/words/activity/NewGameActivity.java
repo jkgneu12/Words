@@ -48,10 +48,12 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 			Intent intent = new Intent();
 			intent.setClass(this, PickOpponentActivity.class);
 			startActivity(intent);
+			finish();
 		} else if (v == username) {
 			Intent intent = new Intent();
 			intent.setClass(this, PickOpponentActivity.class);
 			startActivity(intent);
+			finish();
 		} else if (v == random) {
 			
 			ParseQuery query = ParseUser.getQuery();

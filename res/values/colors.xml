@@ -3,8 +3,11 @@
 
     <color name="base">#ae6242</color>
     <color name="brown">#7F3F29</color>
-    <color name="pail">#FFB89F</color>
+    <color name="brown_dark">#633120</color>
+    <color name="pail">#A85A38</color>
     <color name="gray">#7F5C50</color>
     <color name="orange">#a2784e</color>
+    <color name="orange_dark">#7F5E3D</color>
+    <color name="text_light">#B0AEAC</color>
 
 </resources>

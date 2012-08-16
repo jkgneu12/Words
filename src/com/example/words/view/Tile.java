@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
@@ -16,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.words.Constants;
+import com.example.words.R;
 import com.example.words.activity.GameActivity;
 
 public abstract class Tile extends RelativeLayout {
@@ -60,17 +63,24 @@ public abstract class Tile extends RelativeLayout {
 		textView.setText(text);
 		textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		textView.setGravity(Gravity.CENTER);
-		textView.setTextColor(Color.BLACK);
+		textView.setTextColor(activity.getResources().getColor(R.color.text_light));
+		textView.setPadding(0, 0, (int)Constants.getDIPixels(activity, 1), (int)Constants.getDIPixels(activity, 1));
+		if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+		else
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
 		addView(textView); 
 
 		scoreView = new TextView(activity);
 		String text = "" + points;
 		scoreView.setText(text);
+		int scoreSize = 10;
 		if(text.length() == 2)
-			scoreView.setTextSize(Constants.getDIPixels(activity, 3));
-		else
-			scoreView.setTextSize(Constants.getDIPixels(activity, 5));
-		scoreView.setTextColor(Color.BLACK);
+			scoreSize = 8;
+		if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+			scoreSize--;
+		scoreView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, scoreSize);
+		scoreView.setTextColor(activity.getResources().getColor(R.color.text_light));
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(ALIGN_PARENT_BOTTOM);
 		params.addRule(ALIGN_PARENT_RIGHT);

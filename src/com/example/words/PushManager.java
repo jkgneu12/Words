@@ -22,7 +22,7 @@ public class PushManager {
 		sendPush("UserGame" + Constants.sanitizeUserName(opponentUserName), "You " + endScorePrefix + " your game with " + myName);
 	}
 	
-	public static void sendPush(String channel, String message){
+	private static void sendPush(String channel, String message){
 		ParsePush push = new ParsePush();
 		push.setChannel(channel);
 		push.setExpirationTimeInterval(86400);
