@@ -1,5 +1,7 @@
 package com.example.words.activity;
 
+import org.json.JSONObject;
+
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,9 +27,9 @@ import android.widget.Toast;
 
 import com.example.words.AppController;
 import com.example.words.Constants;
-import com.example.words.PushManager;
 import com.example.words.R;
 import com.example.words.listener.ShakeEventListener;
+import com.example.words.network.PushManager;
 import com.example.words.state.Game;
 import com.example.words.view.GameBoard;
 import com.example.words.view.LastWord;
@@ -115,12 +117,9 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         } 
         
         if(!isMyTurn || isGameOver){
-    		submit.setVisibility(View.GONE);
-    		resign.setVisibility(View.GONE);
-    		pass.setVisibility(View.GONE);
+    		showReadOnlyButtons();
     	} else if(isNewGame){
-    		resign.setVisibility(View.GONE);
-    		pass.setVisibility(View.GONE);
+    		showNewGameButtons();
     	}
     }
 
@@ -402,8 +401,13 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 	
 	public void submit(){
 		update();
-		String validation = Constants.validateGameBoard(game, lastWord);
-		if(validation.equals("1")){
+		String validation = Constants.startValidateGameBoard(this, game, lastWord);
+		if(validation != "1")
+			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
+	}
+	
+	public void validated(JSONObject result) {
+		if(result != null && result.has("value")){
 			boolean usedAllTiles = usedAllTiles();
 			int points = getPointsForValidWord(usedAllTiles);
 			game.currentPlayer.replenishTiles();
@@ -412,10 +416,21 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 			game.save();
 			Toast.makeText(this, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
-			finish();
+			showReadOnlyButtons();
 		}
 		else
-			Toast.makeText(this, validation, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Not a Word", Toast.LENGTH_SHORT).show();
+	}
+
+	private void showReadOnlyButtons() {
+		submit.setVisibility(View.GONE);
+		resign.setVisibility(View.GONE);
+		pass.setVisibility(View.GONE);
+	}
+	
+	private void showNewGameButtons() {
+		resign.setVisibility(View.GONE);
+		pass.setVisibility(View.GONE);
 	}
 
 	public boolean usedAllTiles() {
@@ -457,7 +472,7 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		        		   game.save(true, false, false);
 		        		   PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 		        	   }
-		        	   finish();
+		        	   showReadOnlyButtons();
 		           }
 		       })
 		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -511,4 +526,6 @@ public class GameActivity extends BaseActivity implements OnClickListener{
 		currentScore.setTextColor(usedAllTiles ? getResources().getColor(R.color.orange) : getResources().getColor(R.color.text_light));
 		currentScore.setTextSize(TypedValue.COMPLEX_UNIT_DIP, usedAllTiles ? 15 : 13);
 	}
+
+	
 }

@@ -10,15 +10,19 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.example.words.activity.ChatActivity;
+import com.example.words.activity.GameActivity;
 import com.example.words.activity.HomeActivity;
 import com.example.words.activity.SignupActivity;
+import com.example.words.network.ValidateTask;
 import com.example.words.state.Game;
 import com.example.words.view.LastWord;
 import com.parse.GetCallback;
@@ -29,6 +33,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseTwitterUtils;
 import com.parse.PushService;
+import com.parse.ParseQuery.CachePolicy;
 
 public class Constants {
 
@@ -60,7 +65,7 @@ public class Constants {
 		return (int)((spaceForEachTile - getTileDimensions(activity)) / 2);
 	}
 
-	public static String validateGameBoard(Game game, LastWord lastWord)  {
+	public static String startValidateGameBoard(GameActivity activity, Game game, LastWord lastWord)  {
 		if(!lastWord.usedAtLeastOneTile())
 			return "You must use at least 1 tile from the last word";
 
@@ -74,24 +79,22 @@ public class Constants {
 			return "Can't reuse the last word with rearranging the letters";
 
 		word = word.toLowerCase();
+		
+		final ProgressDialog waiting = new ProgressDialog(activity, ProgressDialog.STYLE_SPINNER);
+		waiting.setTitle("Please Wait");
+		waiting.setMessage("Validating \"" + word.substring(0,1).toUpperCase() + word.substring(1) + "\"");
+		waiting.setOnCancelListener(new OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				//finish();
+			}
+		});
+		waiting.show();
 
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
-		try {
-			GetTask task = new GetTask(); 
-			task.execute(url);
-			JSONObject json = task.get();
-			if(json != null && json.has("value"))
-				return "1";
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-
-		return "Not a Word";
+		ValidateTask task = new ValidateTask(activity, waiting); 
+		task.execute(url);
+		return "1";
 	}
 
 	public static String arrayToString(String[] wordArray) {
@@ -212,6 +215,11 @@ public class Constants {
 		query.getFirstInBackground(new GetCallback() {
 			@Override
 			public void done(ParseObject obj, ParseException e) {
+				if(e != null){
+					Toast.makeText(activity, "Could not connect to server. Please try again.", Toast.LENGTH_LONG).show();
+					activity.finish();
+					return;
+				}
 				double version = obj.getDouble("Version");
 				if(version > VERSION){
 					AlertDialog.Builder builder = new AlertDialog.Builder(activity);

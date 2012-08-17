@@ -66,7 +66,7 @@ public class GameBoard extends FreeFormBoard {
 
 	@Override
 	protected boolean canDrop(Tile tile) {
-		return getChildCount() < Constants.NUM_MY_TILES;
+		return getChildCount() < Constants.NUM_MY_TILES || tile.getParent() == this;
 	}
 	
 	@Override

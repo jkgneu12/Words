@@ -1,7 +1,8 @@
-package com.example.words;
+package com.example.words.network;
 
 import android.util.Log;
 
+import com.example.words.Constants;
 import com.parse.ParseException;
 import com.parse.ParsePush;
 import com.parse.SendCallback;

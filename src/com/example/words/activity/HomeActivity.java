@@ -3,8 +3,11 @@ package com.example.words.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,7 +41,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	private LinearLayout waitingGamesLayout;
 	private LinearLayout finishedGamesLayout;
 	protected ArrayList<GameRowData> games;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,23 +55,45 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 
 		currentUser = ParseUser.getCurrentUser();
 		userId = currentUser.getObjectId();
-
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		setupGamesList();
+		
+		setupGamesList(savedInstanceState != null ? CachePolicy.CACHE_ONLY : CachePolicy.NETWORK_ONLY);
 		Constants.checkVersion(this, true);
+
+	}
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		resetGamesList();
+		setupGamesList(CachePolicy.NETWORK_ONLY);
 	}
 
-	private void setupGamesList() {
+	private void resetGamesList() {
+		games = new ArrayList<GameRowData>();
+		buildGamesList();
+	}
+
+	private void setupGamesList(final CachePolicy cachePolicy) {
 		ArrayList<ParseQuery> queries = new ArrayList<ParseQuery>();
 		queries.add(new ParseQuery("Game").whereEqualTo("currentPlayerId", currentUser.getObjectId()));
 		queries.add(new ParseQuery("Game").whereEqualTo("waitingPlayerId", currentUser.getObjectId()));
 		ParseQuery query = ParseQuery.or(queries); 
 		query.orderByDescending("updatedAt");
-		query.setCachePolicy(CachePolicy.CACHE_THEN_NETWORK);
+		query.setCachePolicy(cachePolicy);
+		
+		final ProgressDialog waiting = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+		if(cachePolicy.equals(CachePolicy.NETWORK_ONLY)){
+			waiting.setTitle("Please Wait");
+			waiting.setMessage("Loading Games");
+			waiting.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					finish();
+				}
+			});
+			waiting.show();
+		}
+		
 		query.findInBackground(new FindCallback() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
@@ -99,6 +124,8 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 				}
 
 				buildGamesList();
+				if(cachePolicy.equals(CachePolicy.NETWORK_ONLY))
+					waiting.dismiss();
 			}
 		});
 	}
@@ -156,7 +183,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	}
 
 	public void refresh() {
-		setupGamesList();
+		setupGamesList(CachePolicy.NETWORK_ONLY);
 	}
 
 	@Override
