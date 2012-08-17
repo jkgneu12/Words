@@ -4,7 +4,6 @@ import java.util.Stack;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.example.words.R;
 

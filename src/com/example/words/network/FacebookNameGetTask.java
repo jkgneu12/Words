@@ -12,18 +12,18 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.facebook.Util;
 
-public class FacebookGetTask extends AsyncTask<String, Object, JSONObject>{
+public class FacebookNameGetTask extends AsyncTask<String, Object, JSONObject>{
 	
 	private ParseUser user;
 
-	public FacebookGetTask(ParseUser user) {
+	public FacebookNameGetTask(ParseUser user) {
 		this.user = user;
 	}
 
 	@Override
 	protected JSONObject doInBackground(String... url) {
 		try {
-			String response = ParseFacebookUtils.getFacebook().request(url[0]);
+			String response = ParseFacebookUtils.getFacebook().request("/me");
 			return Util.parseJson(response);
 		} catch (Exception e) {
 			Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
@@ -37,6 +37,7 @@ public class FacebookGetTask extends AsyncTask<String, Object, JSONObject>{
 		super.onPostExecute(result);
 		try {
 			user.put("displayName", result.get("name"));
+			user.put("facebookId", result.get("id"));
 			user.saveInBackground();
 		} catch (JSONException e) {
 			e.printStackTrace();

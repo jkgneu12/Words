@@ -20,7 +20,7 @@ public class BaseActivity extends Activity {
 		super.onResume();
 		View ticker = findViewById(R.id.ticker);
 		if(ticker != null){
-			if(Constants.getSharedPrefBool(this, "hideTicker")){
+			if(Constants.getSharedPrefBool(this, "hideTicker", false)){
 				((Ticker)ticker).pauseScroll();
 				((Ticker)ticker).setVisibility(View.GONE);
 			} else {

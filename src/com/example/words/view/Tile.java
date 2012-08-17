@@ -4,9 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -186,7 +184,7 @@ public abstract class Tile extends RelativeLayout {
 			shadowSize.y *= DRAG_SCALE;
 			boolean right;
 			if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-				right = Constants.getSharedPrefBool(activity, "leftHanded");
+				right = Constants.getSharedPrefBool(activity, "leftHanded", false);
 			} else {
 				right = leftSideOfScreen(shadowTouchPoint.x);
 			}

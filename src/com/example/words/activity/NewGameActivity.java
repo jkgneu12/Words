@@ -46,7 +46,7 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 	public void onClick(View v) {
 		if(v == facebook){
 			Intent intent = new Intent();
-			intent.setClass(this, PickOpponentActivity.class);
+			intent.setClass(this, FacebookFriendsActivity.class);
 			startActivity(intent);
 			finish();
 		} else if (v == username) {

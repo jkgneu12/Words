@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.example.words.Constants;
 import com.example.words.R;
-import com.example.words.network.FacebookGetTask;
+import com.example.words.network.FacebookNameGetTask;
 import com.example.words.network.TwitterGetTask;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -147,7 +147,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 			public void done(ParseUser user, ParseException e) {
 				if (user != null) {
 					if (ParseFacebookUtils.isLinked(user)) {
-						new FacebookGetTask(user).execute("/me");
+						new FacebookNameGetTask(user).execute();
 						currentUser = user;
 						navigate(currentUser.getUsername());
 

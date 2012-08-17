@@ -514,7 +514,8 @@ public class GameActivity extends BaseActivity implements OnClickListener{
         mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
 
           public void onShake() {
-            myTiles.shuffle();
+        	  if(Constants.getSharedPrefBool(GameActivity.this, "shakeShuffle", true))
+        		  myTiles.shuffle();
           }
         });
 	}

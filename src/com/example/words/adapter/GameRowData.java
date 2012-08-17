@@ -3,7 +3,7 @@ package com.example.words.adapter;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class GameRowData implements Parcelable{
+public class GameRowData extends Data implements Parcelable{
 
 	public String id;
 	public String opponent;
@@ -24,6 +24,11 @@ public class GameRowData implements Parcelable{
 		this.yourScore = yourScore;
 		this.currentPlayer = currentPlayer;
 		this.gameOver = gameOver;
+	}
+	
+	@Override
+	public String getFilterableName() {
+		return opponentUserName.toLowerCase();
 	}
 
 

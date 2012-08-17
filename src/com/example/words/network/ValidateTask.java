@@ -10,10 +10,10 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
-import com.example.words.activity.GameActivity;
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+
+import com.example.words.activity.GameActivity;
 
 public class ValidateTask extends AsyncTask<String, Object, JSONObject>{
 

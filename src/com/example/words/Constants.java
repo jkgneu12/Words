@@ -2,18 +2,16 @@ package com.example.words;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
@@ -33,7 +31,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseTwitterUtils;
 import com.parse.PushService;
-import com.parse.ParseQuery.CachePolicy;
 
 public class Constants {
 
@@ -263,7 +260,7 @@ public class Constants {
 		return ret;
 	}
 	
-	public static boolean getSharedPrefBool(Activity activity, String pref){
-		return activity.getSharedPreferences("SETTINGS", Activity.MODE_PRIVATE).getBoolean(pref, false);
+	public static boolean getSharedPrefBool(Activity activity, String pref, boolean defaultValue){
+		return activity.getSharedPreferences("SETTINGS", Activity.MODE_PRIVATE).getBoolean(pref, defaultValue);
 	}
 }

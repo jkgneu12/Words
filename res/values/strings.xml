@@ -42,5 +42,6 @@
     <string name="chat_push">Receive Notifications for Chat</string>
     <string name="game_push">Receive Notifications for Games</string>
     <string name="zero">0</string>
+    <string name="shake_to_shuffle">Shake to Shuffle</string>
 
 </resources>

@@ -6,9 +6,10 @@ import java.util.List;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +45,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.e("onCreate", "HomeActivity");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 
@@ -63,6 +65,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	
 	@Override
 	protected void onRestart() {
+		Log.e("onRestart", "HomeActivity");
 		super.onRestart();
 		resetGamesList();
 		setupGamesList(CachePolicy.NETWORK_ONLY);

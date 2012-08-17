@@ -18,6 +18,7 @@ public class SettingsActivity extends BaseActivity implements OnCheckedChangeLis
 	private CheckBox gamePush;
 	private ParseUser currentUser;
 	private String currentUserName;
+	private CheckBox shakeShuffle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,10 @@ public class SettingsActivity extends BaseActivity implements OnCheckedChangeLis
 		gamePush = (CheckBox)findViewById(R.id.game_push);
 		gamePush.setOnCheckedChangeListener(this);
 		gamePush.setChecked(getSharedPreferences("SETTINGS", MODE_PRIVATE).getBoolean("gamePush", true));
+		
+		shakeShuffle = (CheckBox)findViewById(R.id.shake_to_shuffle);
+		shakeShuffle.setOnCheckedChangeListener(this);
+		shakeShuffle.setChecked(getSharedPreferences("SETTINGS", MODE_PRIVATE).getBoolean("shakeShuffle", true));
 	}
 
 	@Override
@@ -73,7 +78,11 @@ public class SettingsActivity extends BaseActivity implements OnCheckedChangeLis
 				Constants.pushSubscribeGame(this, currentUserName);
 			else
 				Constants.pushUnsubscribeGame(this, currentUserName);
-		}
+		} else if (button == shakeShuffle){
+			Editor editor = getSharedPreferences("SETTINGS", MODE_PRIVATE).edit();
+			editor.putBoolean("shakeShuffle", isChecked);
+			editor.commit();
+		} 
 	}
 
 }

@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.words.view.Row;
 
-public class ListAdapter<D,V extends Row<D>> extends ArrayAdapter<D> {
+public class ListAdapter<D extends Data, V extends Row<D>> extends ArrayAdapter<D> {
 	
 	protected LayoutInflater mLayoutInflater;
 	protected int resourceId;
