@@ -41,7 +41,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	private LinearLayout currentGamesLayout;
 	private LinearLayout waitingGamesLayout;
 	private LinearLayout finishedGamesLayout;
-	protected ArrayList<GameRowData> games;
+	protected ArrayList<GameRowData> currentGames;
+	protected ArrayList<GameRowData> waitingGames;
+	protected ArrayList<GameRowData> finishedGames;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	}
 
 	private void resetGamesList() {
-		games = new ArrayList<GameRowData>();
+		currentGames = new ArrayList<GameRowData>();
+		waitingGames = new ArrayList<GameRowData>();
+		finishedGames = new ArrayList<GameRowData>();
 		buildGamesList();
 	}
 
@@ -100,7 +104,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		query.findInBackground(new FindCallback() {
 			@Override
 			public void done(List<ParseObject> objects, ParseException e) {
-				games = new ArrayList<GameRowData>();
+				currentGames = new ArrayList<GameRowData>();
+				waitingGames = new ArrayList<GameRowData>();
+				finishedGames = new ArrayList<GameRowData>();
 				if(e != null){
 					if(HomeActivity.this.hasWindowFocus()){
 						Toast.makeText(HomeActivity.this, "Could not connect to Server. Please try again.", Toast.LENGTH_LONG).show();
@@ -122,7 +128,12 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 						else
 							data = new GameRowData(obj.getObjectId(), obj.getString("currentPlayerName"), obj.getString("currentPlayerUserName"), currentPlayerId, currentPlayerScore, waitingPlayerScore, currentPlayer, gameOver);
 
-						games.add(data);
+						if(data.isGameOver)
+							finishedGames.add(data);
+						else if(data.isCurrentPlayer)
+							currentGames.add(data);
+						else
+							waitingGames.add(data);
 					}
 				}
 
@@ -138,29 +149,21 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		waitingGamesLayout.removeAllViews();
 		finishedGamesLayout.removeAllViews();
 
-		LinearLayout layout;
 		boolean currentGameFound = false, waitingGameFound = false, finishedGameFound = false;
 
-		for(GameRowData data : games){
-			if(data.gameOver){
-				layout = finishedGamesLayout;
-				finishedGameFound = true;
-			}
-			else if(data.currentPlayer){
-				layout = currentGamesLayout;
-				currentGameFound = true;
-
-			} else {
-				layout = waitingGamesLayout;
-				waitingGameFound = true;
-			}
-
-			GameRow row = (GameRow) ((LayoutInflater)HomeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.game_row, layout, false);
-			row.initialize(data);
-			//if(data.currentPlayer)
-				row.setOnClickListener(HomeActivity.this);
-
-			layout.addView(row);
+		for(GameRowData data : currentGames){
+			addRowToList(data, currentGamesLayout);
+			currentGameFound = true;
+		}
+		
+		for(GameRowData data : waitingGames){
+			addRowToList(data, waitingGamesLayout);
+			waitingGameFound = true;
+		}
+		
+		for(GameRowData data : finishedGames){
+			addRowToList(data, finishedGamesLayout);
+			finishedGameFound = true;
 		}
 		
 		if(!finishedGameFound){
@@ -183,6 +186,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 			noGames.setGravity(Gravity.CENTER_HORIZONTAL);
 			waitingGamesLayout.addView(noGames);
 		}
+	}
+
+	private void addRowToList(GameRowData data, LinearLayout layout) {
+		GameRow row = (GameRow) ((LayoutInflater)HomeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.game_row, layout, false);
+		row.initialize(data);
+		row.setOnClickListener(HomeActivity.this);
+
+		layout.addView(row);
 	}
 
 	public void refresh() {
@@ -293,22 +304,25 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 
 		Intent intent = new Intent();
 		intent.setClass(this, GameActivity.class);
-		intent.putExtra("NewGame", false);
-		intent.putExtra("MyTurn", row.getParent() == currentGamesLayout);
-		intent.putExtra("GameOver", row.getParent() == finishedGamesLayout);
 
 		GameRowData item = row.getData();
 
-		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
-		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
-		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
-		intent.putExtra("CurrentPlayerScore", item.yourScore);
-		intent.putExtra("WaitingPlayerId", item.opponentId);
-		intent.putExtra("WaitingPlayerName", item.opponent);
-		intent.putExtra("WaitingPlayerUserName", item.opponentUserName);
-		intent.putExtra("WaitingPlayerScore", item.opponentScore);
-
-		intent.putExtra("id", item.id);
+//		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
+//		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
+//		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
+//		intent.putExtra("CurrentPlayerScore", item.yourScore);
+//		intent.putExtra("WaitingPlayerId", item.opponentId);
+//		intent.putExtra("WaitingPlayerName", item.opponent);
+//		intent.putExtra("WaitingPlayerUserName", item.opponentUserName);
+//		intent.putExtra("WaitingPlayerScore", item.opponentScore);
+//
+//		intent.putExtra("id", item.id);
+		intent.putExtra("item", item);
+		ArrayList<GameRowData> games = new ArrayList<GameRowData>(currentGames);
+		games.addAll(waitingGames);
+		games.addAll(finishedGames);
+		intent.putExtra("games", games);
+		
 		startActivity(intent);
 	}
 

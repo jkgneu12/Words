@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.words.activity.ChatActivity;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 import com.example.words.activity.HomeActivity;
 import com.example.words.activity.SignupActivity;
 import com.example.words.network.ValidateTask;
@@ -62,7 +63,7 @@ public class Constants {
 		return (int)((spaceForEachTile - getTileDimensions(activity)) / 2);
 	}
 
-	public static String startValidateGameBoard(GameActivity activity, Game game, LastWord lastWord)  {
+	public static String startValidateGameBoard(GameActivity activity, GameFragment fragment, Game game, LastWord lastWord)  {
 		if(!lastWord.usedAtLeastOneTile())
 			return "You must use at least 1 tile from the last word";
 
@@ -89,7 +90,7 @@ public class Constants {
 		waiting.show();
 
 		String url = "http://api.wordnik.com//v4/word.json/" + word + "/scrabbleScore?api_key=be7067c9f3d5828a9e0e618f32f08a06c3d0e3e3a6abad472";
-		ValidateTask task = new ValidateTask(activity, waiting); 
+		ValidateTask task = new ValidateTask(fragment, waiting); 
 		task.execute(url);
 		return "1";
 	}
@@ -262,5 +263,14 @@ public class Constants {
 	
 	public static boolean getSharedPrefBool(Activity activity, String pref, boolean defaultValue){
 		return activity.getSharedPreferences("SETTINGS", Activity.MODE_PRIVATE).getBoolean(pref, defaultValue);
+	}
+
+	public static int countNonNulls(String[] array) {
+		int sum = 0;
+		for(int z = 0; z < array.length; z++){
+			if(!isNullOrEmpty(array[z]))
+				sum++;
+		}
+		return sum;
 	}
 }

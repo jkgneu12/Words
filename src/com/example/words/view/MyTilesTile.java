@@ -4,11 +4,12 @@ import android.graphics.drawable.Drawable;
 
 import com.example.words.R;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 
 public class MyTilesTile extends Tile {
 
-	public MyTilesTile(GameActivity activity, String text) {
-		super(activity, text);
+	public MyTilesTile(GameActivity activity, GameFragment fragment, String text) {
+		super(activity, fragment, text);
 	}
 
 	@Override

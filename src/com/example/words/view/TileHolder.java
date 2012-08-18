@@ -13,20 +13,23 @@ import android.widget.LinearLayout;
 import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 import com.example.words.listener.DragAndDropListener;
 import com.example.words.listener.IDragAndDrop;
 
 public class TileHolder extends FrameLayout implements IDragAndDrop {
 
 	protected GameActivity activity;
+	protected GameFragment fragment;
 	
 	protected boolean containsDragable;
 
 	protected int index;
 	
-	public TileHolder(GameActivity activity, int index) {
+	public TileHolder(GameActivity activity, GameFragment fragment, int index) {
 		super(activity);
 		this.activity = activity;
+		this.fragment = fragment;
 		this.index = index;
 		
 		initLayoutParams();
@@ -70,16 +73,16 @@ public class TileHolder extends FrameLayout implements IDragAndDrop {
 	    		Tile oldChild = (Tile)getChildAt(0);
 	    		removeView(oldChild);
 	    		if(tile.getParent() instanceof TileHolder && tile.getParent().getParent() instanceof GameBoard)
-	    			activity.addTileToGameBoard(oldChild);
+	    			fragment.addTileToGameBoard(oldChild);
 	    		else if(oldChild.isPartOfLastWord())
-	    			activity.replaceLastWordTile(tile, oldChild);
+	    			fragment.replaceLastWordTile(tile, oldChild);
 	    		else
-	        		activity.replaceMyTile(tile, oldChild);
+	    			fragment.replaceMyTile(tile, oldChild);
 	    	}
 	    	ViewGroup owner = (ViewGroup) tile.getParent();
 	        owner.removeView(tile);
 	        addView(tile);
-	        activity.update();
+	        fragment.update();
 		} else 
 			((LastWord)getParent()).dragDropped(tile, dragEvent);
 		

@@ -65,7 +65,7 @@ public class Ticker extends TextView {
 
 		int scrollingLen = calculateScrollingLen();
 		int distance = scrollingLen - (getWidth() + xPaused);
-		int duration = (new Double(fullScrollDuration * distance * 1.00000
+		int duration = (Double.valueOf(fullScrollDuration * distance * 1.00000
 				/ scrollingLen)).intValue();
 
 		setVisibility(VISIBLE);

@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -13,6 +12,8 @@ import android.widget.Toast;
 
 import com.example.words.Constants;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
+import com.example.words.adapter.GameRowData;
 import com.example.words.view.GameBoard;
 import com.example.words.view.LastWord;
 import com.example.words.view.MyTiles;
@@ -24,7 +25,7 @@ import com.parse.SaveCallback;
 
 public class Game implements Parcelable{
 	
-	private GameActivity activity;
+	public GameActivity activity;
 	private ParseObject parseObject;
 	
 	public String id;
@@ -39,35 +40,37 @@ public class Game implements Parcelable{
 	
 	public PreviousWords prevWords;
 	public LastTurn lastTurn;
+	private GameFragment fragment;
 
 	
 
-	public Game(GameActivity activity, Intent intent, boolean isNewGame, boolean isMyTurn) {
+	public Game(GameActivity activity, GameFragment fragment, GameRowData gameData, boolean isNewGame, boolean isMyTurn) {
 		this.activity = activity;
+		this.fragment = fragment;
 		
 		this.currentPlayer = new Player(this);
 		this.waitingPlayer = new Player(this);
 		
 		this.board = new Board(this);
-		this.bag = new Bag(activity, this);
+		this.bag = new Bag(activity);
 		
 		this.prevWords = new PreviousWords(this);
 		
-		this.lastTurn = new LastTurn(this);
+		this.lastTurn = new LastTurn();
 		
 		this.isMyTurn = isMyTurn;
 		
-		init(intent, isNewGame);
+		init(gameData, isNewGame);
 	}
 
-	public void init(Intent intent, boolean isNewGame) {
+	public void init(GameRowData gameData, boolean isNewGame) {
 		if(isNewGame){
         	bag.initBag();
         	initMyTiles();
-        	setupUsers(intent);
+        	setupUsers(gameData);
     	} else {
-    		id = intent.getStringExtra("id");
-    		setupUsers(intent);
+    		this.id = gameData.id;
+    		setupUsers(gameData);
     		refresh();
     	}
 	}
@@ -77,14 +80,9 @@ public class Game implements Parcelable{
 		waitingPlayer.initMyTiles();
 	}
 	
-	public void setupUsers(Intent intent) {
-		if(isMyTurn){
-			currentPlayer.init(intent, "CurrentPlayer");
-			waitingPlayer.init(intent, "WaitingPlayer");
-		} else {
-			currentPlayer.init(intent, "WaitingPlayer");
-			waitingPlayer.init(intent, "CurrentPlayer");
-		}
+	public void setupUsers(GameRowData gameData) {
+		currentPlayer.init(gameData, isMyTurn);
+		waitingPlayer.init(gameData, !isMyTurn);
 	}
 	
 	public void update(GameBoard gb, MyTiles mt, LastWord lw) {
@@ -163,7 +161,7 @@ public class Game implements Parcelable{
 					bag.refresh(obj);
 					
 					currentPlayer.replenishTiles();//they should be full, but just in case something went wrong
-					activity.refreshUIFromGame();
+					fragment.refreshUIFromGame();
 					
 				} else {
 					Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();

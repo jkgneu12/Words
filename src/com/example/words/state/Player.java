@@ -2,13 +2,14 @@ package com.example.words.state;
 
 import java.util.ArrayList;
 
-import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.example.words.Constants;
+import com.example.words.adapter.GameRowData;
 import com.example.words.view.MyTiles;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 public class Player implements Parcelable{
 
@@ -25,11 +26,20 @@ public class Player implements Parcelable{
 		this.tiles = new String[Constants.NUM_MY_TILES]; 
 	}
 	
-	public void init(Intent intent, String prefix){
-		id = intent.getStringExtra(prefix + "Id");
-    	displayName = intent.getStringExtra(prefix + "Name");
-    	userName = intent.getStringExtra(prefix + "UserName");
-    	score = intent.getIntExtra(prefix + "Score", 0);
+	public void init(GameRowData gameData, boolean currentPlayer){
+		
+		if(currentPlayer){
+			ParseUser currentUser = game.activity.currentUser;
+			id = currentUser.getObjectId();
+	    	displayName = currentUser.getString("displayName");
+	    	userName = currentUser.getUsername();
+	    	score = gameData.yourScore;
+		} else {
+			id = gameData.opponentId;
+	    	displayName = gameData.opponent;
+	    	userName = gameData.opponentUserName;
+	    	score = gameData.opponentScore;
+		}
 	}
 
 	public void initMyTiles(){

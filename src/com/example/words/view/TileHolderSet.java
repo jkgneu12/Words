@@ -5,10 +5,12 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 
 public abstract class TileHolderSet extends LinearLayout {
 
 	protected GameActivity activity;
+	protected GameFragment fragment;
 
 	public TileHolderSet(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -31,5 +33,9 @@ public abstract class TileHolderSet extends LinearLayout {
 	}
 
 	public abstract String[] getLetters();
+	
+	public void setFragment(GameFragment fragment) {
+		this.fragment = fragment;
+	}
 	
 }

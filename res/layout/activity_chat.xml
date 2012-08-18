@@ -49,8 +49,7 @@
         <com.example.words.view.Ticker
             android:id="@+id/ticker"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
 </RelativeLayout>

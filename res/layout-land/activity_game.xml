@@ -37,15 +37,6 @@
         />
     
     <TextView
-        android:id="@+id/opponent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:textSize="14dp" />
-    
-    <TextView
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,8 +50,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_below="@id/opponent"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:textSize="14dp" />
 
     <LinearLayout

@@ -13,15 +13,15 @@ import org.json.JSONObject;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
-import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 
 public class ValidateTask extends AsyncTask<String, Object, JSONObject>{
 
-	private GameActivity activity;
 	private ProgressDialog waiting;
+	private GameFragment fragment;
 
-	public ValidateTask(GameActivity activity, ProgressDialog waiting) {
-		this.activity = activity;
+	public ValidateTask(GameFragment fragment, ProgressDialog waiting) {
+		this.fragment = fragment;
 		this.waiting = waiting;
 	}
 	
@@ -45,7 +45,7 @@ public class ValidateTask extends AsyncTask<String, Object, JSONObject>{
 		super.onPostExecute(result);
 		if(waiting != null && waiting.isShowing())
 			waiting.dismiss();
-		activity.validated(result);
+		fragment.validated(result);
 	}
 
 }

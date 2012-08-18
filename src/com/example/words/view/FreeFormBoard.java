@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 import com.example.words.Constants;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 import com.example.words.listener.DragAndDropListener;
 import com.example.words.listener.IDragAndDrop;
 
@@ -21,6 +22,7 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 
 	protected boolean containsDragable;
 	protected GameActivity activity;
+	protected GameFragment fragment;
 
 	public FreeFormBoard(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -74,10 +76,10 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_UP){
-			Tile active = activity.getActiveTile();
+			Tile active = fragment.getActiveTile();
 			if(active != null && canDrop(active)){
 				placeTile(active, (int)event.getX());
-				activity.setActiveTile(null);
+				fragment.setActiveTile(null);
 			}
 		}
 		return true;
@@ -130,7 +132,7 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 		ViewGroup owner = (ViewGroup) tile.getParent();
 		owner.removeView(tile);
 		addView(tile, insertIndex);
-		((GameActivity)getContext()).update();
+		fragment.update();
 	}
 
 	private int getMiddle(View v){
@@ -184,5 +186,8 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 		return containsDragable;
 	}
 
+	public void setFragment(GameFragment fragment) {
+		this.fragment = fragment;
+	}
 
 }

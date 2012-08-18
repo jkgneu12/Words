@@ -10,8 +10,6 @@ import com.parse.ParseObject;
 
 public class LastTurn implements Parcelable {
 	
-	private Game game;
-	
 	public String[] currentLastWord;
 	public String[] completeLastWord;
 	public boolean[] partOfLastWord;
@@ -19,8 +17,7 @@ public class LastTurn implements Parcelable {
 	public boolean lastPlayerPassed;
 	
 	
-	public LastTurn(Game game) {
-		this.game = game;
+	public LastTurn() {
 		
 		this.currentLastWord = new String[Constants.NUM_TILE_HOLDERS];  
 		this.completeLastWord = new String[Constants.NUM_TILE_HOLDERS];  

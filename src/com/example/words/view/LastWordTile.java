@@ -4,13 +4,14 @@ import android.graphics.drawable.Drawable;
 
 import com.example.words.R;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 
 public class LastWordTile extends Tile  {
 	
 	private int index;
 
-	public LastWordTile(GameActivity activity, String text, int index) {
-		super(activity, text);
+	public LastWordTile(GameActivity activity, GameFragment fragment, String text, int index) {
+		super(activity, fragment, text);
 		
 		this.index = index;
 	}

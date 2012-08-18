@@ -41,15 +41,6 @@
         android:background="@drawable/fade_180" />
 
     <TextView
-        android:id="@+id/opponent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp"
-        android:textSize="14dp" />
-
-    <TextView
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/opponent"
+        android:layout_alignParentTop="true"
         android:layout_margin="10dp"
         android:textSize="14dp" />
 
@@ -71,8 +62,7 @@
         android:id="@+id/buttons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/ticker_holder"
-        android:layout_marginTop="5px" >
+        android:layout_alignParentBottom="true" >
 
         <Button
             android:id="@+id/resign"
@@ -139,19 +129,5 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/game_board"
         android:gravity="center_horizontal" />
-
-    <FrameLayout
-        android:id="@id/ticker_holder"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:minHeight="1px" >
-
-        <com.example.words.view.Ticker
-            android:id="@+id/ticker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
-    </FrameLayout>
 
 </RelativeLayout>

@@ -7,8 +7,6 @@ import android.util.AttributeSet;
 import android.widget.ScrollView;
 
 public class StarWarsScroller extends ScrollView {
-	
-	private boolean firstLayout = true;
 
 	public StarWarsScroller(Context context, AttributeSet attrs) {
 		super(context, attrs);

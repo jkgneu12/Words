@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.activity.GameActivity;
+import com.example.words.activity.GameFragment;
 
 public abstract class Tile extends RelativeLayout {
 
@@ -26,6 +27,7 @@ public abstract class Tile extends RelativeLayout {
 	public static final boolean RIGHT_HANDED = true;//TODO: make prefernce
 
 	protected GameActivity activity;
+	protected GameFragment fragment;
 
 	protected TextView textView;
 	protected TextView scoreView;
@@ -35,17 +37,19 @@ public abstract class Tile extends RelativeLayout {
 
 	private boolean active;
 
-	public static Tile create(GameActivity activity, String text, int index, boolean isPartOfLastWord){
+	public static Tile create(GameActivity activity, GameFragment fragment, String text, int index, boolean isPartOfLastWord){
+		
 		if(isPartOfLastWord)
-			return new LastWordTile(activity, text, index);
+			return new LastWordTile(activity, fragment, text, index);
 		else
-			return new MyTilesTile(activity, text);
+			return new MyTilesTile(activity, fragment, text);
 	}
 
 
-	public Tile(GameActivity activity, String text) {
+	public Tile(GameActivity activity, GameFragment fragment, String text) {
 		super(activity);
 		this.activity = activity;
+		this.fragment = fragment;
 		this.text = text.toUpperCase();
 		this.points = activity.getAppController().getPoints(text);
 
@@ -110,13 +114,13 @@ public abstract class Tile extends RelativeLayout {
 				if(startDrag(ClipData.newPlainText("", ""), new TileDragShadowBuilder(this), this, 0))
 					setVisibility(INVISIBLE);
 				else
-					activity.setActiveTile(null);
+					fragment.setActiveTile(null);
 			}
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP){
 			if(Build.VERSION.SDK_INT >= 11){
-				if(activity.returnTile(this))
-					activity.setActiveTile(null);
+				if(fragment.returnTile(this))
+					fragment.setActiveTile(null);
 				else
 					toggleActive();
 
@@ -145,9 +149,9 @@ public abstract class Tile extends RelativeLayout {
 
 	public void toggleActive() {
 		if(active){
-			activity.setActiveTile(null);
+			fragment.setActiveTile(null);
 		} else {
-			activity.setActiveTile(this);
+			fragment.setActiveTile(this);
 		}
 	}
 

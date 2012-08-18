@@ -13,13 +13,11 @@ import com.parse.ParseObject;
 public class Bag implements Parcelable{
 	
 	private GameActivity activity;
-	private Game game;
 	
 	public Map<String, Object> tiles;
 	
-	public Bag(GameActivity activity, Game game) {
+	public Bag(GameActivity activity) {
 		this.activity = activity;
-		this.game = game;
 	}
 	
 	public void initBag() {

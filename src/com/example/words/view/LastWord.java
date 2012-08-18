@@ -10,7 +10,6 @@ import android.view.View;
 
 import com.example.words.Constants;
 import com.example.words.R;
-import com.example.words.activity.GameActivity;
 import com.example.words.listener.DragAndDropListener;
 import com.example.words.listener.IDragAndDrop;
 
@@ -35,8 +34,9 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	public void setCompleteLastWord(String[] lastWordArray){
 		if(lastWord == null)
 			lastWord = Constants.arrayToString(lastWordArray);
+		removeAllViews();
 		for(int z = 0; z < lastWord.length(); z++){
-			addView(new TileHolder((GameActivity)getContext(), z));
+			addView(new TileHolder(activity, fragment, z));
 		}
 	}
 	
@@ -44,7 +44,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 		for(int z = 0; z < lastWordArray.length; z++){
 			String c = lastWordArray[z];
 			if(!Constants.isNullOrEmpty(c)){
-				Tile tile = new LastWordTile((GameActivity)getContext(), lastWordArray[z], z);
+				Tile tile = new LastWordTile(activity, fragment, lastWordArray[z], z);
 				tiles[z] = tile.hashCode();
 				getTileHolderAt(z).removeAllViews();
 				getTileHolderAt(z).addView(tile);
@@ -146,7 +146,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(event.getAction() == MotionEvent.ACTION_UP){
-			Tile active = activity.getActiveTile();
+			Tile active = fragment.getActiveTile();
 			if(active != null && canDrop(active)){
 				dragDropped(active, null);
 			}
@@ -157,6 +157,17 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	private boolean canDrop(Tile tile) {
 		return tile.isPartOfLastWord();
 	}
+
+	public int getTileCount() {
+		int sum = 0;
+		for(int z = 0; z < getChildCount(); z++){
+			if(getTileAt(z) != null)
+				sum++;
+		}
+		return sum;
+	}
+
+	
 
 	
 

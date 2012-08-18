@@ -43,7 +43,7 @@ public class GameBoard extends FreeFormBoard {
 		while(getChildCount() > 0){
 			Tile t = getTileAt(0);
 			if(t != null){
-				activity.returnTile(t);
+				fragment.returnTile(t);
 			}
 				
 		}
@@ -77,5 +77,7 @@ public class GameBoard extends FreeFormBoard {
 	protected void unhighlight() {
 		setBackgroundResource(R.drawable.gameboard_background);
 	}
+
+	
 
 }

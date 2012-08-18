@@ -1,7 +1,6 @@
 package com.example.words.activity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -25,9 +24,7 @@ import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.adapter.FacebookFriendData;
 import com.example.words.adapter.FacebookFriendListAdpater;
-import com.example.words.adapter.UserRowData;
 import com.example.words.network.FacebookFriendsGetTask;
-import com.example.words.network.PushManager;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -39,7 +36,6 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 	private ListView facebookList;
 	private EditText searchBar;
 	private ParseUser currentUser;
-	private String userId;
 	private FacebookFriendListAdpater adapter;
 
 	@Override
@@ -53,7 +49,6 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 		searchBar = (EditText)findViewById(R.id.search);
 
 		currentUser = ParseUser.getCurrentUser();
-		userId = currentUser.getObjectId();
 		
 		FacebookFriendsGetTask task = new FacebookFriendsGetTask(this);
 		task.execute();
@@ -106,16 +101,6 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private ArrayList<FacebookFriendData> sort(ArrayList<FacebookFriendData> users) {
-		ArrayList<FacebookFriendData> sorted = new ArrayList<FacebookFriendData>();
-		for(int z = 0; z < users.size(); z++){
-			if(users.get(z).active)
-				sorted.add(users.get(z));
-		}
-		sorted.addAll(users);
-		return sorted;
 	}
 
 	@Override
