@@ -30,3 +30,9 @@ bin/classes/com/example/words/R$id.class
 bin/classes/com/example/words/Constants.class
 
 *.class
+
+*.ap_
+
+*.dex
+
+*.apk
