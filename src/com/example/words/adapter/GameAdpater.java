@@ -13,17 +13,19 @@ public class GameAdpater extends FragmentStatePagerAdapter
 
 	private SparseArray<GameFragment> frags;
 	private GameActivity activity;
+	private boolean firstGameIsNewGame;
 	
-	public GameAdpater(GameActivity activity, FragmentManager fragmentManager) {
+	public GameAdpater(GameActivity activity, FragmentManager fragmentManager, boolean firstGameIsNewGame) {
 		super(fragmentManager);
 		this.activity = activity;
+		this.firstGameIsNewGame = firstGameIsNewGame;
 		frags = new SparseArray<GameFragment>(activity.games.size());
 	}
 
 	@Override
 	public Fragment getItem(int position) {
 		if(frags.size() <= position || frags.get(position) == null){
-			GameFragment frag = new GameFragment(activity, activity.games.get(position), false);
+			GameFragment frag = new GameFragment(activity, activity.games.get(position), firstGameIsNewGame && position == 0);
 			frags.put(position, frag);
 		} 
 		return frags.get(position);

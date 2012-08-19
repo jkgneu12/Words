@@ -72,8 +72,8 @@ public class Constants {
 		if(game.prevWords.usedWords.contains(word)) 
 			return "Already Used";
 
-		String lastWordString = lastWord.getLastWord().toUpperCase();
-		if(!isNullOrEmpty(lastWordString) && word.contains(lastWordString))
+		String lastWordString = lastWord.getLastWord();
+		if(!isNullOrEmpty(lastWordString) && word.contains(lastWordString.toUpperCase()))
 			return "Can't reuse the last word with rearranging the letters";
 
 		word = word.toLowerCase();

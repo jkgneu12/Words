@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.adapter.GameRowData;
+import com.example.words.network.ParseUtils;
 import com.example.words.view.GameRow;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -81,12 +82,10 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	}
 
 	private void setupGamesList(final CachePolicy cachePolicy) {
-		ArrayList<ParseQuery> queries = new ArrayList<ParseQuery>();
-		queries.add(new ParseQuery("Game").whereEqualTo("currentPlayerId", currentUser.getObjectId()));
-		queries.add(new ParseQuery("Game").whereEqualTo("waitingPlayerId", currentUser.getObjectId()));
-		ParseQuery query = ParseQuery.or(queries); 
-		query.orderByDescending("updatedAt");
-		query.setCachePolicy(cachePolicy);
+
+		currentGames = new ArrayList<GameRowData>();
+		waitingGames = new ArrayList<GameRowData>();
+		finishedGames = new ArrayList<GameRowData>();
 		
 		final ProgressDialog waiting = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
 		if(cachePolicy.equals(CachePolicy.NETWORK_ONLY)){
@@ -101,47 +100,14 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 			waiting.show();
 		}
 		
-		query.findInBackground(new FindCallback() {
+		ParseUtils.getGamesLists(this, currentGames, waitingGames, finishedGames, waiting, currentUser, cachePolicy, new Runnable() {
+			
 			@Override
-			public void done(List<ParseObject> objects, ParseException e) {
-				currentGames = new ArrayList<GameRowData>();
-				waitingGames = new ArrayList<GameRowData>();
-				finishedGames = new ArrayList<GameRowData>();
-				if(e != null){
-					if(HomeActivity.this.hasWindowFocus()){
-						Toast.makeText(HomeActivity.this, "Could not connect to Server. Please try again.", Toast.LENGTH_LONG).show();
-						finish();
-					}
-				} else {
-					for(ParseObject obj : objects){
-						boolean gameOver = obj.getBoolean("gameOver");
-						String currentPlayerId = obj.getString("currentPlayerId");
-						int currentPlayerScore = obj.getInt("currentPlayerScore");
-						String waitingPlayerId = obj.getString("waitingPlayerId");
-						int waitingPlayerScore = obj.getInt("waitingPlayerScore");
-
-						GameRowData data;
-
-						boolean currentPlayer = currentPlayerId.equals(userId);
-						if(currentPlayer)
-							data = new GameRowData(obj.getObjectId(), obj.getString("waitingPlayerName"), obj.getString("waitingPlayerUserName"), waitingPlayerId, waitingPlayerScore, currentPlayerScore, currentPlayer, gameOver);
-						else
-							data = new GameRowData(obj.getObjectId(), obj.getString("currentPlayerName"), obj.getString("currentPlayerUserName"), currentPlayerId, currentPlayerScore, waitingPlayerScore, currentPlayer, gameOver);
-
-						if(data.isGameOver)
-							finishedGames.add(data);
-						else if(data.isCurrentPlayer)
-							currentGames.add(data);
-						else
-							waitingGames.add(data);
-					}
-				}
-
+			public void run() {
 				buildGamesList();
-				if(cachePolicy.equals(CachePolicy.NETWORK_ONLY))
-					waiting.dismiss();
 			}
 		});
+
 	}
 
 	protected void buildGamesList() {
@@ -295,6 +261,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 	public void newGame() {	
 		Intent intent = new Intent();
 		intent.setClass(this, NewGameActivity.class);
+		intent.putExtra("games", compileAllGames());
 		startActivity(intent);
 	}
 
@@ -306,24 +273,18 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		intent.setClass(this, GameActivity.class);
 
 		GameRowData item = row.getData();
-
-//		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
-//		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
-//		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
-//		intent.putExtra("CurrentPlayerScore", item.yourScore);
-//		intent.putExtra("WaitingPlayerId", item.opponentId);
-//		intent.putExtra("WaitingPlayerName", item.opponent);
-//		intent.putExtra("WaitingPlayerUserName", item.opponentUserName);
-//		intent.putExtra("WaitingPlayerScore", item.opponentScore);
-//
-//		intent.putExtra("id", item.id);
+		
 		intent.putExtra("item", item);
+		intent.putExtra("games", compileAllGames());
+		
+		startActivity(intent);
+	}
+
+	public ArrayList<GameRowData> compileAllGames() {
 		ArrayList<GameRowData> games = new ArrayList<GameRowData>(currentGames);
 		games.addAll(waitingGames);
 		games.addAll(finishedGames);
-		intent.putExtra("games", games);
-		
-		startActivity(intent);
+		return games;
 	}
 
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 
 import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.adapter.GameRowData;
 import com.example.words.adapter.UserListAdpater;
 import com.example.words.adapter.UserRowData;
 import com.parse.FindCallback;
@@ -30,6 +32,7 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
 	private String userId;
 	private UserListAdpater adapter;
 	private EditText searchBar;
+	private ArrayList<GameRowData> games;
 
 
 	@Override
@@ -46,6 +49,8 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
         
         setupUserList();
         setupSearchBar();
+        
+        games = getIntent().getParcelableArrayListExtra("games");
         
     }
 
@@ -79,15 +84,15 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
 		Intent intent = new Intent();
 		intent.setClass(this, GameActivity.class);
 		intent.putExtra("NewGame", true);
-
-		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
-		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
-		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
 		
 		UserRowData item = adapter.getItem(position);
-		intent.putExtra("WaitingPlayerId", item.userId);
-		intent.putExtra("WaitingPlayerName", item.user);
-		intent.putExtra("WaitingPlayerUserName", item.userName);
+		
+		GameRowData row = new GameRowData(null, item.user, item.userName, item.userId, 0, 0, true, false);
+		
+		games.add(0, row);
+		
+		intent.putExtra("item", row);
+		intent.putExtra("games", games);
 		
 		startActivity(intent);
 		

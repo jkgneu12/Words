@@ -53,6 +53,8 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public String getLastWord(){
+		if(lastWord == null)
+			return null;
 		return lastWord.toLowerCase();
 	}
 	

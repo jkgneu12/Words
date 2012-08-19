@@ -421,6 +421,9 @@ public class GameFragment extends Fragment implements OnClickListener{
 			game.currentPlayer.replenishTiles();
 			game.currentPlayer.incrementCurrentScore(points);
 			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
+			game.lastTurn.completeLastWord = gameBoard.getLetters();
+			game.lastTurn.currentLastWord = gameBoard.getLetters();
+			game.board.clearTiles();
 			game.save();
 			Toast.makeText(activity, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);

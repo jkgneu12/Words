@@ -59,7 +59,7 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 		
 		games = getIntent().getParcelableArrayListExtra("games");
 		
-		adapter = new GameAdpater(this, getSupportFragmentManager());
+		adapter = new GameAdpater(this, getSupportFragmentManager(), getIntent().getBooleanExtra("NewGame", false));
 		
 		if(savedInstanceState != null){
 			adapter.setFragmentTags(savedInstanceState.getStringArray("fragTags"));
@@ -70,7 +70,8 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 		
 		GameRowData mainItem = getIntent().getParcelableExtra("item");
 		for(int z = 0; z < games.size(); z++){
-			if(games.get(z).id.equals(mainItem.id)){
+			String id = games.get(z).id;
+			if(id == null || id.equals(mainItem.id)){
 				pager.setCurrentItem(z);
 				break;
 			}

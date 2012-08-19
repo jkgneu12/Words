@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.adapter.FacebookFriendData;
 import com.example.words.adapter.FacebookFriendListAdpater;
+import com.example.words.adapter.GameRowData;
 import com.example.words.network.FacebookFriendsGetTask;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -37,6 +39,7 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 	private EditText searchBar;
 	private ParseUser currentUser;
 	private FacebookFriendListAdpater adapter;
+	private ArrayList<GameRowData> games;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,8 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 		
 		setupSearchBar();
 		facebookList.setOnItemClickListener(this);
+		
+		games = getIntent().getParcelableArrayListExtra("games");
 	}
 
 	public void setupList(JSONObject result) {
@@ -117,15 +122,13 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 		Intent intent = new Intent();
 		intent.setClass(this, GameActivity.class);
 		intent.putExtra("NewGame", true);
-
-		intent.putExtra("CurrentPlayerId", currentUser.getObjectId());
-		intent.putExtra("CurrentPlayerName", currentUser.getString("displayName"));
-		intent.putExtra("CurrentPlayerUserName", currentUser.getUsername());
 		
+		GameRowData row = new GameRowData(null, item.user, item.userName, item.userId, 0, 0, true, false);
 		
-		intent.putExtra("WaitingPlayerId", item.userId);
-		intent.putExtra("WaitingPlayerName", item.user);
-		intent.putExtra("WaitingPlayerUserName", item.userName);
+		games.add(0, row);
+		
+		intent.putExtra("item", row);
+		intent.putExtra("games", games);
 		
 		startActivity(intent);
 		

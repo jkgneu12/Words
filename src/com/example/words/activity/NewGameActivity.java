@@ -1,15 +1,18 @@
 package com.example.words.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.adapter.GameRowData;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -23,6 +26,7 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 	private Button random;
 	private ParseUser currentUser;
 	private String userId;
+	private ArrayList<GameRowData> games;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +44,24 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 		
 		currentUser = ParseUser.getCurrentUser();
         userId = currentUser.getObjectId();
+        
+        games = getIntent().getParcelableArrayListExtra("games");
 	}
 
 	@Override
 	public void onClick(View v) {
+		final Intent intent = new Intent();
+		intent.putExtra("games", games);
+		
 		if(v == facebook){
-			Intent intent = new Intent();
 			intent.setClass(this, FacebookFriendsActivity.class);
 			startActivity(intent);
 			finish();
 		} else if (v == username) {
-			Intent intent = new Intent();
 			intent.setClass(this, PickOpponentActivity.class);
 			startActivity(intent);
 			finish();
 		} else if (v == random) {
-			
 			ParseQuery query = ParseUser.getQuery();
 	        query.whereNotEqualTo("objectId", userId);
 	        query.findInBackground(new FindCallback() {
@@ -65,7 +71,6 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 					int index = (int)(Math.random() * objects.size());
 					ParseUser user = (ParseUser)objects.get(index);
 					
-					Intent intent = new Intent();
 					intent.setClass(NewGameActivity.this, GameActivity.class);
 					intent.putExtra("NewGame", true);
 					

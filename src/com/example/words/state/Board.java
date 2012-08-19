@@ -15,8 +15,7 @@ public class Board implements Parcelable{
 	public int[] indices;
 	
 	public Board(Game game) {
-		this.tiles = new String[Constants.NUM_TILE_HOLDERS];  
-		this.indices = new int[Constants.NUM_TILE_HOLDERS];  
+		clearTiles();  
 	}
 	
 	public void update(GameBoard gb) {
@@ -30,6 +29,11 @@ public class Board implements Parcelable{
 
 	public ArrayList<String> getTilesList() {
 		return Constants.arrayToListStrip(tiles);
+	}
+	
+	public void clearTiles() {
+		this.tiles = new String[Constants.NUM_TILE_HOLDERS];  
+		this.indices = new int[Constants.NUM_TILE_HOLDERS];  
 	}
 
 	
@@ -64,4 +68,6 @@ public class Board implements Parcelable{
 			return new Board[size];
 		}
 	};
+
+	
 }
