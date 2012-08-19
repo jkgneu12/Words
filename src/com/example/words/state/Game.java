@@ -161,7 +161,7 @@ public class Game implements Parcelable{
 					bag.refresh(obj);
 					
 					currentPlayer.replenishTiles();//they should be full, but just in case something went wrong
-					fragment.refreshUIFromGame();
+					fragment.refreshUIFromGame(false);
 					
 				} else {
 					Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();

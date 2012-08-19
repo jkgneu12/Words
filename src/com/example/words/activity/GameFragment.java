@@ -114,7 +114,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			((FrameLayout)view.getParent()).removeView(view);
 		}
 		if(couldntLayout)
-			refreshGameBoardUIFromGame();
+			refreshGameBoardUIFromGame(false);
 		return view;
 	}
 	
@@ -128,7 +128,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			isNewGame = savedInstanceState.getBoolean("isNewGame");
 			
 			if(game != null){	
-			    refreshUIFromGame();
+			    refreshUIFromGame(false);
 			} 
 		} else if(activity.isFirstFragmentLoad){
 			onFragmentShown();
@@ -151,9 +151,9 @@ public class GameFragment extends Fragment implements OnClickListener{
 		if(game == null){
 			game = new Game(activity, this, gameData, isNewGame, gameData.isCurrentPlayer);
 			if(isNewGame)
-				refreshUIFromGame();  
+				refreshUIFromGame(false);  
 		} else
-			refreshUIFromGame();
+			refreshUIFromGame(false);
 	}
 	
 	@Override
@@ -206,20 +206,20 @@ public class GameFragment extends Fragment implements OnClickListener{
 		return true;
 	}
 
-	public void refreshUIFromGame(){
+	public void refreshUIFromGame(boolean force){
 		if(myTiles == null){
 			couldntLayout = true;
 			return;
 		}
 		couldntLayout = false;
-		if(myTiles.getChildCount() != Constants.countNonNulls(game.currentPlayer.tiles)){
+		if(force || myTiles.getChildCount() != Constants.countNonNulls(game.currentPlayer.tiles)){
 			myTiles.removeAllViews();
 			for(int z = 0; z < game.currentPlayer.tiles.length; z++){
 				if(!Constants.isNull(game.currentPlayer.tiles[z]))
 					myTiles.addView(new MyTilesTile(activity, this, "" + game.currentPlayer.tiles[z]));
 			}
 		}
-		if(lastWord.getTileCount() != Constants.countNonNulls(game.lastTurn.currentLastWord)){
+		if(force || lastWord.getTileCount() != Constants.countNonNulls(game.lastTurn.currentLastWord)){
 			lastWord.setCompleteLastWord(game.lastTurn.completeLastWord);
 			lastWord.setCurrentLastWord(game.lastTurn.currentLastWord);
 		}
@@ -228,12 +228,12 @@ public class GameFragment extends Fragment implements OnClickListener{
 		
 		Log.e("PREV CHILD COUNT", "" +previousWords.getChildCount());
 		Log.e("PREV WORD COUNT", ""+game.prevWords.usedWords.size());
-		setupPreviousWords();
-		refreshGameBoardUIFromGame();
+		setupPreviousWords(force);
+		refreshGameBoardUIFromGame(force);
 	}
 
-	private void refreshGameBoardUIFromGame() {
-		if(gameBoard.getChildCount() != Constants.countNonNulls(game.board.tiles)){
+	private void refreshGameBoardUIFromGame(boolean force) {
+		if(force || gameBoard.getChildCount() != Constants.countNonNulls(game.board.tiles)){
 			gameBoard.removeAllViews();
 			for(int z = 0; z < game.board.tiles.length; z++){
 				if(!Constants.isNull(game.board.tiles[z]) && Character.isLetter(game.board.tiles[z].charAt(0))){
@@ -245,11 +245,11 @@ public class GameFragment extends Fragment implements OnClickListener{
 		updateCurrentScore();
 	}
 
-	public void setupPreviousWords() {
+	public void setupPreviousWords(boolean force) {
 		int prevWordCount = game.prevWords.usedWords.size();
 		float fontSize = Constants.getPreviousWordSize(activity);
 		
-		if(previousWords.getChildCount() != game.prevWords.usedWords.size()){
+		if(force || previousWords.getChildCount() != game.prevWords.usedWords.size()){
 			
 			previousWords.removeAllViews();
 	
@@ -421,14 +421,14 @@ public class GameFragment extends Fragment implements OnClickListener{
 			game.currentPlayer.replenishTiles();
 			game.currentPlayer.incrementCurrentScore(points);
 			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
+			game.save();
 			game.lastTurn.completeLastWord = gameBoard.getLetters();
 			game.lastTurn.currentLastWord = gameBoard.getLetters();
 			game.board.clearTiles();
-			game.save();
 			Toast.makeText(activity, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 			showReadOnlyButtons();
-			refreshUIFromGame();
+			refreshUIFromGame(true);
 		}
 		else
 			Toast.makeText(activity, "Not a Word", Toast.LENGTH_SHORT).show();
