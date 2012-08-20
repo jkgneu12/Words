@@ -2,6 +2,7 @@ package com.example.words.view;
 
 import android.graphics.drawable.Drawable;
 
+import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
@@ -38,5 +39,6 @@ public class LastWordTile extends Tile  {
 	protected Drawable getSelectedBackgroundDrawable() {
 		return activity.getResources().getDrawable(R.drawable.selected_last_word_tile_background);
 	}
+
 
 }

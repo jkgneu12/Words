@@ -1,10 +1,12 @@
 package com.example.words.view;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,8 +23,11 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 
 	public LastWord(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		tiles = new int[Constants.NUM_TILE_HOLDERS];
+		tiles = new int[Constants.NUM_GAMEBOARD_TILES];
 		initListeners();
+		
+		setMinimumHeight((int)(Constants.getTileDimensions((Activity)context) + Constants.getDIPixels(activity, 10)));
+		setGravity(Gravity.CENTER);
 	}
 	
 	@TargetApi(11)
@@ -59,7 +64,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public String[] getLetters() {
-		String[] letters = new String[Constants.NUM_TILE_HOLDERS];
+		String[] letters = new String[Constants.NUM_GAMEBOARD_TILES];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
 			if(t != null)
@@ -136,13 +141,12 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 
-	private void goodHighlight() {
+	protected void goodHighlight() {
 		setBackgroundResource(R.drawable.last_word_higlight_backround);
-		
 	}
-	private void unhighlight() {
-		setBackgroundDrawable(null);
-		
+
+	protected void unhighlight() {
+		setBackgroundResource(R.drawable.last_word_backround);
 	}
 	
 	@Override
@@ -167,6 +171,11 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 				sum++;
 		}
 		return sum;
+	}
+
+	@Override
+	@TargetApi(11)
+	public void dragMoved(Tile tile, DragEvent dragEvent) {
 	}
 
 	

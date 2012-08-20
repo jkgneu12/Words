@@ -5,6 +5,7 @@ import java.util.Stack;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.example.words.Constants;
 import com.example.words.R;
 
 public class MyTiles extends FreeFormBoard {
@@ -39,11 +40,18 @@ public class MyTiles extends FreeFormBoard {
 
 	@Override
 	protected void goodHighlight() {
-		setBackgroundResource(R.drawable.last_word_higlight_backround);
+		setBackgroundResource(R.drawable.my_tiles_higlight_backround);
 	}
 
 	@Override
 	protected void unhighlight() {
-		setBackgroundDrawable(null);
+		setBackgroundResource(R.drawable.my_tiles_backround);
+	}
+
+
+
+	@Override
+	protected int getMaxNumTiles() {
+		return Constants.NUM_MY_TILES;
 	}
 }

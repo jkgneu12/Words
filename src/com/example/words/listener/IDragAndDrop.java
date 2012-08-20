@@ -11,5 +11,6 @@ public interface IDragAndDrop {
 	public void dragEnded(Tile tile);
 	public void dragDropped(Tile tile, DragEvent dragEvent);
 	public boolean containsDragable();
+	public void dragMoved(Tile tile, DragEvent dragEvent);
 
 }

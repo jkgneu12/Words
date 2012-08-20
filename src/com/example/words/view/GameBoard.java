@@ -19,7 +19,7 @@ public class GameBoard extends FreeFormBoard {
 	}
 	
 	public int[] getIndices() {
-		int[] indices = new int[Constants.NUM_TILE_HOLDERS];
+		int[] indices = new int[Constants.NUM_GAMEBOARD_TILES];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
 			if(t != null && t.isPartOfLastWord()){
@@ -30,7 +30,7 @@ public class GameBoard extends FreeFormBoard {
 	}
 
 	public boolean[] partOfLastWordArray() {
-		boolean[] partOfLastWord = new boolean[Constants.NUM_TILE_HOLDERS];
+		boolean[] partOfLastWord = new boolean[Constants.NUM_GAMEBOARD_TILES];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
 			if(t != null)
@@ -65,7 +65,7 @@ public class GameBoard extends FreeFormBoard {
 
 	@Override
 	protected boolean canDrop(Tile tile) {
-		return getChildCount() < Constants.NUM_MY_TILES || tile.getParent() == this;
+		return getChildCount() < Constants.NUM_GAMEBOARD_TILES || tile.getParent() == this;
 	}
 	
 	@Override
@@ -76,6 +76,11 @@ public class GameBoard extends FreeFormBoard {
 	@Override
 	protected void unhighlight() {
 		setBackgroundResource(R.drawable.gameboard_background);
+	}
+
+	@Override
+	protected int getMaxNumTiles() {
+		return Constants.NUM_GAMEBOARD_TILES;
 	}
 
 	

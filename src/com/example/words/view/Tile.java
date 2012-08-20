@@ -55,12 +55,12 @@ public abstract class Tile extends RelativeLayout {
 
 		setBackgroundDrawable(getBackgroundDrawable());
 
-		initLayoutParams();
+		initLayoutParams(Constants.NUM_MY_TILES);
 
 		initTextView();
 	}
 	
-	private void initTextView() {
+	protected void initTextView() {
 		textView = new TextView(activity);
 		textView.setText(text);
 		textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -92,13 +92,17 @@ public abstract class Tile extends RelativeLayout {
 		addView(scoreView);
 	}
 
-	public void initLayoutParams() {
+	public void initLayoutParams(int numTiles) {
 		int dim = Constants.getTileDimensions(activity);
 
 		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(dim, dim);
-		int margin = Constants.getTileMargin(activity, Constants.NUM_MY_TILES);
+		int margin = getMargin(numTiles);
 		p.setMargins(margin, 0, margin, 0);
 		setLayoutParams(p);
+	}
+	
+	protected int getMargin(int numTiles){
+		return Constants.getTileMargin(activity, numTiles) ;
 	}
 
 	@SuppressLint("NewApi")

@@ -32,8 +32,8 @@ public class Board implements Parcelable{
 	}
 	
 	public void clearTiles() {
-		this.tiles = new String[Constants.NUM_TILE_HOLDERS];  
-		this.indices = new int[Constants.NUM_TILE_HOLDERS];  
+		this.tiles = new String[Constants.NUM_GAMEBOARD_TILES];  
+		this.indices = new int[Constants.NUM_GAMEBOARD_TILES];  
 	}
 
 	

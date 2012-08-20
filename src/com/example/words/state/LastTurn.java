@@ -19,8 +19,8 @@ public class LastTurn implements Parcelable {
 	
 	public LastTurn() {
 		
-		this.currentLastWord = new String[Constants.NUM_TILE_HOLDERS];  
-		this.completeLastWord = new String[Constants.NUM_TILE_HOLDERS];  
+		this.currentLastWord = new String[Constants.NUM_GAMEBOARD_TILES];  
+		this.completeLastWord = new String[Constants.NUM_GAMEBOARD_TILES];  
 		
 		this.lastPlayerPassed = false;
 	}

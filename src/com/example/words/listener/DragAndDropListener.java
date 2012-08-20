@@ -28,6 +28,8 @@ public class DragAndDropListener implements OnDragListener{
         	caller.dragEnded(tile);
         } else if (dragAction == DragEvent.ACTION_DROP && caller.containsDragable()) {
         	caller.dragDropped(tile, dragEvent);
+        } else if (dragAction == DragEvent.ACTION_DRAG_LOCATION) {
+        	caller.dragMoved(tile, dragEvent);
         }
         return true;
     }

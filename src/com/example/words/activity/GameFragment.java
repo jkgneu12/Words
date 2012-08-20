@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -226,8 +227,6 @@ public class GameFragment extends Fragment implements OnClickListener{
 		remainingTiles.setText(game.bag.remainingTiles() + " Tiles Left");
 		setScoreText();
 		
-		Log.e("PREV CHILD COUNT", "" +previousWords.getChildCount());
-		Log.e("PREV WORD COUNT", ""+game.prevWords.usedWords.size());
 		setupPreviousWords(force);
 		refreshGameBoardUIFromGame(force);
 	}
@@ -247,10 +246,10 @@ public class GameFragment extends Fragment implements OnClickListener{
 
 	public void setupPreviousWords(boolean force) {
 		int prevWordCount = game.prevWords.usedWords.size();
-		float fontSize = Constants.getPreviousWordSize(activity);
 		
-		if(force || previousWords.getChildCount() != game.prevWords.usedWords.size()){
+		if(previousWords != null && (force || previousWords.getChildCount() != prevWordCount)){
 			
+			float fontSize = Constants.getPreviousWordSize(activity);
 			previousWords.removeAllViews();
 	
 			for(int z = 0; z < prevWordCount - 1; z++){
@@ -263,9 +262,10 @@ public class GameFragment extends Fragment implements OnClickListener{
 					letter.setText("" + wordText.charAt(y));
 					letter.setTextSize(fontSize);
 					if(game.prevWords.reused == null || game.prevWords.reused.size() <= z || !game.prevWords.reused.get(z).contains(y))
-						letter.setTextColor(getResources().getColor(R.color.brown));
+						letter.setTextColor(getResources().getColor(R.color.brown_light));
 					else 
-						letter.setTextColor(getResources().getColor(R.color.orange));
+						letter.setTextColor(getResources().getColor(R.color.orange_light));
+					letter.setShadowLayer(3, 2, 2, Color.BLACK);
 					word.addView(letter);
 				}
 	

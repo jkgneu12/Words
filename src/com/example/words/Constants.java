@@ -35,10 +35,11 @@ import com.parse.PushService;
 
 public class Constants {
 
-	public static final int NUM_TILE_HOLDERS = 10;
+	public static int NUM_GAMEBOARD_TILES = 10;
 	public static final int NUM_MY_TILES = 7;
 
 	private static double VERSION = .1;
+	
 	
 	public static final String UPDATE_SITE = "market://details?id=fm.asot";
 
@@ -55,7 +56,7 @@ public class Constants {
 	}
 
 	public static int getTileDimensions(Activity activity){
-		return (getActivityWidth(activity) / Constants.NUM_TILE_HOLDERS) - 5;
+		return (getActivityWidth(activity) / Constants.NUM_GAMEBOARD_TILES) - 5;
 	}
 
 	public static int getTileMargin(Activity activity, int numTiles) {

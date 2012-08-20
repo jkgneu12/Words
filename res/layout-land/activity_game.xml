@@ -4,38 +4,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/background" >
     
-    <com.example.words.view.StarWarsScroller
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_above="@+id/game_board"
-        android:scrollbars="none">
-
-        <com.example.words.view.StarWarsScrollerLayout
-            android:id="@+id/previous_words"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal|bottom"
-            android:orientation="vertical" >
-        </com.example.words.view.StarWarsScrollerLayout>
-    </com.example.words.view.StarWarsScroller>
-    
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignBottom="@id/remaining_tiles"
-        android:background="@drawable/fade"
-        />
-    
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-       	android:layout_alignTop="@id/last_word"
-       	android:layout_alignBottom="@id/last_word"
-        android:background="@drawable/fade_180"
-        />
-    
     <TextView
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
@@ -94,7 +62,8 @@
         android:id="@+id/my_tiles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/buttons" />
+        android:layout_above="@id/buttons"
+        android:background="@drawable/my_tiles_backround" />
 
     <com.example.words.view.GameBoard
         android:id="@id/game_board"
@@ -122,7 +91,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/game_board"
-        android:gravity="center_horizontal" />
+        android:background="@drawable/last_word_backround" />
 
     
     

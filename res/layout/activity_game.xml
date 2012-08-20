@@ -25,20 +25,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignBottom="@id/score"
-        android:layout_alignParentTop="true"
-        android:background="#FF000000" />
-
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="30dp"
-        android:layout_alignTop="@id/score"
-        android:background="@drawable/fade" />
+        android:layout_alignParentTop="true" />
 
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:layout_alignBottom="@+id/last_word"
-        android:background="@drawable/fade_180" />
+        android:layout_alignBottom="@+id/last_word" />
 
     <TextView
         android:id="@+id/remaining_tiles"
@@ -97,7 +89,8 @@
         android:id="@+id/my_tiles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/buttons" />
+        android:layout_above="@id/buttons"
+        android:background="@drawable/my_tiles_backround"/>
 
     <com.example.words.view.GameBoard
         android:id="@id/game_board"
@@ -128,6 +121,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/game_board"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"
+        android:background="@drawable/last_word_backround" />
 
 </RelativeLayout>

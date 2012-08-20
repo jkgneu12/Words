@@ -47,7 +47,7 @@ public class TileHolder extends FrameLayout implements IDragAndDrop {
 		int dim = Constants.getTileDimensions(activity);
 		
 		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(dim, dim);
-		int margin = Constants.getTileMargin(activity, Constants.NUM_TILE_HOLDERS);
+		int margin = Constants.getTileMargin(activity, Constants.NUM_GAMEBOARD_TILES);
 		p.setMargins(margin, margin, margin, margin);
 		setLayoutParams(p);
 	}
@@ -83,6 +83,7 @@ public class TileHolder extends FrameLayout implements IDragAndDrop {
 	        owner.removeView(tile);
 	        addView(tile);
 	        fragment.update();
+	        ((LastWord)getParent()).unhighlight();
 		} else 
 			((LastWord)getParent()).dragDropped(tile, dragEvent);
 		
@@ -91,31 +92,16 @@ public class TileHolder extends FrameLayout implements IDragAndDrop {
 	@Override
 	public void dragEntered(Tile tile) {
     	containsDragable = true;
-    	goodHighlight();
 	}
 	
 	@Override
 	public void dragExited(Tile tile) {
 		containsDragable = false;
-        unhighlight();
 	}
 	
 	@Override
 	public void dragEnded(Tile tile) {
 		tile.setVisibility(View.VISIBLE);
-        unhighlight();
-	}
-
-	public void goodHighlight() {
-		setBackgroundColor(activity.getResources().getColor(R.color.base));
-	}
-	
-	public void badHighlight() {
-		setBackgroundColor(Color.RED);
-	}
-
-	public void unhighlight() {
-		setBackgroundDrawable(null);
 	}
 
 	public Tile getTile() {
@@ -128,6 +114,11 @@ public class TileHolder extends FrameLayout implements IDragAndDrop {
 	
 	public boolean containsDragable(){
 		return containsDragable;
+	}
+
+	@TargetApi(11)
+	@Override
+	public void dragMoved(Tile tile, DragEvent dragEvent) {
 	}
 
 }

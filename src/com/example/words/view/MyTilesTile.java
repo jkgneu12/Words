@@ -2,6 +2,7 @@ package com.example.words.view;
 
 import android.graphics.drawable.Drawable;
 
+import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;

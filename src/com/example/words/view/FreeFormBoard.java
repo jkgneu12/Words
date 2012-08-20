@@ -23,6 +23,7 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 	protected boolean containsDragable;
 	protected GameActivity activity;
 	protected GameFragment fragment;
+	protected Tile fakeTile = null;
 
 	public FreeFormBoard(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -46,14 +47,34 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 	@Override
 	public void dragEntered(Tile tile) {
     	containsDragable = true;
-    	if(canDrop(tile) && tile.getParent() != this)
+    	if(canDrop(tile) && tile.getParent() != this){
     		goodHighlight();
+    	}
 	}
+	
+	@Override
+	@TargetApi(11)
+	public void dragMoved(Tile tile, DragEvent dragEvent) {
+    	containsDragable = true;
+    	if(canDrop(tile)){
+    		if(tile.getParent() == this)
+    			placeTile(tile, (int)dragEvent.getX());
+    		else
+    			placeFakeTile(tile, (int)dragEvent.getX());
+    	}
+	}
+
 
 	@Override
 	public void dragExited(Tile tile) {
 		containsDragable = false;
         unhighlight();
+        removeFakeTile();
+	}
+
+	private void removeFakeTile() {
+		if (fakeTile != null && fakeTile.getParent() == this)
+			removeView(fakeTile);
 	}
 
 	@Override
@@ -88,7 +109,28 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 	protected abstract boolean canDrop(Tile tile);
 
 	private void placeTile(Tile tile, int x) {
+		removeFakeTile();
+			
+		int insertIndex = getInsertIndex(tile, x);
 
+		ViewGroup owner = (ViewGroup) tile.getParent();
+		owner.removeView(tile);
+		addView(tile, insertIndex);
+		fragment.update();
+	}
+	
+	private void placeFakeTile(Tile tile, int x) {
+		if(fakeTile == null)
+			fakeTile = new FakeTile(activity, fragment);
+		else 
+			removeFakeTile();
+		
+		int insertIndex = getInsertIndex(tile, x);
+		if(getChildAt(insertIndex) != tile)
+			addView(fakeTile, insertIndex);
+	}
+
+	public int getInsertIndex(Tile tile, int x) {
 		int insertIndex = -1;
 		boolean alreadyAdded = tile.getParent() == this;
 
@@ -128,11 +170,7 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 		}
 		if(insertIndex == -1)
 			insertIndex = 0;
-
-		ViewGroup owner = (ViewGroup) tile.getParent();
-		owner.removeView(tile);
-		addView(tile, insertIndex);
-		fragment.update();
+		return insertIndex;
 	}
 
 	private int getMiddle(View v){
@@ -146,14 +184,16 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 	@Override
 	public void addView(View child) {
 		super.addView(child);
-		((Tile)child).initLayoutParams();
+		((Tile)child).initLayoutParams(getMaxNumTiles());
 	}
 
 	@Override
 	public void addView(View child, int index) {
 		super.addView(child, index);
-		((Tile)child).initLayoutParams();
+		((Tile)child).initLayoutParams(getMaxNumTiles());
 	}
+
+	protected abstract int getMaxNumTiles();
 
 	public void replaceTile(View oldChild, View newChild) {
 		addView(newChild, indexOf(oldChild));
@@ -168,11 +208,16 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 	}
 
 	public String[] getLetters() {
-		String[] letters = new String[Constants.NUM_MY_TILES];
+		int offset = 0;
+		String[] letters = new String[getMaxNumTiles()];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
-			if(t != null)
-				letters[z] = t.getLetter();
+			if(t != null){
+				if(t == fakeTile)
+					offset--;
+				else
+					letters[z + offset] = t.getLetter();
+			}
 		}
 		return letters;
 	}
