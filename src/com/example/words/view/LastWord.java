@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -46,6 +47,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public void setCurrentLastWord(String[] lastWordArray) {
+		Log.e("LastWordArray", lastWordArray.length + " " + getChildCount());
 		for(int z = 0; z < lastWordArray.length; z++){
 			String c = lastWordArray[z];
 			if(!Constants.isNullOrEmpty(c)){
@@ -64,7 +66,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public String[] getLetters() {
-		String[] letters = new String[Constants.NUM_GAMEBOARD_TILES];
+		String[] letters = new String[getChildCount()];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
 			if(t != null)

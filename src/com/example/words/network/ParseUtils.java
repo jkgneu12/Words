@@ -63,7 +63,7 @@ public class ParseUtils {
 				
 				callback.run();
 				
-				if(waiting != null && cachePolicy.equals(CachePolicy.NETWORK_ONLY))
+				if(waiting != null && cachePolicy.equals(CachePolicy.NETWORK_ONLY) && waiting.isShowing())
 					waiting.dismiss();
 			}
 		});

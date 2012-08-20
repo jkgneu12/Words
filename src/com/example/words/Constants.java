@@ -168,32 +168,6 @@ public class Constants {
 		ParseTwitterUtils.initialize("gruvvPslY6g4e8uEGgLqtA", "wcpS5Bt5NEfoooibKRg650Beww7EtQEPFGJTQvJs");
 	}
 	
-	public static void pushSubscribe(Activity activity, String userName){
-		userName = sanitizeUserName(userName);
-		PushService.subscribe(activity, "UserInit" + userName, SignupActivity.class);
-		PushService.subscribe(activity, "UserGame" + userName, HomeActivity.class);	
-		PushService.subscribe(activity, "UserChat" + userName, ChatActivity.class);
-	}
-	
-	public static void pushSubscribeGame(Activity activity, String userName){
-		userName = sanitizeUserName(userName);
-		PushService.subscribe(activity, "UserGame" + userName, HomeActivity.class);	
-	}
-	
-	public static void pushSubscribeChat(Activity activity, String userName){
-		userName = sanitizeUserName(userName);
-		PushService.subscribe(activity, "UserChat" + userName, ChatActivity.class);
-	}
-	
-	public static void pushUnsubscribeGame(Activity activity, String userName){
-		userName = sanitizeUserName(userName);
-		PushService.unsubscribe(activity, "UserGame" + userName);
-	}
-	
-	public static void pushUnsubscribeChat(Activity activity, String userName){
-		userName = sanitizeUserName(userName);
-		PushService.unsubscribe(activity, "UserChat" + userName);
-	}
 	
 	public static String sanitizeUserName(String userName){
 		return userName.replaceAll("\\s", "");

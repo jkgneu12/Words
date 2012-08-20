@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.network.FacebookNameGetTask;
+import com.example.words.network.PushManager;
 import com.example.words.network.TwitterGetTask;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -63,7 +64,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private void navigate(String userName) {
-		Constants.pushSubscribe(this, userName);
+		PushManager.pushSubscribe(this, userName);
 		Intent intent = new Intent();
 		intent.setClass(this, HomeActivity.class);
 		startActivity(intent);

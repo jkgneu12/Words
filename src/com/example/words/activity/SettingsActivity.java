@@ -8,6 +8,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.network.PushManager;
 import com.parse.ParseUser;
 
 public class SettingsActivity extends BaseActivity implements OnCheckedChangeListener {
@@ -66,18 +67,18 @@ public class SettingsActivity extends BaseActivity implements OnCheckedChangeLis
 			editor.commit();
 			
 			if(isChecked)
-				Constants.pushSubscribeChat(this, currentUserName);
+				PushManager.pushSubscribeChat(this, currentUserName);
 			else
-				Constants.pushUnsubscribeChat(this, currentUserName);
+				PushManager.pushUnsubscribeChat(this, currentUserName);
 		} else if (button == gamePush){
 			Editor editor = getSharedPreferences("SETTINGS", MODE_PRIVATE).edit();
 			editor.putBoolean("gamePush", isChecked);
 			editor.commit();
 			
 			if(isChecked)
-				Constants.pushSubscribeGame(this, currentUserName);
+				PushManager.pushSubscribeGame(this, currentUserName);
 			else
-				Constants.pushUnsubscribeGame(this, currentUserName);
+				PushManager.pushUnsubscribeGame(this, currentUserName);
 		} else if (button == shakeShuffle){
 			Editor editor = getSharedPreferences("SETTINGS", MODE_PRIVATE).edit();
 			editor.putBoolean("shakeShuffle", isChecked);
