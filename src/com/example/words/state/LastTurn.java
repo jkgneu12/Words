@@ -3,7 +3,8 @@ package com.example.words.state;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
+import com.example.words.Utils;
 import com.example.words.view.GameBoard;
 import com.example.words.view.LastWord;
 import com.parse.ParseObject;
@@ -19,8 +20,8 @@ public class LastTurn implements Parcelable {
 	
 	public LastTurn() {
 		
-		this.currentLastWord = new String[Constants.NUM_GAMEBOARD_TILES];  
-		this.completeLastWord = new String[Constants.NUM_GAMEBOARD_TILES];  
+		this.currentLastWord = new String[AppController.NUM_GAMEBOARD_TILES];  
+		this.completeLastWord = new String[AppController.NUM_GAMEBOARD_TILES];  
 		
 		this.lastPlayerPassed = false;
 	}
@@ -31,8 +32,8 @@ public class LastTurn implements Parcelable {
 	}
 	
 	public void refresh(ParseObject obj) {
-		currentLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
-		completeLastWord = Constants.listToArrayStrip(obj.getList("lastWord"));
+		currentLastWord = Utils.listToArrayStrip(obj.getList("lastWord"));
+		completeLastWord = Utils.listToArrayStrip(obj.getList("lastWord"));
 		lastPlayerPassed = obj.getBoolean("passed");
 	}
 	

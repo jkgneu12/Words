@@ -7,8 +7,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
 import com.example.words.R;
+import com.example.words.Utils;
 
 public class MainActivity extends BaseActivity implements OnClickListener  {
 
@@ -22,7 +23,7 @@ public class MainActivity extends BaseActivity implements OnClickListener  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Constants.initParse(this); 
+		Utils.initParse(this); 
 
 		play = (Button)findViewById(R.id.play);
 		howToPlay = (Button)findViewById(R.id.how_to_play);
@@ -62,7 +63,7 @@ public class MainActivity extends BaseActivity implements OnClickListener  {
 
 	private void review() {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse(Constants.UPDATE_SITE));
+		intent.setData(Uri.parse(AppController.UPDATE_SITE));
 		startActivity(intent);
 	}
 	

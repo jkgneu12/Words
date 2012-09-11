@@ -5,13 +5,12 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.adapter.GameRowData;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -31,7 +30,7 @@ public class NewGameActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Constants.initParse(this);
+		Utils.initParse(this);
 		setContentView(R.layout.activity_new);
 		
 		facebook = (Button)findViewById(R.id.facebook);

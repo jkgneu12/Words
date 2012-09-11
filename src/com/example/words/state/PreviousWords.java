@@ -6,7 +6,7 @@ import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.words.Constants;
+import com.example.words.Utils;
 import com.parse.ParseObject;
 
 public class PreviousWords implements Parcelable {
@@ -54,7 +54,7 @@ public class PreviousWords implements Parcelable {
 		usedWords = obj.getList("usedWords");
 		scores = obj.getList("scores");
 		turns = obj.getList("turns");
-		reused = Constants.handleJSONArray(obj.getList("reused"));
+		reused = Utils.handleJSONArray(obj.getList("reused"));
 	}
 	
 	

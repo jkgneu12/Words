@@ -8,8 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.network.FacebookNameGetTask;
 import com.example.words.network.PushManager;
 import com.example.words.network.TwitterGetTask;
@@ -35,7 +35,7 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Constants.initParse(this); 
+		Utils.initParse(this); 
 
 		currentUser = ParseUser.getCurrentUser();
 
@@ -88,12 +88,12 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 		String passwordString = password.getEditableText().toString();
 
 
-		if(Constants.isNullOrEmpty(userName)){
+		if(Utils.isNullOrEmpty(userName)){
 			Toast.makeText(SignupActivity.this, "Enter a User Name", Toast.LENGTH_LONG).show();
 			return;
 		}
 
-		if(Constants.isNullOrEmpty(passwordString)){
+		if(Utils.isNullOrEmpty(passwordString)){
 			Toast.makeText(SignupActivity.this, "Enter a Password", Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -119,12 +119,12 @@ public class SignupActivity extends BaseActivity implements OnClickListener {
 		String passwordString = password.getEditableText().toString();
 
 
-		if(Constants.isNullOrEmpty(userName)){
+		if(Utils.isNullOrEmpty(userName)){
 			Toast.makeText(SignupActivity.this, "Enter a User Name", Toast.LENGTH_LONG).show();
 			return;
 		}
 
-		if(Constants.isNullOrEmpty(passwordString)){
+		if(Utils.isNullOrEmpty(passwordString)){
 			Toast.makeText(SignupActivity.this, "Enter a Password", Toast.LENGTH_LONG).show();
 			return;
 		}

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.view.Ticker;
 
 public class BaseActivity extends FragmentActivity {
@@ -20,7 +20,7 @@ public class BaseActivity extends FragmentActivity {
 		super.onResume();
 		View ticker = findViewById(R.id.ticker);
 		if(ticker != null){
-			if(Constants.getSharedPrefBool(this, "hideTicker", false)){
+			if(Utils.getSharedPrefBool(this, "hideTicker", false)){
 				((Ticker)ticker).pauseScroll();
 				((Ticker)ticker).setVisibility(View.GONE);
 			} else {

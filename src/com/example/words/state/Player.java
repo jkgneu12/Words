@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
+import com.example.words.Utils;
 import com.example.words.adapter.GameRowData;
 import com.example.words.view.MyTiles;
 import com.parse.ParseObject;
@@ -23,7 +24,7 @@ public class Player implements Parcelable{
 	
 	public Player(Game game) {
 		this.game = game;
-		this.tiles = new String[Constants.NUM_MY_TILES]; 
+		this.tiles = new String[AppController.NUM_MY_TILES]; 
 	}
 	
 	public void init(GameRowData gameData, boolean currentPlayer){
@@ -50,7 +51,7 @@ public class Player implements Parcelable{
 	
 	public void replenishTiles() {
 		for(int z = 0; z < tiles.length; z++){
-			if(Constants.isNull(tiles[z]))
+			if(Utils.isNull(tiles[z]))
 				tiles[z] = game.bag.takeFromBag();
 		}
 	}
@@ -60,7 +61,7 @@ public class Player implements Parcelable{
 	}
 
 	public ArrayList<String> getTilesList() {
-		return Constants.arrayToList(tiles);
+		return Utils.arrayToList(tiles);
 	}
 	
 	public void update(MyTiles mt) {

@@ -5,8 +5,9 @@ import java.util.Stack;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
 import com.example.words.R;
+import com.example.words.Utils;
 
 public class MyTiles extends FreeFormBoard {
 	
@@ -52,6 +53,18 @@ public class MyTiles extends FreeFormBoard {
 
 	@Override
 	protected int getMaxNumTiles() {
-		return Constants.NUM_MY_TILES;
+		return AppController.NUM_MY_TILES;
+	}
+
+
+
+	public void refreshUI(String[] letters, boolean force) {
+		if(force || getChildCount() != Utils.countNonNulls(letters)){
+			removeAllViews();
+			for(int z = 0; z < letters.length; z++){
+				if(!Utils.isNull(letters[z]))
+					addView(new MyTilesTile(activity, fragment, letters[z]));
+			}
+		}
 	}
 }

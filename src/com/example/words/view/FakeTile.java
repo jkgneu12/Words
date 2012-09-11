@@ -1,6 +1,5 @@
 package com.example.words.view;
 
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 

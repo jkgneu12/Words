@@ -1,7 +1,6 @@
 package com.example.words.view;
 
 import android.annotation.TargetApi;
-import android.graphics.Color;
 import android.os.Build;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -10,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.example.words.Constants;
-import com.example.words.R;
+import com.example.words.AppController;
+import com.example.words.Utils;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
 import com.example.words.listener.DragAndDropListener;
@@ -44,10 +43,10 @@ public class TileHolder extends FrameLayout implements IDragAndDrop {
 	}
 
 	public void initLayoutParams() {
-		int dim = Constants.getTileDimensions(activity);
+		int dim = Utils.getTileDimensions(activity);
 		
 		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(dim, dim);
-		int margin = Constants.getTileMargin(activity, Constants.NUM_GAMEBOARD_TILES);
+		int margin = Utils.getTileMargin(activity, AppController.NUM_GAMEBOARD_TILES);
 		p.setMargins(margin, margin, margin, margin);
 		setLayoutParams(p);
 	}

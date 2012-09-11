@@ -15,8 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
 
@@ -55,7 +56,7 @@ public abstract class Tile extends RelativeLayout {
 
 		setBackgroundDrawable(getBackgroundDrawable());
 
-		initLayoutParams(Constants.NUM_MY_TILES);
+		initLayoutParams(AppController.NUM_MY_TILES);
 
 		initTextView();
 	}
@@ -66,7 +67,7 @@ public abstract class Tile extends RelativeLayout {
 		textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		textView.setGravity(Gravity.CENTER);
 		textView.setTextColor(activity.getResources().getColor(R.color.text_light));
-		textView.setPadding(0, 0, (int)Constants.getDIPixels(activity, 1), (int)Constants.getDIPixels(activity, 1));
+		textView.setPadding(0, 0, (int)Utils.getDIPixels(activity, 1), (int)Utils.getDIPixels(activity, 1));
 		if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
 			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
 		else
@@ -86,14 +87,14 @@ public abstract class Tile extends RelativeLayout {
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		params.addRule(ALIGN_PARENT_BOTTOM);
 		params.addRule(ALIGN_PARENT_RIGHT);
-		int margin = (int)Constants.getDIPixels(activity, 3);
+		int margin = (int)Utils.getDIPixels(activity, 3);
 		params.setMargins(0,0,margin*2,margin);
 		scoreView.setLayoutParams(params);
 		addView(scoreView);
 	}
 
 	public void initLayoutParams(int numTiles) {
-		int dim = Constants.getTileDimensions(activity);
+		int dim = Utils.getTileDimensions(activity);
 
 		LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(dim, dim);
 		int margin = getMargin(numTiles);
@@ -102,7 +103,7 @@ public abstract class Tile extends RelativeLayout {
 	}
 	
 	protected int getMargin(int numTiles){
-		return Constants.getTileMargin(activity, numTiles) ;
+		return Utils.getTileMargin(activity, numTiles) ;
 	}
 
 	@SuppressLint("NewApi")
@@ -192,7 +193,7 @@ public abstract class Tile extends RelativeLayout {
 			shadowSize.y *= DRAG_SCALE;
 			boolean right;
 			if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-				right = Constants.getSharedPrefBool(activity, "leftHanded", false);
+				right = Utils.getSharedPrefBool(activity, "leftHanded", false);
 			} else {
 				right = leftSideOfScreen(shadowTouchPoint.x);
 			}
@@ -207,7 +208,7 @@ public abstract class Tile extends RelativeLayout {
 		private boolean leftSideOfScreen(int touchX){
 			int[] pos = new int[2];
 			tile.getLocationInWindow(pos);
-			return touchX + pos[0] < Constants.getActivityWidth(activity) / 2;
+			return touchX + pos[0] < Utils.getActivityWidth(activity) / 2;
 		}
 		
 		@Override

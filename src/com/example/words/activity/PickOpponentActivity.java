@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -14,8 +13,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.adapter.GameRowData;
 import com.example.words.adapter.UserListAdpater;
 import com.example.words.adapter.UserRowData;
@@ -38,7 +37,7 @@ public class PickOpponentActivity extends BaseActivity implements OnItemClickLis
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Constants.initParse(this); 
+        Utils.initParse(this); 
         setContentView(R.layout.activity_pick);
         
         userList = (ListView)findViewById(R.id.user_list);

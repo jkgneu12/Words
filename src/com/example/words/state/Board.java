@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
+import com.example.words.Utils;
 import com.example.words.view.GameBoard;
 
 public class Board implements Parcelable{
@@ -24,16 +25,16 @@ public class Board implements Parcelable{
 	}
 
 	public String getTilesString() {
-		return Constants.arrayToString(tiles);
+		return Utils.arrayToString(tiles);
 	}
 
 	public ArrayList<String> getTilesList() {
-		return Constants.arrayToListStrip(tiles);
+		return Utils.arrayToListStrip(tiles);
 	}
 	
 	public void clearTiles() {
-		this.tiles = new String[Constants.NUM_GAMEBOARD_TILES];  
-		this.indices = new int[Constants.NUM_GAMEBOARD_TILES];  
+		this.tiles = new String[AppController.NUM_GAMEBOARD_TILES];  
+		this.indices = new int[AppController.NUM_GAMEBOARD_TILES];  
 	}
 
 	

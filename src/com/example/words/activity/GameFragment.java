@@ -4,36 +4,30 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.adapter.GameRowData;
 import com.example.words.network.PushManager;
 import com.example.words.state.Game;
+import com.example.words.view.CurrentScore;
 import com.example.words.view.GameBoard;
 import com.example.words.view.LastWord;
 import com.example.words.view.LastWordTile;
 import com.example.words.view.MyTiles;
-import com.example.words.view.MyTilesTile;
-import com.example.words.view.StarWarsScroller;
+import com.example.words.view.PreviousWordsLayout;
+import com.example.words.view.RemainingTiles;
+import com.example.words.view.Score;
 import com.example.words.view.Tile;
 
 public class GameFragment extends Fragment implements OnClickListener{
@@ -41,9 +35,11 @@ public class GameFragment extends Fragment implements OnClickListener{
 	private LastWord lastWord;
 	private GameBoard gameBoard;
 	private MyTiles myTiles;
-	private LinearLayout previousWords;
-	private TextView remainingTiles;
-	private TextView score;
+	private PreviousWordsLayout previousWords;
+	private RemainingTiles remainingTiles;
+	private Score score;
+	private CurrentScore currentScore;
+	
 	private Button submit;
 	private Button reset;
 	private Button pass;
@@ -58,7 +54,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 	private Tile activeTile;
 
 	
-	private TextView currentScore;
+	
 	private GameActivity activity;
 	private boolean isNewGame;
 	public GameRowData gameData;
@@ -91,19 +87,20 @@ public class GameFragment extends Fragment implements OnClickListener{
 			view = inflater.inflate(R.layout.activity_game, null);
 			
 			gameBoard = (GameBoard)view.findViewById(R.id.game_board);
-			gameBoard.setFragment(this);
 			lastWord = (LastWord)view.findViewById(R.id.last_word);
-			lastWord.setFragment(this);
 			myTiles = (MyTiles)view.findViewById(R.id.my_tiles);
-			myTiles.setFragment(this);
-			remainingTiles = (TextView)view.findViewById(R.id.remaining_tiles);
-			score = (TextView)view.findViewById(R.id.score);
-			previousWords = (LinearLayout)view.findViewById(R.id.previous_words);
+			remainingTiles = (RemainingTiles)view.findViewById(R.id.remaining_tiles);
+			score = (Score)view.findViewById(R.id.score);
+			previousWords = (PreviousWordsLayout)view.findViewById(R.id.previous_words);
 			submit = (Button)view.findViewById(R.id.submit);
 			reset = (Button)view.findViewById(R.id.reset);
 			pass = (Button)view.findViewById(R.id.pass);
 			resign = (Button)view.findViewById(R.id.resign);
-			currentScore = (TextView)view.findViewById(R.id.current_score);
+			currentScore = (CurrentScore)view.findViewById(R.id.current_score);
+			
+			gameBoard.setFragment(this);
+			lastWord.setFragment(this);
+			myTiles.setFragment(this);
 	
 			submit.setOnClickListener(this);
 			reset.setOnClickListener(this);
@@ -115,7 +112,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			((FrameLayout)view.getParent()).removeView(view);
 		}
 		if(couldntLayout)
-			refreshGameBoardUIFromGame(false);
+			refreshUI(true);
 		return view;
 	}
 	
@@ -129,7 +126,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			isNewGame = savedInstanceState.getBoolean("isNewGame");
 			
 			if(game != null){	
-			    refreshUIFromGame(false);
+			    refreshUI(false);
 			} 
 		} else if(activity.isFirstFragmentLoad){
 			onFragmentShown();
@@ -152,9 +149,9 @@ public class GameFragment extends Fragment implements OnClickListener{
 		if(game == null){
 			game = new Game(activity, this, gameData, isNewGame, gameData.isCurrentPlayer);
 			if(isNewGame)
-				refreshUIFromGame(false);  
+				refreshUI(false);  
 		} else
-			refreshUIFromGame(false);
+			refreshUI(false);
 	}
 	
 	@Override
@@ -177,7 +174,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 	public void update() {
 		if(game != null){
 			game.update(gameBoard, myTiles, lastWord);
-			updateCurrentScore();
+			currentScore.refreshUI(game.board.tiles, usedAllTiles());
 		} 
 	}
 
@@ -207,179 +204,21 @@ public class GameFragment extends Fragment implements OnClickListener{
 		return true;
 	}
 
-	public void refreshUIFromGame(boolean force){
+	public void refreshUI(boolean force){
 		if(myTiles == null){
 			couldntLayout = true;
 			return;
 		}
 		couldntLayout = false;
-		if(force || myTiles.getChildCount() != Constants.countNonNulls(game.currentPlayer.tiles)){
-			myTiles.removeAllViews();
-			for(int z = 0; z < game.currentPlayer.tiles.length; z++){
-				if(!Constants.isNull(game.currentPlayer.tiles[z]))
-					myTiles.addView(new MyTilesTile(activity, this, "" + game.currentPlayer.tiles[z]));
-			}
-		}
-		if(force || lastWord.getTileCount() != Constants.countNonNulls(game.lastTurn.currentLastWord)){
-			lastWord.setCompleteLastWord(game.lastTurn.completeLastWord);
-			lastWord.setCurrentLastWord(game.lastTurn.currentLastWord);
-		}
-		remainingTiles.setText(game.bag.remainingTiles() + " Tiles Left");
-		setScoreText();
 		
-		setupPreviousWords(force);
-		refreshGameBoardUIFromGame(force);
+		myTiles.refreshUI(game.currentPlayer.tiles, force);
+		lastWord.refreshUI(game.lastTurn.currentLastWord, game.lastTurn.completeLastWord, force);
+		previousWords.refreshUI(game.prevWords, force);
+		gameBoard.refreshUI(game.board, game.lastTurn, force);
+		remainingTiles.refreshUI(game.bag);
+		score.refreshUI(game, gameData);
+		currentScore.refreshUI(game.board.tiles, usedAllTiles());
 	}
-
-	private void refreshGameBoardUIFromGame(boolean force) {
-		if(force || gameBoard.getChildCount() != Constants.countNonNulls(game.board.tiles)){
-			gameBoard.removeAllViews();
-			for(int z = 0; z < game.board.tiles.length; z++){
-				if(!Constants.isNull(game.board.tiles[z]) && Character.isLetter(game.board.tiles[z].charAt(0))){
-					Tile tile = Tile.create(activity, this, "" + game.board.tiles[z], game.board.indices[z], game.lastTurn.partOfLastWord[z]);
-					gameBoard.addView(tile);
-				}
-			}
-		}
-		updateCurrentScore();
-	}
-
-	public void setupPreviousWords(boolean force) {
-		int prevWordCount = game.prevWords.usedWords.size();
-		
-		if(previousWords != null && (force || previousWords.getChildCount() != prevWordCount)){
-			
-			float fontSize = Constants.getPreviousWordSize(activity);
-			previousWords.removeAllViews();
-	
-			for(int z = 0; z < prevWordCount - 1; z++){
-				LinearLayout row = (LinearLayout) ((LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
-	
-				LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
-				String wordText = game.prevWords.usedWords.get(z);
-				for(int y = 0; y < wordText.length(); y++){
-					TextView letter = new TextView(activity);
-					letter.setText("" + wordText.charAt(y));
-					letter.setTextSize(fontSize);
-					if(game.prevWords.reused == null || game.prevWords.reused.size() <= z || !game.prevWords.reused.get(z).contains(y))
-						letter.setTextColor(getResources().getColor(R.color.brown_light));
-					else 
-						letter.setTextColor(getResources().getColor(R.color.orange_light));
-					letter.setShadowLayer(3, 2, 2, Color.BLACK);
-					word.addView(letter);
-				}
-	
-				if(game.prevWords.scores != null && game.prevWords.scores.size() > z){
-					String scoreText = "" + game.prevWords.scores.get(z);
-					TextView score;
-					TextView space;
-					if(game.prevWords.turns.size() > z && game.prevWords.turns.get(z).equals(activity.currentUser.getObjectId())){
-						score = (TextView)row.findViewById(R.id.a);
-						space = (TextView)row.findViewById(R.id.c);
-					} else {
-						score = (TextView)row.findViewById(R.id.c);
-						space = (TextView)row.findViewById(R.id.a);
-					}
-					score.setText(scoreText);
-					score.setTextSize(fontSize / 2);
-					String spaceText = "";
-					for(int y = 0; y < wordText.length(); y++)
-						spaceText += " ";
-					space.setText(spaceText);
-					space.setTextSize(fontSize / 2);
-				} 
-	
-				previousWords.addView(row);
-			}
-	
-			addDummyPreviousWord(fontSize);
-	
-			final StarWarsScroller scroll = (StarWarsScroller)previousWords.getParent();
-			scroll.post(new Runnable() {
-				@Override
-				public void run() {
-					scroll.fullScroll(ScrollView.FOCUS_DOWN);
-					scroll.invalidate();
-				}
-			});
-		}
-//		} else {
-//			for(int z = 0; z < previousWords.getChildCount(); z++){
-//				LinearLayout row = (LinearLayout)previousWords.getChildAt(z);
-//				LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
-//				String wordText = game.prevWords.usedWords.get(z);
-//				for(int y = 0; y < word.getChildCount(); y++){
-//					TextView letter = (TextView) word.getChildAt(y);
-//					letter.setTextSize(fontSize);
-//				}
-//			}
-//			previousWords.invalidate();
-//		}
-	}
-
-	public void addDummyPreviousWord(float fontSize) {
-		LinearLayout row = (LinearLayout) ((LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, previousWords, false);
-
-		LinearLayout word = (LinearLayout)row.findViewById(R.id.b);
-		TextView text = new TextView(activity);
-		text.setText(" ");
-		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-			fontSize *= 1.3;
-		text.setTextSize((int)fontSize);
-		word.addView(text);
-
-		previousWords.addView(row);
-	}
-
-
-
-	private void setScoreText() {
-		String scoreText;
-		if(gameData.isCurrentPlayer)
-			scoreText = getScorePrefix() + game.currentPlayer.score + " : " + game.waitingPlayer.score;
-		else
-			scoreText = getScorePrefix() + game.waitingPlayer.score + " : " + game.currentPlayer.score;
-		score.setText(scoreText);
-	}
-
-	private String getScorePrefix() {
-		if(gameData.isGameOver)
-			return getEndScorePrefix(gameData.isCurrentPlayer);
-		else
-			return getLiveScorePrefix();
-	}
-
-	private String getLiveScorePrefix(){
-		if(gameData.isCurrentPlayer){
-			if(game.currentPlayer.score > game.waitingPlayer.score)
-				return "Winning ";
-			else if(game.currentPlayer.score < game.waitingPlayer.score)
-				return "Losing ";
-		} else {
-			if(game.currentPlayer.score > game.waitingPlayer.score)
-				return "Losing ";
-			else if(game.currentPlayer.score < game.waitingPlayer.score)
-				return "Winning ";
-		}
-		return "Tied ";
-	}
-
-	private String getEndScorePrefix(boolean forMe){
-		if(forMe){
-			if(game.currentPlayer.score > game.waitingPlayer.score)
-				return "Won ";
-			else if(game.currentPlayer.score < game.waitingPlayer.score)
-				return "Lost ";
-		} else {
-			if(game.currentPlayer.score > game.waitingPlayer.score)
-				return "Lost ";
-			else if(game.currentPlayer.score < game.waitingPlayer.score)
-				return "Won ";
-		}
-		return "Tied ";
-	}
-
-	
 
 	public void setActiveTile(Tile tile) {
 		if(activeTile != null)
@@ -409,7 +248,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 
 	public void submit(){
 		update();
-		String validation = Constants.startValidateGameBoard(activity, this, game, lastWord);
+		String validation = Utils.startValidateGameBoard(activity, this, game, lastWord);
 		if(validation != "1")
 			Toast.makeText(activity, validation, Toast.LENGTH_LONG).show();
 	}
@@ -417,7 +256,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 	public void validated(JSONObject result) {
 		if(result != null && result.has("value")){
 			boolean usedAllTiles = usedAllTiles();
-			int points = getPointsForValidWord(usedAllTiles);
+			int points = activity.getAppController().getPointsForValidWord(game.board.tiles, usedAllTiles);
 			game.currentPlayer.replenishTiles();
 			game.currentPlayer.incrementCurrentScore(points);
 			game.prevWords.addGameBoardToUsedWord(points, gameBoard.getReusedIndices());
@@ -428,7 +267,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			Toast.makeText(activity, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
 			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
 			showReadOnlyButtons();
-			refreshUIFromGame(true);
+			refreshUI(true);
 		}
 		else
 			Toast.makeText(activity, "Not a Word", Toast.LENGTH_SHORT).show();
@@ -456,13 +295,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			return points + " Points!!";
 	}
 
-	private int getPointsForValidWord(boolean usedAllTiles) {
-		int points = activity.getAppController().getPoints(game.board.tiles);
-		if(usedAllTiles)
-			points *= 2;
-		return points;
-
-	}
+	
 
 	public void reset() {
 		gameBoard.reset();
@@ -479,7 +312,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 				reset();
 				if(game.lastTurn.lastPlayerPassed){
 					game.save(true, true, false);
-					PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, getEndScorePrefix(false));
+					PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, score.getEndScorePrefix(game, gameData));
 				} else {
 					game.save(true, false, false);
 					PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
@@ -513,13 +346,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 		builder.show();
 	}
 
-	public void updateCurrentScore() {
-		boolean usedAllTiles = usedAllTiles();
-		int points = getPointsForValidWord(usedAllTiles);
-		currentScore.setText("" + points);
-		currentScore.setTextColor(usedAllTiles ? getResources().getColor(R.color.orange) : getResources().getColor(R.color.text_light));
-		currentScore.setTextSize(TypedValue.COMPLEX_UNIT_DIP, usedAllTiles ? 15 : 13);
-	}
+	
 
 	public void shuffleTiles() {
 		myTiles.shuffle();

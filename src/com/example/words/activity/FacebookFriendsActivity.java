@@ -12,7 +12,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -21,8 +20,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.adapter.FacebookFriendData;
 import com.example.words.adapter.FacebookFriendListAdpater;
 import com.example.words.adapter.GameRowData;
@@ -45,7 +44,7 @@ public class FacebookFriendsActivity extends BaseActivity implements TextWatcher
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Constants.initParse(this); 
+		Utils.initParse(this); 
 		setContentView(R.layout.activity_facebook);
 
 		facebookList = (ListView)findViewById(R.id.facebook_list);

@@ -20,8 +20,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -49,7 +49,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		
 		setContentView(R.layout.activity_chat); 
 		
-		Constants.initParse(this); 
+		Utils.initParse(this); 
 		
 		chatWindowScroll = (ScrollView)findViewById(R.id.chat_window_scroll);
 		chatWindow = (LinearLayout)findViewById(R.id.chat_window);
@@ -162,7 +162,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 	public void sendPush(final String text) {
 		try {
 			ParsePush push = new ParsePush();
-			push.setChannel("UserChat" + Constants.sanitizeUserName(opponentName));
+			push.setChannel("UserChat" + Utils.sanitizeUserName(opponentName));
 			push.setExpirationTimeInterval(86400);
 			
 			JSONObject json = new JSONObject();

@@ -10,7 +10,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.words.Constants;
+import com.example.words.Utils;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
 import com.example.words.adapter.GameRowData;
@@ -161,7 +161,7 @@ public class Game implements Parcelable{
 					bag.refresh(obj);
 					
 					currentPlayer.replenishTiles();//they should be full, but just in case something went wrong
-					fragment.refreshUIFromGame(false);
+					fragment.refreshUI(false);
 					
 				} else {
 					Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();
@@ -174,13 +174,13 @@ public class Game implements Parcelable{
 			public void refreshPlayers(ParseObject obj) {
 				List temp = obj.getList("currentPlayerTiles");
 				if(temp == null)
-					currentPlayer.tiles = Constants.listToArray(obj.getList("myTiles"));
+					currentPlayer.tiles = Utils.listToArray(obj.getList("myTiles"));
 				else
-					currentPlayer.tiles = Constants.listToArray(temp);
+					currentPlayer.tiles = Utils.listToArray(temp);
 				
 				temp = obj.getList("waitingPlayerTiles");
 				if(temp != null)
-					waitingPlayer.tiles = Constants.listToArray(temp);
+					waitingPlayer.tiles = Utils.listToArray(temp);
 				else
 					waitingPlayer.tiles = currentPlayer.tiles;
 				

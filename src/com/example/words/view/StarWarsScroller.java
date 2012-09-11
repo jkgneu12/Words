@@ -22,7 +22,7 @@ public class StarWarsScroller extends ScrollView {
 	
 	public void relayout(int t, int h){
 		if(Build.VERSION.SDK_INT >= 11 && getChildCount() > 0)
-			((StarWarsScrollerLayout)getChildAt(0)).relayout(t, h);
+			((PreviousWordsLayout)getChildAt(0)).relayout(t, h);
 	}
 	
 	@Override

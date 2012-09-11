@@ -11,8 +11,9 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.listener.DragAndDropListener;
 import com.example.words.listener.IDragAndDrop;
 
@@ -24,10 +25,10 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 
 	public LastWord(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		tiles = new int[Constants.NUM_GAMEBOARD_TILES];
+		tiles = new int[AppController.NUM_GAMEBOARD_TILES];
 		initListeners();
 		
-		setMinimumHeight((int)(Constants.getTileDimensions((Activity)context) + Constants.getDIPixels(activity, 10)));
+		setMinimumHeight((int)(Utils.getTileDimensions((Activity)context) + Utils.getDIPixels(activity, 10)));
 		setGravity(Gravity.CENTER);
 	}
 	
@@ -38,8 +39,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public void setCompleteLastWord(String[] lastWordArray){
-		if(lastWord == null)
-			lastWord = Constants.arrayToString(lastWordArray);
+		lastWord = Utils.arrayToString(lastWordArray);
 		removeAllViews();
 		for(int z = 0; z < lastWord.length(); z++){
 			addView(new TileHolder(activity, fragment, z));
@@ -47,18 +47,18 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public void setCurrentLastWord(String[] lastWordArray) {
-		Log.e("LastWordArray", lastWordArray.length + " " + getChildCount());
 		for(int z = 0; z < lastWordArray.length; z++){
 			String c = lastWordArray[z];
-			if(!Constants.isNullOrEmpty(c)){
+			if(!Utils.isNullOrEmpty(c)){
 				Tile tile = new LastWordTile(activity, fragment, lastWordArray[z], z);
 				tiles[z] = tile.hashCode();
+				
 				getTileHolderAt(z).removeAllViews();
 				getTileHolderAt(z).addView(tile);
 			}
 		}
 	}
-	
+
 	public String getLastWord(){
 		if(lastWord == null)
 			return null;
@@ -93,7 +93,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public boolean usedAtLeastOneTile(){
-		if(Constants.isNullOrEmpty(lastWord)) return true;
+		if(Utils.isNullOrEmpty(lastWord)) return true;
 		for(int z = 0; z < lastWord.length(); z++){
 			if(getTileAt(z) == null)
 				return true;
@@ -102,7 +102,7 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	}
 	
 	public boolean usedAllTiles(){
-		if(Constants.isNullOrEmpty(lastWord)) return false;
+		if(Utils.isNullOrEmpty(lastWord)) return false;
 		for(int z = 0; z < lastWord.length(); z++){
 			if(getTileAt(z) != null)
 				return false;
@@ -178,6 +178,13 @@ public class LastWord extends TileHolderSet implements IDragAndDrop {
 	@Override
 	@TargetApi(11)
 	public void dragMoved(Tile tile, DragEvent dragEvent) {
+	}
+
+	public void refreshUI(String[] currentLetters, String[] completeLetters, boolean force) {
+		if(force || getTileCount() != Utils.countNonNulls(currentLetters)){
+			setCompleteLastWord(completeLetters);
+			setCurrentLastWord(currentLetters);
+		}
 	}
 
 	

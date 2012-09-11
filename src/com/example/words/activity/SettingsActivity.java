@@ -6,7 +6,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.example.words.Constants;
 import com.example.words.R;
 import com.example.words.network.PushManager;
 import com.parse.ParseUser;

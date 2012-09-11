@@ -16,8 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.words.AppController;
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.adapter.GameAdpater;
 import com.example.words.adapter.GameRowData;
 import com.example.words.listener.ShakeEventListener;
@@ -106,7 +106,7 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 		super.onResume();
 		if(Build.VERSION.SDK_INT >= 11)
 			hideActionBar();
-		Constants.checkVersion(this, false);
+		Utils.checkVersion(this, false);
 		mSensorManager.registerListener(mSensorListener,
 				mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_UI);
@@ -176,7 +176,7 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 		mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
 
 			public void onShake() {
-				if(Constants.getSharedPrefBool(GameActivity.this, "shakeShuffle", true))
+				if(Utils.getSharedPrefBool(GameActivity.this, "shakeShuffle", true))
 					getCurrentFragment().shuffleTiles();
 			}
 		});

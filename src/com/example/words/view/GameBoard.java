@@ -7,8 +7,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
-import com.example.words.Constants;
+import com.example.words.AppController;
 import com.example.words.R;
+import com.example.words.Utils;
+import com.example.words.state.Board;
+import com.example.words.state.LastTurn;
 
 public class GameBoard extends FreeFormBoard {
 
@@ -19,7 +22,7 @@ public class GameBoard extends FreeFormBoard {
 	}
 	
 	public int[] getIndices() {
-		int[] indices = new int[Constants.NUM_GAMEBOARD_TILES];
+		int[] indices = new int[AppController.NUM_GAMEBOARD_TILES];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
 			if(t != null && t.isPartOfLastWord()){
@@ -30,7 +33,7 @@ public class GameBoard extends FreeFormBoard {
 	}
 
 	public boolean[] partOfLastWordArray() {
-		boolean[] partOfLastWord = new boolean[Constants.NUM_GAMEBOARD_TILES];
+		boolean[] partOfLastWord = new boolean[AppController.NUM_GAMEBOARD_TILES];
 		for(int z = 0; z < getChildCount(); z++){
 			Tile t = getTileAt(z);
 			if(t != null)
@@ -65,7 +68,7 @@ public class GameBoard extends FreeFormBoard {
 
 	@Override
 	protected boolean canDrop(Tile tile) {
-		return getChildCount() < Constants.NUM_GAMEBOARD_TILES || tile.getParent() == this;
+		return getChildCount() < AppController.NUM_GAMEBOARD_TILES || tile.getParent() == this;
 	}
 	
 	@Override
@@ -80,7 +83,19 @@ public class GameBoard extends FreeFormBoard {
 
 	@Override
 	protected int getMaxNumTiles() {
-		return Constants.NUM_GAMEBOARD_TILES;
+		return AppController.NUM_GAMEBOARD_TILES;
+	}
+
+	public void refreshUI(Board board, LastTurn lastTurn, boolean force) {
+		if(force || getChildCount() != Utils.countNonNulls(board.tiles)){
+			removeAllViews();
+			for(int z = 0; z < board.tiles.length; z++){
+				if(!Utils.isNull(board.tiles[z]) && Character.isLetter(board.tiles[z].charAt(0))){
+					Tile tile = Tile.create(activity, fragment, "" + board.tiles[z], board.indices[z], lastTurn.partOfLastWord[z]);
+					addView(tile);
+				}
+			}
+		}
 	}
 
 	

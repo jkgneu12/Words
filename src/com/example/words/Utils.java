@@ -16,11 +16,8 @@ import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
-import com.example.words.activity.ChatActivity;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
-import com.example.words.activity.HomeActivity;
-import com.example.words.activity.SignupActivity;
 import com.example.words.network.ValidateTask;
 import com.example.words.state.Game;
 import com.example.words.view.LastWord;
@@ -31,17 +28,8 @@ import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseTwitterUtils;
-import com.parse.PushService;
 
-public class Constants {
-
-	public static int NUM_GAMEBOARD_TILES = 10;
-	public static final int NUM_MY_TILES = 7;
-
-	private static double VERSION = .1;
-	
-	
-	public static final String UPDATE_SITE = "market://details?id=fm.asot";
+public class Utils {
 
 	public static int getActivityWidth(Activity activity){
 		DisplayMetrics pSize = new DisplayMetrics();
@@ -56,7 +44,7 @@ public class Constants {
 	}
 
 	public static int getTileDimensions(Activity activity){
-		return (getActivityWidth(activity) / Constants.NUM_GAMEBOARD_TILES) - 5;
+		return (getActivityWidth(activity) / AppController.NUM_GAMEBOARD_TILES) - 5;
 	}
 
 	public static int getTileMargin(Activity activity, int numTiles) {
@@ -194,14 +182,14 @@ public class Constants {
 					return;
 				}
 				double version = obj.getDouble("Version");
-				if(version > VERSION){
+				if(version > AppController.VERSION){
 					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 					builder.setMessage("A new version is available. Download Now?")
 					.setCancelable(false)
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int id) {
 							Intent intent = new Intent(Intent.ACTION_VIEW);
-							intent.setData(Uri.parse(UPDATE_SITE));
+							intent.setData(Uri.parse(AppController.UPDATE_SITE));
 							activity.startActivity(intent);
 						}
 					})

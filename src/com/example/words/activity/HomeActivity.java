@@ -1,7 +1,6 @@
 package com.example.words.activity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,16 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.words.Constants;
 import com.example.words.R;
+import com.example.words.Utils;
 import com.example.words.adapter.GameRowData;
 import com.example.words.network.ParseUtils;
 import com.example.words.view.GameRow;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
@@ -52,7 +48,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 
-		Constants.initParse(this); 
+		Utils.initParse(this); 
 
 		currentGamesLayout = (LinearLayout)findViewById(R.id.current_games);
 		waitingGamesLayout = (LinearLayout)findViewById(R.id.waiting_games);
@@ -62,7 +58,7 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		userId = currentUser.getObjectId();
 		
 		setupGamesList(savedInstanceState != null ? CachePolicy.CACHE_ONLY : CachePolicy.NETWORK_ONLY);
-		Constants.checkVersion(this, true);
+		Utils.checkVersion(this, true);
 
 	}
 	

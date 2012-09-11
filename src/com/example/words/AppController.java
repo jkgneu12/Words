@@ -6,6 +6,13 @@ import android.app.Application;
 
 public class AppController extends Application {
 	
+	public static int NUM_GAMEBOARD_TILES = 10;
+	public static final int NUM_MY_TILES = 7;
+
+	public static double VERSION = .1;
+	
+	public static final String UPDATE_SITE = "market://details?id=fm.asot";
+	
 	private String[] alpha;
 	private HashMap<String, Integer> indices;
 	private HashMap<String, Integer> points;
@@ -32,8 +39,16 @@ public class AppController extends Application {
 		}
 	}
 	
+	public int getPointsForValidWord(String[] tiles, boolean usedAllTiles) {
+		int points = getPoints(tiles);
+		if(usedAllTiles)
+			points *= 2;
+		return points;
+
+	}
+	
 	public int getPoints(String c){
-		if(Constants.isNull(c))
+		if(Utils.isNull(c))
 			return 0;
 		return points.get(c.toLowerCase());
 	}

@@ -12,13 +12,13 @@
         android:layout_gravity="bottom"
         android:scrollbars="none" >
 
-        <com.example.words.view.StarWarsScrollerLayout
+        <com.example.words.view.PreviousWordsLayout
             android:id="@+id/previous_words"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal|bottom"
             android:orientation="vertical" >
-        </com.example.words.view.StarWarsScrollerLayout>
+        </com.example.words.view.PreviousWordsLayout>
     </com.example.words.view.StarWarsScroller>
 
     <FrameLayout
@@ -32,7 +32,7 @@
         android:layout_height="50dp"
         android:layout_alignBottom="@+id/last_word" />
 
-    <TextView
+    <com.example.words.view.RemainingTiles
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
         android:layout_margin="10dp"
         android:textSize="14dp" />
 
-    <TextView
+    <com.example.words.view.Score
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
         
     </com.example.words.view.GameBoard>
     
-    <TextView 
+    <com.example.words.view.CurrentScore 
             android:id="@+id/current_score"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"

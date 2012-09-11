@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.example.words.Constants;
+import com.example.words.Utils;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
 import com.example.words.listener.DragAndDropListener;
@@ -33,7 +33,7 @@ public abstract class FreeFormBoard extends LinearLayout implements IDragAndDrop
 		setOrientation(HORIZONTAL);
 		setGravity(Gravity.CENTER);
 
-		setMinimumHeight((int)(Constants.getTileDimensions((Activity)context) + Constants.getDIPixels(activity, 10)));
+		setMinimumHeight((int)(Utils.getTileDimensions((Activity)context) + Utils.getDIPixels(activity, 10)));
 
 		initListeners();
 	}
