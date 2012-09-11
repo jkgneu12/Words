@@ -1,0 +1,11 @@
+{
+    "applications": {
+        "Words": {
+            "applicationId": "VhnMRCE8J0r9fJLuXvGWMQvdNEw6GSxoAQCApqf2", 
+            "masterKey": "6yJAH933ZleEEiPHCOYiAYiZ3JeTqDVuncASuSOt"
+        }, 
+        "_default": {
+            "link": "Words"
+        }
+    }
+}
