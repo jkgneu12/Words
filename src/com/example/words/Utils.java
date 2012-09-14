@@ -14,19 +14,18 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.words.activity.BaseActivity;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
 import com.example.words.network.ValidateTask;
 import com.example.words.state.Game;
 import com.example.words.view.LastWord;
-import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseTwitterUtils;
 
 public class Utils {
@@ -169,43 +168,6 @@ public class Utils {
 		return (int)getDIPixels(activity, 1);
 	}
 
-	public static void checkVersion(final Activity activity, final boolean showDialog) {
-
-
-		ParseQuery query = new ParseQuery("Version");
-		query.getFirstInBackground(new GetCallback() {
-			@Override
-			public void done(ParseObject obj, ParseException e) {
-				if(e != null){
-					Toast.makeText(activity, "Could not connect to server. Please try again.", Toast.LENGTH_LONG).show();
-					activity.finish();
-					return;
-				}
-				double version = obj.getDouble("Version");
-				if(version > AppController.VERSION){
-					AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-					builder.setMessage("A new version is available. Download Now?")
-					.setCancelable(false)
-					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							Intent intent = new Intent(Intent.ACTION_VIEW);
-							intent.setData(Uri.parse(AppController.UPDATE_SITE));
-							activity.startActivity(intent);
-						}
-					})
-					.setNegativeButton("No", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							dialog.cancel();
-							Toast.makeText(activity, "You must update in order to play.", Toast.LENGTH_LONG).show();
-							activity.finish();
-						}
-					});
-					builder.show();
-				}
-			}
-		});
-	}
-
 	public static List<List<Integer>> handleJSONArray(List<Object> list) {
 		if(list == null) return null;
 		List<List<Integer>> ret = new ArrayList<List<Integer>>();
@@ -235,5 +197,29 @@ public class Utils {
 				sum++;
 		}
 		return sum;
+	}
+
+	public static void handleParseErrors(ParseException e, final BaseActivity activity) {
+		Log.e("Parse", e.getMessage());
+		if(e.getMessage().equals("A new version is available. You must update to continue playing.")){
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			builder.setMessage(e.getMessage())
+			.setCancelable(false)
+			.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(AppController.UPDATE_SITE));
+					activity.startActivity(intent);
+				}
+			})
+			.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+					Toast.makeText(activity, "You must update in order to play.", Toast.LENGTH_LONG).show();
+					activity.finish();
+				}
+			});
+			builder.show();
+		}
 	}
 }

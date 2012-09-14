@@ -1,5 +1,6 @@
 package com.example.words;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Application;
@@ -17,8 +18,13 @@ public class AppController extends Application {
 	private HashMap<String, Integer> indices;
 	private HashMap<String, Integer> points;
 	
+	private ArrayList<String> gamesToRefresh;
+	private ArrayList<GameUpdateListener> gameUpdateListeners;
+	
 	public AppController() {
 		super();
+		gamesToRefresh = new ArrayList<String>();
+		gameUpdateListeners = new ArrayList<GameUpdateListener>();
 	}
 	
 	@Override
@@ -67,6 +73,31 @@ public class AppController extends Application {
 	
 	public String getLetter(int index){
 		return alpha[index];
+	}
+
+	public void registerGameUpdateListener(GameUpdateListener listener) {
+		gameUpdateListeners.add(listener);
+	}
+	
+	public void unregisterGameUpdateListener(GameUpdateListener listener) {
+		gameUpdateListeners.remove(listener);
+	}
+	
+	public void addGameToRefresh(String id){
+		gamesToRefresh.add(id);
+		for(GameUpdateListener listener : gameUpdateListeners){
+			listener.refresh(id);
+		}
+	}
+
+	public boolean removeGamesToRefresh(String id) {
+		for(int z = 0; z < gamesToRefresh.size(); z++){
+			if(gamesToRefresh.get(z).equals(id)){
+				gamesToRefresh.remove(z);
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

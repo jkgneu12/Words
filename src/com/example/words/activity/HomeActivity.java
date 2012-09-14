@@ -58,8 +58,6 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		userId = currentUser.getObjectId();
 		
 		setupGamesList(savedInstanceState != null ? CachePolicy.CACHE_ONLY : CachePolicy.NETWORK_ONLY);
-		Utils.checkVersion(this, true);
-
 	}
 	
 	@Override
@@ -268,9 +266,9 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		Intent intent = new Intent();
 		intent.setClass(this, GameActivity.class);
 
-		GameRowData item = row.getData();
+		String id = row.getData().id;
 		
-		intent.putExtra("item", item);
+		intent.putExtra("GameId", id);
 		intent.putExtra("games", compileAllGames());
 		
 		startActivity(intent);

@@ -68,4 +68,19 @@ public class ParseUtils {
 			}
 		});
 	}
+	
+	public static ArrayList<GameRowData> getGamesLists(final Activity activity,
+			final ProgressDialog waiting, final ParseUser currentUser, final CachePolicy cachePolicy, final Runnable callback){
+		ArrayList<GameRowData> currentGames = new ArrayList<GameRowData>();
+		ArrayList<GameRowData> waitingGames = new ArrayList<GameRowData>();
+		ArrayList<GameRowData> finishedGames = new ArrayList<GameRowData>();
+		
+		getGamesLists(activity, currentGames, waitingGames, finishedGames, waiting, currentUser, cachePolicy, callback);
+		
+		currentGames.addAll(waitingGames);
+		currentGames.addAll(finishedGames);
+		
+		return currentGames;
+		
+	}
 }

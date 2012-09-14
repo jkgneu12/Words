@@ -1,127 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <com.example.words.view.StarWarsScroller
+    <com.viewpagerindicator.TitlePageIndicator
+        android:id="@+id/titles"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/game_board"
-        android:layout_below="@+id/score"
-        android:layout_gravity="bottom"
-        android:scrollbars="none" >
-
-        <com.example.words.view.PreviousWordsLayout
-            android:id="@+id/previous_words"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal|bottom"
-            android:orientation="vertical" >
-        </com.example.words.view.PreviousWordsLayout>
-    </com.example.words.view.StarWarsScroller>
-
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignBottom="@id/score"
         android:layout_alignParentTop="true" />
 
-    <FrameLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_alignBottom="@+id/last_word" />
-
-    <com.example.words.view.RemainingTiles
-        android:id="@+id/remaining_tiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp"
-        android:textSize="14dp" />
-
-    <com.example.words.view.Score
-        android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp"
-        android:textSize="14dp" />
-
-    <LinearLayout
-        android:id="@+id/buttons"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" >
-
-        <Button
-            android:id="@+id/resign"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/resign" />
-
-        <Button
-            android:id="@+id/pass"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/pass" />
-
-        <Button
-            android:id="@+id/reset"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/reset" />
-
-        <Button
-            android:id="@+id/submit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/submit" />
-    </LinearLayout>
-
-    <com.example.words.view.MyTiles
-        android:id="@+id/my_tiles"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/buttons"
-        android:background="@drawable/my_tiles_backround"/>
-
-    <com.example.words.view.GameBoard
-        android:id="@id/game_board"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/my_tiles"
-        android:background="@drawable/gameboard_background"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp" >
-        
-    </com.example.words.view.GameBoard>
+        android:layout_height="fill_parent"
+       	android:layout_below="@id/titles"
+       	android:layout_above="@+id/ticker_holder" />
     
-    <com.example.words.view.CurrentScore 
-            android:id="@+id/current_score"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:background="@android:color/transparent"
-            android:gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@id/game_board"
-            android:layout_alignBottom="@id/game_board"
-            android:text="@string/zero"/>
-    
-
-    <com.example.words.view.LastWord
-        android:id="@id/last_word"
-        android:layout_width="fill_parent"
+    <FrameLayout 
+        android:id="@id/ticker_holder"
+        android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:layout_above="@id/game_board"
-        android:gravity="center_horizontal"
-        android:background="@drawable/last_word_backround" />
+        android:minHeight="1px"
+        android:layout_alignParentBottom="true">
+
+        <com.example.words.view.Ticker
+            android:id="@+id/ticker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             />
+    </FrameLayout>
 
 </RelativeLayout>

@@ -3,7 +3,10 @@ package com.example.words.activity;
 import java.util.ArrayList;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -15,17 +18,19 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.words.AppController;
+import com.example.words.GameUpdateListener;
 import com.example.words.R;
 import com.example.words.Utils;
 import com.example.words.adapter.GameAdpater;
 import com.example.words.adapter.GameRowData;
 import com.example.words.listener.ShakeEventListener;
+import com.example.words.network.ParseUtils;
+import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
 
-public class GameActivity extends BaseActivity implements OnPageChangeListener {
+public class GameActivity extends BaseActivity implements OnPageChangeListener, GameUpdateListener {
 
 	
 	private GameAdpater adapter;
@@ -37,7 +42,7 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 
 	private TitlePageIndicator indicator;
 	
-	private AppController appController;
+	
 	
 	public ParseUser currentUser;
 
@@ -51,13 +56,49 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_game_main);
+		setContentView(R.layout.activity_game);
 		
-		appController = (AppController)getApplication();
-
 		currentUser = ParseUser.getCurrentUser();
 		
+		getAppController().registerGameUpdateListener(this);
+		
 		games = getIntent().getParcelableArrayListExtra("games");
+		if(games == null){
+			final ProgressDialog waiting = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+			waiting.setTitle("Please Wait");
+			waiting.setMessage("Loading Games");
+			waiting.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					finish();
+				}
+			});
+			waiting.show();
+			
+			Runnable callback = new Runnable() {
+				
+				@Override
+				public void run() {
+					finishInitAfterDataReturned(null);
+				}
+			};
+			
+			games = ParseUtils.getGamesLists(this, waiting, currentUser, CachePolicy.NETWORK_ONLY, callback);
+		} else {
+			finishInitAfterDataReturned(savedInstanceState);
+		}
+
+	}
+
+	private void finishInitAfterDataReturned(Bundle savedInstanceState) {
+		String mainId = getIntent().getParcelableExtra("GameId");
+		for(int z = 0; z < games.size(); z++){
+			String id = games.get(z).id;
+			if(id == null || id.equals(mainId)){
+				pager.setCurrentItem(z);
+				break;
+			}
+		}
 		
 		adapter = new GameAdpater(this, getSupportFragmentManager(), getIntent().getBooleanExtra("NewGame", false));
 		
@@ -67,16 +108,6 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 		
 		pager = (ViewPager) findViewById(R.id.viewpager);
 		pager.setAdapter(adapter);
-		
-		GameRowData mainItem = getIntent().getParcelableExtra("item");
-		for(int z = 0; z < games.size(); z++){
-			String id = games.get(z).id;
-			if(id == null || id.equals(mainItem.id)){
-				pager.setCurrentItem(z);
-				break;
-			}
-		}
-		
 		
 		final float density = getResources().getDisplayMetrics().density;
 		indicator = (TitlePageIndicator)findViewById(R.id.titles);
@@ -92,9 +123,7 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
         
         indicator.setOnPageChangeListener(this);
         
-
         setupShakeListener();
-
 	}
 
 	private GameFragment getCurrentFragment(){
@@ -106,10 +135,15 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 		super.onResume();
 		if(Build.VERSION.SDK_INT >= 11)
 			hideActionBar();
-		Utils.checkVersion(this, false);
 		mSensorManager.registerListener(mSensorListener,
 				mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_UI);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		appController.unregisterGameUpdateListener(this);
 	}
 
 	@TargetApi(11)
@@ -181,10 +215,6 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 			}
 		});
 	}
-	
-	public AppController getAppController(){
-		return appController;
-	}
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
@@ -198,4 +228,10 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener {
 
 	@Override
 	public void onPageSelected(int index) {}
+
+	@Override
+	public void refresh(String id) {
+		if(getCurrentFragment().game != null && getCurrentFragment().game.id.equals(id))
+			getCurrentFragment().game.fullRefresh();
+	}
 }

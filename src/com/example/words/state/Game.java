@@ -1,15 +1,13 @@
 package com.example.words.state;
 
-import java.util.List;
-
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.example.words.AppController;
 import com.example.words.Utils;
 import com.example.words.activity.GameActivity;
 import com.example.words.activity.GameFragment;
@@ -71,7 +69,7 @@ public class Game implements Parcelable{
     	} else {
     		this.id = gameData.id;
     		setupUsers(gameData);
-    		refresh();
+    		refresh(false);
     	}
 	}
 	
@@ -102,7 +100,7 @@ public class Game implements Parcelable{
 			@Override
 			public void done(ParseException e) {
 				if(e != null)
-					Log.e("Parse", "Could not save game");
+					Utils.handleParseErrors(e, activity);
 			}
 		});
 	}
@@ -122,12 +120,12 @@ public class Game implements Parcelable{
 		currentPlayer.updateParseObject(parseObject, "waitingPlayer");
 		waitingPlayer.updateParseObject(parseObject, "currentPlayer");
 		
-		parseObject.put("myTiles",currentPlayer.getTilesList());//TODO: DEPRECIATE
-		
 		prevWords.updateParseObject(parseObject);
+		
+		parseObject.put("Version", AppController.VERSION);
 	}
 	
-	public void refresh(){
+	public void refresh(boolean force){
 		if(parseObject == null){
 			ProgressDialog waiting = new ProgressDialog(activity, ProgressDialog.STYLE_SPINNER);
 			waiting.setTitle("Please Wait");
@@ -141,13 +139,18 @@ public class Game implements Parcelable{
 			waiting.show();
 			
 			
-			queryForParseObject(waiting);
+			queryForParseObject(waiting, force);
 		} else {
 			parseObject.refreshInBackground(null);
 		}
 	}
+	
+	public void fullRefresh(){
+		parseObject = null;
+		refresh(true);
+	}
 
-	public void queryForParseObject(final ProgressDialog waiting) {
+	public void queryForParseObject(final ProgressDialog waiting, final boolean force) {
 		ParseQuery query = new ParseQuery("Game");
 		query.getInBackground(id, new GetCallback() {
 			@Override
@@ -155,13 +158,15 @@ public class Game implements Parcelable{
 				if(e == null){
 					parseObject = obj;
 					
+					isMyTurn = obj.getString("currentPlayerId").equals(activity.currentUser.getObjectId());
+					
 					refreshPlayers(obj);
 					lastTurn.refresh(obj);
 					prevWords.refresh(obj);
 					bag.refresh(obj);
 					
 					currentPlayer.replenishTiles();//they should be full, but just in case something went wrong
-					fragment.refreshUI(false);
+					fragment.refreshUI(force, isMyTurn);
 					
 				} else {
 					Toast.makeText(activity, "Game Failed to Load. Please try again.", Toast.LENGTH_LONG).show();
@@ -170,25 +175,9 @@ public class Game implements Parcelable{
 				waiting.dismiss();
 			}
 
-			//TODO: DEPRECIATE myTiles and simplify this
 			public void refreshPlayers(ParseObject obj) {
-				List temp = obj.getList("currentPlayerTiles");
-				if(temp == null)
-					currentPlayer.tiles = Utils.listToArray(obj.getList("myTiles"));
-				else
-					currentPlayer.tiles = Utils.listToArray(temp);
-				
-				temp = obj.getList("waitingPlayerTiles");
-				if(temp != null)
-					waitingPlayer.tiles = Utils.listToArray(temp);
-				else
-					waitingPlayer.tiles = currentPlayer.tiles;
-				
-				if(!isMyTurn ){
-					String[] swap = waitingPlayer.tiles;
-					waitingPlayer.tiles = currentPlayer.tiles;
-					currentPlayer.tiles = swap;
-				}
+				currentPlayer.init(obj, isMyTurn);
+				waitingPlayer.init(obj, !isMyTurn);
 			}
 		});
 	}

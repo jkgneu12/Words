@@ -42,6 +42,22 @@ public class Player implements Parcelable{
 	    	score = gameData.opponentScore;
 		}
 	}
+	
+	public void init(ParseObject obj, boolean currentPlayer){
+		
+		if(currentPlayer){
+			ParseUser currentUser = game.activity.currentUser;
+			id = currentUser.getObjectId();
+	    	displayName = currentUser.getString("displayName");
+	    	userName = currentUser.getUsername();
+	    	score = obj.getInt("currentPlayerScore");
+		} else {
+			id = obj.getString("waitingPlayerId");
+	    	displayName = obj.getString("waitingPlayerName");
+	    	userName = obj.getString("waitingPlayerUserName");
+	    	score = obj.getInt("waitingPlayerScore");
+		}
+	}
 
 	public void initMyTiles(){
 		for(int z = 0; z < tiles.length; z++){

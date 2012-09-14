@@ -1,10 +1,10 @@
 package com.example.words.view;
 
-import com.example.words.state.Bag;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import com.example.words.state.Bag;
 
 public class RemainingTiles extends TextView {
 

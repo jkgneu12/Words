@@ -1,5 +1,8 @@
 package com.example.words.network;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.util.Log;
 
@@ -14,25 +17,34 @@ import com.parse.SendCallback;
 
 public class PushManager {
 
-	public static void sendGameUpdatePush(String myName, String opponentUserName) {
+	public static void sendGameUpdatePush(String myName, String opponentUserName, String id) {
 		if(opponentUserName == null)
 			return;
 		
-		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "Your turn with " + myName);
+		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "Your turn with " + myName, id);
 	}
 	
-	public static void sendGameOverPush(String myName, String opponentUserName, String endScorePrefix) {
+	public static void sendGameOverPush(String myName, String opponentUserName, String endScorePrefix, String id) {
 		if(opponentUserName == null)
 			return;
 		
-		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "You " + endScorePrefix + " your game with " + myName);
+		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "You " + endScorePrefix + " your game with " + myName, id);
 	}
 	
-	private static void sendPush(String channel, String message){
+	private static void sendPush(String channel, String message, String id){
 		ParsePush push = new ParsePush();
 		push.setChannel(channel);
 		push.setExpirationTimeInterval(86400);
 		push.setMessage(message);
+		try {
+			JSONObject data = new JSONObject();
+			data.put("action", "com.example.GAME");
+			data.put("id", id);
+			push.setData(data);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		push.sendInBackground(new SendCallback() {
 			
 			@Override

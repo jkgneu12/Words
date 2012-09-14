@@ -84,7 +84,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if(view == null){
-			view = inflater.inflate(R.layout.activity_game, null);
+			view = inflater.inflate(R.layout.fragment_game, null);
 			
 			gameBoard = (GameBoard)view.findViewById(R.id.game_board);
 			lastWord = (LastWord)view.findViewById(R.id.last_word);
@@ -112,7 +112,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			((FrameLayout)view.getParent()).removeView(view);
 		}
 		if(couldntLayout)
-			refreshUI(true);
+			refreshUI(true, false);
 		return view;
 	}
 	
@@ -126,7 +126,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 			isNewGame = savedInstanceState.getBoolean("isNewGame");
 			
 			if(game != null){	
-			    refreshUI(false);
+			    refreshUI(false, false);
 			} 
 		} else if(activity.isFirstFragmentLoad){
 			onFragmentShown();
@@ -142,6 +142,8 @@ public class GameFragment extends Fragment implements OnClickListener{
 			showReadOnlyButtons();
 		} else if(isNewGame){
 			showNewGameButtons();
+		} else {
+			showAllButtons();
 		}
 	}
 	
@@ -149,9 +151,11 @@ public class GameFragment extends Fragment implements OnClickListener{
 		if(game == null){
 			game = new Game(activity, this, gameData, isNewGame, gameData.isCurrentPlayer);
 			if(isNewGame)
-				refreshUI(false);  
+				refreshUI(false, false);  
+		} else if (activity.getAppController().removeGamesToRefresh(game.id)){
+			game.fullRefresh();
 		} else
-			refreshUI(false);
+			refreshUI(false, false);
 	}
 	
 	@Override
@@ -204,7 +208,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 		return true;
 	}
 
-	public void refreshUI(boolean force){
+	public void refreshUI(boolean force, boolean showAllButtons){
 		if(myTiles == null){
 			couldntLayout = true;
 			return;
@@ -218,6 +222,8 @@ public class GameFragment extends Fragment implements OnClickListener{
 		remainingTiles.refreshUI(game.bag);
 		score.refreshUI(game, gameData);
 		currentScore.refreshUI(game.board.tiles, usedAllTiles());
+		if(showAllButtons)
+			showAllButtons();
 	}
 
 	public void setActiveTile(Tile tile) {
@@ -265,25 +271,32 @@ public class GameFragment extends Fragment implements OnClickListener{
 			game.lastTurn.currentLastWord = gameBoard.getLetters();
 			game.board.clearTiles();
 			Toast.makeText(activity, getMessageForValidWord(usedAllTiles, points), Toast.LENGTH_LONG).show();
-			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
+			PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName, game.id);
 			showReadOnlyButtons();
-			refreshUI(true);
+			refreshUI(true, false);
 		}
 		else
 			Toast.makeText(activity, "Not a Word", Toast.LENGTH_SHORT).show();
 	}
-
+	
 	private void showReadOnlyButtons() {
 		submit.setVisibility(View.GONE);
 		resign.setVisibility(View.GONE);
 		pass.setVisibility(View.GONE);
 	}
+	
 
 	private void showNewGameButtons() {
 		resign.setVisibility(View.GONE);
 		pass.setVisibility(View.GONE);
 	}
-
+	
+	private void showAllButtons() {
+		submit.setVisibility(View.VISIBLE);
+		resign.setVisibility(View.VISIBLE);
+		pass.setVisibility(View.VISIBLE);
+	}
+	
 	public boolean usedAllTiles() {
 		return lastWord.usedAllTiles() || myTiles.usedAllTiles();
 	}
@@ -312,10 +325,10 @@ public class GameFragment extends Fragment implements OnClickListener{
 				reset();
 				if(game.lastTurn.lastPlayerPassed){
 					game.save(true, true, false);
-					PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, score.getEndScorePrefix(game, gameData));
+					PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, score.getEndScorePrefix(game, gameData), game.id);
 				} else {
 					game.save(true, false, false);
-					PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName);
+					PushManager.sendGameUpdatePush(game.currentPlayer.displayName, game.waitingPlayer.userName, game.id);
 				}
 				showReadOnlyButtons();
 			}
@@ -335,7 +348,7 @@ public class GameFragment extends Fragment implements OnClickListener{
 		.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				game.save(false, true, true);
-				PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, "Won ");
+				PushManager.sendGameOverPush(game.currentPlayer.displayName, game.waitingPlayer.userName, "Won ", game.id);
 			}
 		})
 		.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -351,13 +364,6 @@ public class GameFragment extends Fragment implements OnClickListener{
 	public void shuffleTiles() {
 		myTiles.shuffle();
 	}
-
-
-
-
-
-	
-
 
 
 }
