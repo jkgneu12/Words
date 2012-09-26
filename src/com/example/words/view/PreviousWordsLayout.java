@@ -20,6 +20,7 @@ import com.example.words.state.PreviousWords;
 public class PreviousWordsLayout extends LinearLayout {
 
 	private GameActivity activity;
+	public boolean hasLaidOut = false;
 
 	public PreviousWordsLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -66,6 +67,7 @@ public class PreviousWordsLayout extends LinearLayout {
 	
 	@TargetApi(11)
 	public void relayout(int t, int height) {
+		hasLaidOut  = true;
 		int top = t;
 		
 		for(int z = 0; z < getChildCount(); z++){

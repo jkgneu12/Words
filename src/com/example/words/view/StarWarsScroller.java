@@ -28,7 +28,7 @@ public class StarWarsScroller extends ScrollView {
 	
 	@Override
 	public boolean fullScroll(int direction) {
-		if(!super.fullScroll(direction)){
+		if(!super.fullScroll(direction) || !((PreviousWordsLayout)getChildAt(0)).hasLaidOut){
 			relayout(getScrollY(), getMeasuredHeight());
 			
 			return false;
@@ -40,7 +40,6 @@ public class StarWarsScroller extends ScrollView {
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		super.onScrollChanged(l, t, oldl, oldt);
-		Log.e("onScrollChanged", t + " : " + getMeasuredHeight());
 		relayout(t, getMeasuredHeight());
 	}
 }
