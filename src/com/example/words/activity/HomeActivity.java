@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.words.AppController;
 import com.example.words.R;
 import com.example.words.Utils;
 import com.example.words.adapter.GameRowData;
@@ -216,6 +218,30 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		} else {
 			menu.removeItem(R.id.link_twitter);
 		}
+		
+		MenuItem howToPlay = menu.findItem(R.id.how_to_play);
+
+
+		howToPlay.setOnMenuItemClickListener(
+			new MenuItem.OnMenuItemClickListener () { 
+				public boolean onMenuItemClick(MenuItem item) { 
+					howToPlay();
+					return true;
+				}
+			} 
+		);
+		
+		MenuItem review = menu.findItem(R.id.review);
+
+
+		review.setOnMenuItemClickListener(
+			new MenuItem.OnMenuItemClickListener () { 
+				public boolean onMenuItemClick(MenuItem item) { 
+					review();
+					return true;
+				}
+			} 
+		);
 
 		return true;
 	}
@@ -281,5 +307,16 @@ public class HomeActivity extends BaseActivity implements OnClickListener  {
 		return games;
 	}
 
+	private void howToPlay() {
+		Intent intent = new Intent();
+		intent.setClass(this, HowToActivity.class);
+		startActivity(intent);
+	}
+
+	private void review() {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(AppController.UPDATE_SITE));
+		startActivity(intent);
+	}
 
 }

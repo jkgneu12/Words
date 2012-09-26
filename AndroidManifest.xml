@@ -11,10 +11,10 @@
 
     <application
         android:name=".AppController"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo" >
-        <activity android:name=".activity.MainActivity" >
+        <activity android:name=".activity.HomeActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +24,6 @@
         <activity android:name=".activity.SignupActivity" >
         </activity>
         <activity android:name=".activity.HowToActivity" >
-        </activity>
-        <activity android:name=".activity.HomeActivity" >
         </activity>
         <activity android:name=".activity.GameActivity" >
         </activity>

@@ -217,7 +217,8 @@ public class GameFragment extends Fragment implements OnClickListener{
 		
 		myTiles.refreshUI(game.currentPlayer.tiles, force);
 		lastWord.refreshUI(game.lastTurn.currentLastWord, game.lastTurn.completeLastWord, force);
-		previousWords.refreshUI(game.prevWords, force);
+		if(previousWords != null)
+			previousWords.refreshUI(game.prevWords, force);
 		gameBoard.refreshUI(game.board, game.lastTurn, force);
 		remainingTiles.refreshUI(game.bag);
 		score.refreshUI(game, gameData);

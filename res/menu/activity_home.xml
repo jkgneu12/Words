@@ -16,5 +16,13 @@
         android:id="@+id/link_twitter"
         android:title="@string/link_twitter">
     </item>
+    <item
+        android:id="@+id/how_to_play"
+        android:title="@string/how_to_play">
+    </item>
+    <item
+        android:id="@+id/review"
+        android:title="@string/review">
+    </item>
 
 </menu>

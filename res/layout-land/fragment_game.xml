@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background" >
     
-    <TextView
+    <com.example.words.view.RemainingTiles
         android:id="@+id/remaining_tiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:textSize="14dp" />
 
-    <TextView
+    <com.example.words.view.Score
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
         android:paddingBottom="5dp"
         android:background="@drawable/gameboard_background" />
     
-    <TextView 
+    <com.example.words.view.CurrentScore 
             android:id="@+id/current_score"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"

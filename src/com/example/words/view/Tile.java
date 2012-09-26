@@ -69,9 +69,9 @@ public abstract class Tile extends RelativeLayout {
 		textView.setTextColor(activity.getResources().getColor(R.color.text_light));
 		textView.setPadding(0, 0, (int)Utils.getDIPixels(activity, 1), (int)Utils.getDIPixels(activity, 1));
 		if(activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13);
 		else
-			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+			textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 		addView(textView); 
 
 		scoreView = new TextView(activity);
