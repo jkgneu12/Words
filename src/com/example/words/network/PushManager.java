@@ -34,21 +34,17 @@ public class PushManager {
 		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "You " + endScorePrefix + " your game with " + myName, id, GAME_ACTION);
 	}
 	
-	public static void sendChatPush(String myName, String opponentUserName, String id, String text) {
+	public static void sendChatPush(String myName, String opponentUserName, String id) {
 		if(opponentUserName == null)
 			return;
 		
-		sendPush("UserChat" + Utils.sanitizeUserName(opponentUserName), myName + " sent you a message", text, id, CHAT_ACTION);
+		sendPush("UserChat" + Utils.sanitizeUserName(opponentUserName), myName + " sent you a message", id, CHAT_ACTION);
 		
 		
 		
 	}
 	
 	private static void sendPush(String channel, String message, String id, String action){
-		sendPush(channel, message, null, id, action);
-	}
-	
-	private static void sendPush(String channel, String message, String alert, String id, String action){
 		ParsePush push = new ParsePush();
 		push.setChannel(channel);
 		push.setExpirationTimeInterval(86400);
@@ -57,7 +53,7 @@ public class PushManager {
 			JSONObject data = new JSONObject();
 			data.put("action", action);
 			data.put("id", id);
-			if(alert != null) data.put("alert", alert);
+			data.put("alert", message);
 			push.setData(data);
 		} catch (JSONException e1) {
 			e1.printStackTrace();

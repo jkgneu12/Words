@@ -145,7 +145,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener, ChatU
 					addText(text, true);
 					scrollToBottom();
 					
-					PushManager.sendChatPush(currentUser.getString("displayName"), opponentName, currentUser.getObjectId(), text);
+					PushManager.sendChatPush(currentUser.getString("displayName"), opponentName, currentUser.getObjectId());
 				}
 			}
 			
@@ -168,5 +168,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener, ChatU
 		populateChatWindow();
 	}
 	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		appController.unregisterChatUpdateListener(this);
+	}
 
 }

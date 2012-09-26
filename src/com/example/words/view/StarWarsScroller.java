@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ScrollView;
 
 public class StarWarsScroller extends ScrollView {
@@ -28,7 +29,8 @@ public class StarWarsScroller extends ScrollView {
 	@Override
 	public boolean fullScroll(int direction) {
 		if(!super.fullScroll(direction)){
-			relayout(0, getMeasuredHeight());
+			relayout(getScrollY(), getMeasuredHeight());
+			
 			return false;
 		}
 		return true;
@@ -38,6 +40,7 @@ public class StarWarsScroller extends ScrollView {
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		super.onScrollChanged(l, t, oldl, oldt);
+		Log.e("onScrollChanged", t + " : " + getMeasuredHeight());
 		relayout(t, getMeasuredHeight());
 	}
 }

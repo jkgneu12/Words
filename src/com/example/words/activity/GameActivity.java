@@ -91,14 +91,7 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener, 
 	}
 
 	private void finishInitAfterDataReturned(Bundle savedInstanceState) {
-		String mainId = getIntent().getParcelableExtra("GameId");
-		for(int z = 0; z < games.size(); z++){
-			String id = games.get(z).id;
-			if(id == null || id.equals(mainId)){
-				pager.setCurrentItem(z);
-				break;
-			}
-		}
+		
 		
 		adapter = new GameAdpater(this, getSupportFragmentManager(), getIntent().getBooleanExtra("NewGame", false));
 		
@@ -108,6 +101,15 @@ public class GameActivity extends BaseActivity implements OnPageChangeListener, 
 		
 		pager = (ViewPager) findViewById(R.id.viewpager);
 		pager.setAdapter(adapter);
+		
+		String mainId = getIntent().getParcelableExtra("GameId");
+		for(int z = 0; z < games.size(); z++){
+			String id = games.get(z).id;
+			if(id == null || id.equals(mainId)){
+				pager.setCurrentItem(z);
+				break;
+			}
+		}
 		
 		final float density = getResources().getDisplayMetrics().density;
 		indicator = (TitlePageIndicator)findViewById(R.id.titles);
