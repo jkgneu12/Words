@@ -20,8 +20,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.words.ChatUpdateListener;
 import com.example.words.R;
 import com.example.words.Utils;
+import com.example.words.network.PushManager;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -32,7 +34,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SendCallback;
 
-public class ChatActivity extends BaseActivity implements OnClickListener {
+public class ChatActivity extends BaseActivity implements OnClickListener, ChatUpdateListener {
 	
 	private LinearLayout chatWindow;
 	private EditText input;
@@ -65,6 +67,8 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		opponentName = getIntent().getExtras().getString("receivingUserName");
 		
 		populateChatWindow();
+		
+		appController.registerChatUpdateListener(this);
 	}
 
 	public void populateChatWindow() {
@@ -141,7 +145,7 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 					addText(text, true);
 					scrollToBottom();
 					
-					sendPush(text);
+					PushManager.sendChatPush(currentUser.getString("displayName"), opponentName, currentUser.getObjectId(), text);
 				}
 			}
 			
@@ -158,34 +162,10 @@ public class ChatActivity extends BaseActivity implements OnClickListener {
 		    }
 		});
 	}
-	
-	public void sendPush(final String text) {
-		try {
-			ParsePush push = new ParsePush();
-			push.setChannel("UserChat" + Utils.sanitizeUserName(opponentName));
-			push.setExpirationTimeInterval(86400);
-			
-			JSONObject json = new JSONObject();
-			json.put("title", currentUser.getString("displayName") + " sent you a message");
-			json.put("alert", text);
-			json.put("action", "com.example.words.activity.ChatActivity");
-			json.put("opponentId", currentUser.getObjectId());
-			json.put("opponentName", currentUser.getString("displayName"));
-			
-			push.setData(json);
-			
-			push.sendInBackground(new SendCallback() {
-				
-				@Override
-				public void done(ParseException e) {
-					if(e != null)
-						Log.w("PUSH", e.getMessage());
-				}
-			});
-		
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+
+	@Override
+	public void refresh(String id) {
+		populateChatWindow();
 	}
 	
 

@@ -19,18 +19,14 @@ public class PushReceiver extends BroadcastReceiver {
 			String action = intent.getAction();
 			String channel = intent.getExtras().getString("com.parse.Channel");
 			JSONObject json = new JSONObject(intent.getExtras().getString("com.parse.Data"));
-			
-			String gameId = json.getString("id");
-			
-			((AppController)context.getApplicationContext()).addGameToRefresh(gameId);
 
-			/*Intent i = new Intent(context, GameActivity.class);
-			i.putExtra("GameId", gameId);
-			i.putExtra("NewGame", false);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			context.startActivity(i);*/
-			
+			String id = json.getString("id");
+
+			if(action.equals(PushManager.GAME_ACTION))
+				((AppController)context.getApplicationContext()).addGameToRefresh(id);
+			else if(action.equals(PushManager.CHAT_ACTION))
+				((AppController)context.getApplicationContext()).refreshChat(id);
+
 		} catch (JSONException e) {
 			Log.d(TAG, "JSONException: " + e.getMessage());
 		}

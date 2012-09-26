@@ -17,32 +17,49 @@ import com.parse.SendCallback;
 
 public class PushManager {
 
+	public static final String GAME_ACTION = "com.example.GAME";
+	public static final String CHAT_ACTION = "com.example.CHAT";
+
 	public static void sendGameUpdatePush(String myName, String opponentUserName, String id) {
 		if(opponentUserName == null)
 			return;
 		
-		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "Your turn with " + myName, id);
+		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "Your turn with " + myName, id, GAME_ACTION);
 	}
 	
 	public static void sendGameOverPush(String myName, String opponentUserName, String endScorePrefix, String id) {
 		if(opponentUserName == null)
 			return;
 		
-		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "You " + endScorePrefix + " your game with " + myName, id);
+		sendPush("UserGame" + Utils.sanitizeUserName(opponentUserName), "You " + endScorePrefix + " your game with " + myName, id, GAME_ACTION);
 	}
 	
-	private static void sendPush(String channel, String message, String id){
+	public static void sendChatPush(String myName, String opponentUserName, String id, String text) {
+		if(opponentUserName == null)
+			return;
+		
+		sendPush("UserChat" + Utils.sanitizeUserName(opponentUserName), myName + " sent you a message", text, id, CHAT_ACTION);
+		
+		
+		
+	}
+	
+	private static void sendPush(String channel, String message, String id, String action){
+		sendPush(channel, message, null, id, action);
+	}
+	
+	private static void sendPush(String channel, String message, String alert, String id, String action){
 		ParsePush push = new ParsePush();
 		push.setChannel(channel);
 		push.setExpirationTimeInterval(86400);
 		push.setMessage(message);
 		try {
 			JSONObject data = new JSONObject();
-			data.put("action", "com.example.GAME");
+			data.put("action", action);
 			data.put("id", id);
+			if(alert != null) data.put("alert", alert);
 			push.setData(data);
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		push.sendInBackground(new SendCallback() {
@@ -81,4 +98,6 @@ public class PushManager {
 		userName = Utils.sanitizeUserName(userName);
 		PushService.unsubscribe(activity, "UserChat" + userName);
 	}
+
+	
 }

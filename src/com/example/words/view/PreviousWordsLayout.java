@@ -32,7 +32,7 @@ public class PreviousWordsLayout extends LinearLayout {
 			float fontSize = Utils.getPreviousWordSize(activity);
 			removeAllViews();
 	
-			for(int z = 0; z < prevWordCount - 1; z++){
+			for(int z = 0; z < prevWordCount; z++){
 				LinearLayout row = (LinearLayout) ((LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.prev_word, this, false);
 	
 				LinearLayout word = (LinearLayout)row.findViewById(R.id.b);

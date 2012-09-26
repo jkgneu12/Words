@@ -52,6 +52,7 @@
         <receiver android:name="com.example.words.network.PushReceiver">
 		  <intent-filter>
 		    <action android:name="com.example.GAME" />
+		    <action android:name="com.example.CHAT" />
 		  </intent-filter>
 		</receiver>
         

@@ -20,11 +20,13 @@ public class AppController extends Application {
 	
 	private ArrayList<String> gamesToRefresh;
 	private ArrayList<GameUpdateListener> gameUpdateListeners;
+	private ArrayList<ChatUpdateListener> chatUpdateListeners;
 	
 	public AppController() {
 		super();
 		gamesToRefresh = new ArrayList<String>();
 		gameUpdateListeners = new ArrayList<GameUpdateListener>();
+		chatUpdateListeners = new ArrayList<ChatUpdateListener>();
 	}
 	
 	@Override
@@ -98,6 +100,20 @@ public class AppController extends Application {
 			}
 		}
 		return false;
+	}
+
+	public void refreshChat(String id) {
+		for(ChatUpdateListener listener : chatUpdateListeners){
+			listener.refresh(id);
+		}
+	}
+
+	public void registerChatUpdateListener(ChatUpdateListener listener) {
+		chatUpdateListeners.add(listener);
+	}
+
+	public void unregisterChatUpdateListener(ChatUpdateListener listener) {
+		chatUpdateListeners.remove(listener);
 	}
 
 }
